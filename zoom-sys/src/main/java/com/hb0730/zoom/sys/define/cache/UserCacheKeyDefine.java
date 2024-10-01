@@ -1,0 +1,68 @@
+package com.hb0730.zoom.sys.define.cache;
+
+import com.hb0730.zoom.base.security.UserInfo;
+import com.hb0730.zoom.cache.core.define.CacheKeyBuilder;
+import com.hb0730.zoom.cache.core.define.CacheKeyDefine;
+import com.hb0730.zoom.cache.core.define.struct.RedisCacheStruct;
+
+import java.util.concurrent.TimeUnit;
+
+/**
+ * 用户缓存定义
+ *
+ * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
+ * @date 2024/9/25
+ */
+public interface UserCacheKeyDefine {
+    /**
+     * 用户信息
+     * <p>
+     * key: user:info:{id}
+     * desc: 用户信息 {id}
+     * type: UserInfo
+     * struct: STRING
+     * timeout: 8小时
+     */
+    CacheKeyDefine USER_INFO = CacheKeyBuilder
+            .create()
+            .key("user:info:{}")
+            .desc("用户信息 {id}")
+            .type(UserInfo.class)
+            .struct(RedisCacheStruct.STRING)
+            .timeout(8, TimeUnit.HOURS)
+            .build();
+
+    /**
+     * 用户登录失败次数
+     * <p>
+     * key: login:failure:account:{username}
+     * desc: 用户登录失败次数 {username}
+     * type: Integer
+     * struct: STRING
+     * timeout: 1天
+     */
+    CacheKeyDefine LOGIN_FAILURE = CacheKeyBuilder.create()
+            .key("login:failure:account:{}")
+            .desc("用户登录失败次数 {username}")
+            .type(Integer.class)
+            .struct(RedisCacheStruct.STRING)
+            .timeout(1, TimeUnit.DAYS)
+            .build();
+
+    CacheKeyDefine LOGIN_TOKEN = CacheKeyBuilder
+            .create()
+            .key("user:token:{}:{}")
+            .desc("用户登录 token ${id} ${time}")
+            .type(String.class)
+            .struct(RedisCacheStruct.STRING)
+            .timeout(1, TimeUnit.DAYS)
+            .build();
+
+    CacheKeyDefine LOGIN_REFRESH = new CacheKeyBuilder()
+            .key("user:refresh:{}:{}")
+            .desc("用户刷新 token ${id} ${time}")
+            .type(String.class)
+            .struct(RedisCacheStruct.STRING)
+            .timeout(32, TimeUnit.HOURS)
+            .build();
+}
