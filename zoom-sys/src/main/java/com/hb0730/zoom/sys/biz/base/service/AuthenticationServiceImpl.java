@@ -9,6 +9,7 @@ import com.hb0730.zoom.base.sys.system.entity.SysUser;
 import com.hb0730.zoom.base.util.AesCryptoUtil;
 import com.hb0730.zoom.base.util.JsonUtil;
 import com.hb0730.zoom.base.util.Md5Util;
+import com.hb0730.zoom.base.util.StrUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
 import com.hb0730.zoom.config.AuthenticationConfig;
 import com.hb0730.zoom.security.core.service.UserService;
@@ -273,6 +274,9 @@ public class AuthenticationServiceImpl implements UserService {
      */
     private Pair<String, Long> parseToken(String token) {
         try {
+            if (StrUtil.isBlank(token)) {
+                return null;
+            }
             String decrypt = AesCryptoUtil.decrypt(Base62.decodeStr(token));
             String[] split = decrypt.split(":");
             return new Pair<>(split[0], Convert.toLong(split[1]));

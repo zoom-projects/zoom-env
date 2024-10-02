@@ -2,6 +2,8 @@ package com.hb0730.zoom.sys.biz.base.controller;
 
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.util.AesCryptoUtil;
+import com.hb0730.zoom.base.util.HexUtil;
+import com.hb0730.zoom.base.util.SecureUtil;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
 import com.hb0730.zoom.sys.biz.base.model.request.LoginRequest;
 import com.hb0730.zoom.sys.biz.base.service.AuthenticationServiceImpl;
@@ -43,10 +45,15 @@ public class AuthenticationController {
     })
     public R<String> login(@RequestBody LoginRequest request) {
         LoginInfo loginInfo = new LoginInfo();
+        // 解密
+        String iv = request.getCaptchaKey();
+        String key = SecureUtil.sha256(request.getCaptchaKey() + request.getTimestamp());
+        byte[] _key = HexUtil.decodeHex(key);
+        byte[] _iv = iv.getBytes();
+        String password = AesCryptoUtil.decrypt(request.getPassword(), AesCryptoUtil.mode, _key, _iv);
         // 解密密码
+        loginInfo.setPassword(password);
         loginInfo.setUsername(request.getUsername());
-        loginInfo.setPassword(AesCryptoUtil.decrypt(request.getPassword(), request.getCaptchaKey()));
-
         // 登录
         return service.login(loginInfo);
     }
