@@ -1,6 +1,7 @@
 package com.hb0730.zoom.sys.biz.base.controller;
 
 import com.hb0730.zoom.base.R;
+import com.hb0730.zoom.base.security.SecurityUtils;
 import com.hb0730.zoom.base.util.AesCryptoUtil;
 import com.hb0730.zoom.base.util.HexUtil;
 import com.hb0730.zoom.base.util.SecureUtil;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 /**
  * 用户认证
@@ -64,7 +67,11 @@ public class AuthenticationController {
     @PermitAll
     @PostMapping("/logout")
     @Operation(summary = "用户登出")
-    public String logout(HttpServletRequest request) {
-        throw new UnsupportedOperationException("未实现");
+    public R<String> logout(HttpServletRequest request) {
+        // 获取登录 token
+        Optional<String> tokenOptional = SecurityUtils.obtainAuthorization(request);
+        tokenOptional.ifPresent(service::logout);
+        return R.OK("登出成功");
+
     }
 }

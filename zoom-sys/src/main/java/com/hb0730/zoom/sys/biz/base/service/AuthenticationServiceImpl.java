@@ -124,6 +124,25 @@ public class AuthenticationServiceImpl implements UserService {
         return userInfo;
     }
 
+    /**
+     * 用户登出
+     *
+     * @param token token
+     */
+    public void logout(String token) {
+        if (StrUtil.isBlank(token)) {
+            return;
+        }
+        Pair<String, Long> parseToken = parseToken(token);
+        if (parseToken == null) {
+            return;
+        }
+        String id = parseToken.getCode();
+        Long current = parseToken.getMessage();
+        // 删除 loginToken & refreshToken
+        cache.del(UserCacheKeyDefine.LOGIN_TOKEN.format(id, current),
+                UserCacheKeyDefine.LOGIN_REFRESH.format(id, current));
+    }
 
     /**
      * 获取loginToken 信息
