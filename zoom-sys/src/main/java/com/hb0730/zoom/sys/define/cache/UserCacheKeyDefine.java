@@ -65,4 +65,15 @@ public interface UserCacheKeyDefine {
             .struct(RedisCacheStruct.STRING)
             .timeout(32, TimeUnit.HOURS)
             .build();
+
+
+    CacheKeyDefine LOGIN_PHONE_CODE = new CacheKeyBuilder()
+            .key("user:phone:code:{}")
+            .desc("用户手机号验证码 ${phone}")
+            .type(String.class)
+            .struct(RedisCacheStruct.STRING)
+            .timeout(5, TimeUnit.MINUTES)
+            .build();
+
+
 }

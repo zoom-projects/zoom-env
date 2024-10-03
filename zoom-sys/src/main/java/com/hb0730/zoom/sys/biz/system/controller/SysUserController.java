@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.biz.system.controller;
 
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.util.AesCryptoUtil;
+import com.hb0730.zoom.base.utils.AesCryptoUtil;
 import com.hb0730.zoom.sys.biz.system.mode.request.UserCreateRequest;
 import com.hb0730.zoom.sys.biz.system.service.SysUserService;
 import io.swagger.v3.oas.annotations.media.Schema;

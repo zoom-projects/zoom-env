@@ -19,4 +19,14 @@ public interface SysUserMapper extends IMapper<SysUser> {
      */
     @Select("select * from sys_user where username = #{username} limit 1")
     SysUser findByUsername(String username);
+
+
+    /**
+     * 根据手机号查询
+     *
+     * @param phone 手机号
+     * @return 用户
+     */
+    @Select("select * from sys_user where phone = #{phone} limit 1")
+    SysUser findByPhone(String phone);
 }

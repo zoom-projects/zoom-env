@@ -45,6 +45,11 @@ public class SysUser extends ZoomBizEntity {
     private String email;
 
     /**
+     * 用户手机号
+     */
+    private String phone;
+
+    /**
      * 用户性别 0-未知 1-男 2-女
      */
     private Integer gender;

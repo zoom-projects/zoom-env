@@ -1,4 +1,4 @@
-package com.hb0730.zoom.sys.biz.base.service;
+package com.hb0730.zoom.sys.biz.base.granter;
 
 import cn.hutool.core.codec.Base62;
 import cn.hutool.core.convert.Convert;
@@ -6,22 +6,20 @@ import com.hb0730.zoom.base.Pair;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.security.UserInfo;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
-import com.hb0730.zoom.base.util.AesCryptoUtil;
-import com.hb0730.zoom.base.util.JsonUtil;
-import com.hb0730.zoom.base.util.Md5Util;
-import com.hb0730.zoom.base.util.StrUtil;
+import com.hb0730.zoom.base.utils.AesCryptoUtil;
+import com.hb0730.zoom.base.utils.JsonUtil;
+import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
 import com.hb0730.zoom.config.AuthenticationConfig;
-import com.hb0730.zoom.security.core.service.UserService;
+import com.hb0730.zoom.core.SysConst;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginToken;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginTokenIdentity;
 import com.hb0730.zoom.sys.biz.system.service.SysUserService;
 import com.hb0730.zoom.sys.define.cache.UserCacheKeyDefine;
 import com.hb0730.zoom.sys.enums.LoginTokenStatusEnums;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,118 +28,172 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * 用户认证
+ * 抽象的token granter
  *
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2024/9/24
+ * @date 2024/10/3
  */
-@Service
 @Slf4j
-@RequiredArgsConstructor
-public class AuthenticationServiceImpl implements UserService {
-    private final CacheUtil cache;
-    private final AuthenticationConfig authConfig;
-    private final SysUserService userService;
+public abstract class AbstractTokenGranter implements TokenGranter {
+    @Autowired
+    private CacheUtil cache;
+    @Autowired
+    private AuthenticationConfig authConfig;
+    @Autowired
+    private SysUserService userService;
 
-    /**
-     * 用户登录
-     *
-     * @param loginInfo 登录信息
-     * @return token
-     */
+    @Override
     public R<String> login(LoginInfo loginInfo) {
-        // 登陆失败次数
-        String loginFailureCount = UserCacheKeyDefine.LOGIN_FAILURE.format(loginInfo.getUsername());
-        // 多次认证失败禁止登录
-        if (Convert.toInt(cache.getString(loginFailureCount), 0) >= authConfig.getLoginFailedLockCount()) {
-            return R.NG("账号已被锁定，请联系管理员重置密码");
+        // 1. 检查参数
+        R<String> r = checkParam(loginInfo);
+        if (!r.isSuccess()) {
+            return r;
         }
-        SysUser user = userService.findByUsername(loginInfo.getUsername());
-        if (user == null) {
-            // 记录登录失败次数
-            return R.NG("用户不存在");
+        // 2. 检查验证码
+        r = checkCaptcha(loginInfo);
+        if (!r.isSuccess()) {
+            return r;
         }
-        // 1. 校验用户是否有效
-        R<?> res = userService.checkUserIsEffective(user);
-        if (!res.isSuccess()) {
-            cache.incr(loginFailureCount, 1);
-            // 记录登录失败次数
-            return R.NG(res.getMessage());
+        // 3. 获取系统用户
+        R<SysUser> userR = getUser(loginInfo);
+        if (!userR.isSuccess()) {
+            return R.NG("用户不存在,请注册");
         }
-
-        // 2. 校验用户名或密码是否正确
-        String _password = Md5Util.md5Hex(loginInfo.getPassword(), user.getSalt());
-        if (!_password.equals(user.getPassword())) {
-            // 记录登录失败次数
-            cache.incr(loginFailureCount, 1);
-            return R.NG("用户名或密码错误");
+        // 4. 检查密码
+        r = checkPassword(loginInfo, userR.getData());
+        if (!r.isSuccess()) {
+            return r;
         }
-        // 3. 设置上次登录时间
-        userService.updateLastLoginTime(user.getId());
-
-        // 4. 删除用户缓存
-        this.delUserCache(user);
-
-        // 5. 重设用户缓存
-        this.setUserCache(user);
-
-        long current = System.currentTimeMillis();
-
-        // 6. 不允许多端登录
-        if (!authConfig.getAllowMultiDevice()) {
-            // 无效化其他缓存
-            this.invalidOtherDeviceToken(user, current);
+        // 5. 检查状态
+        r = checkStatus(userR.getData());
+        if (!r.isSuccess()) {
+            return r;
         }
-        // 7. 生成token
-        String token = this.generatorLoginToken(user, current);
+        // 6. 生成token
+        String token = generatorToken(userR.getData());
         return R.OK(token);
     }
 
-    @Override
-    public UserInfo getUserByToken(String token) {
-        LoginToken loginToken = getLoginToken(token);
-        if (loginToken == null) {
-            return null;
-        }
-        // 检测状态
-        if (loginToken.getStatus() != 1) {
-            // 删除缓存
-            UserCacheKeyDefine.LOGIN_TOKEN.format(loginToken.getId(), loginToken.getOrigin().getLoginTime());
-            return null;
-        }
-        // 获取登录信息
-        SysUser user = userService.getById(loginToken.getId());
-        if (user == null) {
-            return null;
-        }
-        // 获取用户信息
-        UserInfo userInfo = getUserInfoById(user.getId());
-        if (userInfo == null) {
-            return null;
-        }
-        // 检查用户状态
-        // 更新登录时间
-        return userInfo;
+    /**
+     * 检查参数
+     *
+     * @param loginInfo 登录信息
+     * @return 是否成功
+     */
+    protected abstract R<String> checkParam(LoginInfo loginInfo);
+
+    /**
+     * 检查验证码
+     *
+     * @param loginInfo 登录信息
+     * @return 是否成功
+     */
+    protected R<String> checkCaptcha(LoginInfo loginInfo) {
+        return R.OK();
     }
 
     /**
-     * 用户登出
+     * 获取系统用户
      *
-     * @param token token
+     * @param loginInfo 登录信息
+     * @return 系统用户
      */
-    public void logout(String token) {
+    protected abstract R<SysUser> getUser(LoginInfo loginInfo);
+
+    /**
+     * 检查密码
+     *
+     * @param loginInfo 登录信息
+     * @param user      系统用户
+     * @return 是否成功
+     */
+    protected R<String> checkPassword(LoginInfo loginInfo, SysUser user) {
+        return R.OK();
+    }
+
+    /**
+     * 检查状态
+     *
+     * @param user 系统用户
+     * @return 是否成功
+     */
+    protected R<String> checkStatus(SysUser user) {
+        if (user == null) {
+            return R.NG("该用户不存在，请注册");
+        }
+        // 情况2：根据用户信息查询，该用户已注销
+        if (SysConst.DEL_FLAG_1.equals(user.getDelFlag())) {
+            return R.NG("该用户已注销");
+        }
+        // 情况3：根据用户信息查询，该用户已冻结
+        if (SysConst.USER_FREEZE.equals(user.getStatus())) {
+            return R.NG("该用户已冻结");
+        }
+        return R.OK();
+    }
+
+    @Override
+    public R<String> logout(String token) {
         if (StrUtil.isBlank(token)) {
-            return;
+            return R.NG("token不能为空");
         }
         Pair<String, Long> parseToken = parseToken(token);
         if (parseToken == null) {
-            return;
+            return R.NG("token无效");
         }
         String id = parseToken.getCode();
         Long current = parseToken.getMessage();
         // 删除 loginToken & refreshToken
         cache.del(UserCacheKeyDefine.LOGIN_TOKEN.format(id, current),
                 UserCacheKeyDefine.LOGIN_REFRESH.format(id, current));
+        return R.OK();
+    }
+
+    /**
+     * 生成token
+     *
+     * @param user 用户
+     * @return 用户信息
+     */
+    private String generatorToken(SysUser user) {
+        // 1. 设置上次登录时间
+        userService.updateLastLoginTime(user.getId());
+
+        // 2. 删除用户缓存
+        this.delUserCache(user);
+
+        // 3. 重设用户缓存
+        this.setUserCache(user);
+
+        long current = System.currentTimeMillis();
+
+        // 4. 不允许多端登录
+        if (!authConfig.getAllowMultiDevice()) {
+            // 无效化其他缓存
+            this.invalidOtherDeviceToken(user, current);
+        }
+        // 5. 生成token
+        return this.generatorLoginToken(user, current);
+    }
+
+    /**
+     * 解析token
+     *
+     * @param token token
+     * @return id, loginTime
+     */
+    private Pair<String, Long> parseToken(String token) {
+        try {
+            if (StrUtil.isBlank(token)) {
+                return null;
+            }
+            String decrypt = AesCryptoUtil.decrypt(Base62.decodeStr(token));
+            String[] split = decrypt.split(":");
+            return new Pair<>(split[0], Convert.toLong(split[1]));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
     }
 
     /**
@@ -150,7 +202,7 @@ public class AuthenticationServiceImpl implements UserService {
      * @param token token
      * @return token
      */
-    private LoginToken getLoginToken(String token) {
+    protected LoginToken getLoginToken(String token) {
         Pair<String, Long> tokenPair = parseToken(token);
         if (tokenPair == null) {
             return null;
@@ -285,25 +337,6 @@ public class AuthenticationServiceImpl implements UserService {
         return Base62.encode(encrypt);
     }
 
-    /**
-     * 解析token
-     *
-     * @param token token
-     * @return id, loginTime
-     */
-    private Pair<String, Long> parseToken(String token) {
-        try {
-            if (StrUtil.isBlank(token)) {
-                return null;
-            }
-            String decrypt = AesCryptoUtil.decrypt(Base62.decodeStr(token));
-            String[] split = decrypt.split(":");
-            return new Pair<>(split[0], Convert.toLong(split[1]));
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return null;
-        }
-    }
 
     /**
      * 获取用户信息
@@ -311,7 +344,7 @@ public class AuthenticationServiceImpl implements UserService {
      * @param id 用户id
      * @return 用户信息
      */
-    private UserInfo getUserInfoById(String id) {
+    protected UserInfo getUserInfoById(String id) {
         String userInfoKey = UserCacheKeyDefine.USER_INFO.format(id);
         Optional<String> userInfoValue = cache.getString(userInfoKey);
         if (userInfoValue.isPresent()) {

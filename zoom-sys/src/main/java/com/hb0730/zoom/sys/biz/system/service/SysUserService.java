@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.exception.ZoomException;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
-import com.hb0730.zoom.base.util.Md5Util;
-import com.hb0730.zoom.base.util.RandomUtil;
+import com.hb0730.zoom.base.utils.Md5Util;
+import com.hb0730.zoom.base.utils.RandomUtil;
 import com.hb0730.zoom.biz.service.ZoomBizService;
 import com.hb0730.zoom.cache.core.CacheUtil;
 import com.hb0730.zoom.core.SysConst;
@@ -39,6 +39,16 @@ public class SysUserService extends ZoomBizService<SysUserMapper, SysUser> {
      */
     public SysUser findByUsername(String username) {
         return baseMapper.findByUsername(username);
+    }
+
+    /**
+     * 根据手机号查询
+     *
+     * @param phone 手机号
+     * @return 用户
+     */
+    public SysUser findByPhone(String phone) {
+        return baseMapper.findByPhone(phone);
     }
 
     /**
