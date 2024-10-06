@@ -34,7 +34,7 @@ import java.util.Optional;
  * @date 2024/9/24
  */
 @RestController
-@RequestMapping("/sys/auth")
+@RequestMapping("/auth")
 @Tag(name = "认证服务")
 @Slf4j
 @RequiredArgsConstructor

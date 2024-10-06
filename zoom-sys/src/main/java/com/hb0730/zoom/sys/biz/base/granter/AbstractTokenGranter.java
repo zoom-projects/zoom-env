@@ -55,22 +55,23 @@ public abstract class AbstractTokenGranter implements TokenGranter {
             return r;
         }
         // 3. 获取系统用户
-        R<SysUser> userR = getUser(loginInfo);
-        if (!userR.isSuccess()) {
+        Optional<SysUser> userR = getUser(loginInfo);
+        if (userR.isEmpty()) {
             return R.NG("用户不存在,请注册");
         }
+        SysUser user = userR.get();
         // 4. 检查密码
-        r = checkPassword(loginInfo, userR.getData());
+        r = checkPassword(loginInfo, user);
         if (!r.isSuccess()) {
             return r;
         }
         // 5. 检查状态
-        r = checkStatus(userR.getData());
+        r = checkStatus(user);
         if (!r.isSuccess()) {
             return r;
         }
         // 6. 生成token
-        String token = generatorToken(userR.getData());
+        String token = generatorToken(user);
         return R.OK(token);
     }
 
@@ -98,7 +99,7 @@ public abstract class AbstractTokenGranter implements TokenGranter {
      * @param loginInfo 登录信息
      * @return 系统用户
      */
-    protected abstract R<SysUser> getUser(LoginInfo loginInfo);
+    protected abstract Optional<SysUser> getUser(LoginInfo loginInfo);
 
     /**
      * 检查密码

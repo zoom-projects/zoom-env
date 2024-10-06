@@ -1,4 +1,4 @@
-package com.hb0730.zoom.sys.biz.system.mode.request;
+package com.hb0730.zoom.sys.biz.system.model.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;

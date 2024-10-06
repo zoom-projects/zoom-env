@@ -2,7 +2,7 @@ package com.hb0730.zoom.base.sys.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.hb0730.zoom.biz.entity.ZoomBizEntity;
+import com.hb0730.zoom.data.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -18,7 +18,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class SysUser extends ZoomBizEntity {
+public class SysUser extends BaseEntity {
     /**
      * 用户账号
      */

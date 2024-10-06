@@ -6,6 +6,7 @@ import com.hb0730.zoom.base.security.UserInfo;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
 import com.hb0730.zoom.base.utils.Md5Util;
 import com.hb0730.zoom.base.utils.StrUtil;
+import com.hb0730.zoom.base.utils.ValidatorUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
 import com.hb0730.zoom.config.AuthenticationConfig;
 import com.hb0730.zoom.security.core.service.UserService;
@@ -15,6 +16,8 @@ import com.hb0730.zoom.sys.biz.system.service.SysUserService;
 import com.hb0730.zoom.sys.define.cache.UserCacheKeyDefine;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * username/password 登录
@@ -41,13 +44,16 @@ public class PasswordTokenGranter extends AbstractTokenGranter implements UserSe
     }
 
     @Override
-    protected R<SysUser> getUser(LoginInfo loginInfo) {
-        // TODO 通过email or phone 获取用户
-        SysUser user = userService.findByUsername(loginInfo.getUsername());
-        if (user == null) {
-            return R.NG("用户不存在");
+    protected Optional<SysUser> getUser(LoginInfo loginInfo) {
+        boolean email = ValidatorUtil.isEmail(loginInfo.getUsername());
+        if (email) {
+            return Optional.ofNullable(userService.findByEmail(loginInfo.getUsername()));
         }
-        return R.OK(user);
+        boolean phone = ValidatorUtil.isMobile(loginInfo.getUsername());
+        if (phone) {
+            return Optional.ofNullable(userService.findByPhone(loginInfo.getUsername()));
+        }
+        return Optional.ofNullable(userService.findByUsername(loginInfo.getUsername()));
     }
 
     @Override

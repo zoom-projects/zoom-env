@@ -1,4 +1,4 @@
-package com.hb0730.zoom.biz.entity;
+package com.hb0730.zoom.data.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -21,7 +21,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class ZoomBizEntity implements Serializable {
+public class BaseEntity implements Serializable {
 
     /**
      * ID

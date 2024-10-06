@@ -1,22 +1,16 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.exception.ZoomException;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
-import com.hb0730.zoom.base.utils.Md5Util;
-import com.hb0730.zoom.base.utils.RandomUtil;
-import com.hb0730.zoom.biz.service.ZoomBizService;
 import com.hb0730.zoom.cache.core.CacheUtil;
 import com.hb0730.zoom.core.SysConst;
 import com.hb0730.zoom.sys.biz.system.convert.SystemUserConvert;
 import com.hb0730.zoom.sys.biz.system.mapper.SysUserMapper;
-import com.hb0730.zoom.sys.biz.system.mode.request.UserCreateRequest;
-import com.hb0730.zoom.sys.define.cache.UserCacheKeyDefine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -27,7 +21,7 @@ import java.util.Date;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysUserService extends ZoomBizService<SysUserMapper, SysUser> {
+public class SysUserService extends com.baomidou.mybatisplus.extension.service.impl.ServiceImpl<SysUserMapper, SysUser> implements com.baomidou.mybatisplus.extension.service.IService<SysUser> {
     private final SystemUserConvert userConvert;
     private final CacheUtil cache;
 
@@ -38,7 +32,9 @@ public class SysUserService extends ZoomBizService<SysUserMapper, SysUser> {
      * @return 用户
      */
     public SysUser findByUsername(String username) {
-        return baseMapper.findByUsername(username);
+        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+                .eq(SysUser::getUsername, username);
+        return baseMapper.of(queryWrapper).one();
     }
 
     /**
@@ -48,7 +44,21 @@ public class SysUserService extends ZoomBizService<SysUserMapper, SysUser> {
      * @return 用户
      */
     public SysUser findByPhone(String phone) {
-        return baseMapper.findByPhone(phone);
+        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+                .eq(SysUser::getPhone, phone);
+        return baseMapper.of(queryWrapper).one();
+    }
+
+    /**
+     * 根据邮箱查询
+     *
+     * @param email 邮箱
+     * @return 用户
+     */
+    public SysUser findByEmail(String email) {
+        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+                .eq(SysUser::getEmail, email);
+        return baseMapper.of(queryWrapper).one();
     }
 
     /**
@@ -82,32 +92,6 @@ public class SysUserService extends ZoomBizService<SysUserMapper, SysUser> {
         user.setId(id);
         user.setLastLoginTime(new Date());
         baseMapper.updateById(user);
-    }
-
-    /**
-     * 创建用户
-     *
-     * @param request 用户信息
-     * @return 用户ID
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public String createUser(UserCreateRequest request) {
-        SysUser user = userConvert.to(request);
-        // 查询用户名是否存在
-        if (checkUsernamePresent(user)) {
-            throw new ZoomException("用户名已存在");
-        }
-        // 生成盐
-        user.setSalt(RandomUtil.randomString(16));
-        // 密码加密
-        user.setPassword(Md5Util.md5Hex(user.getPassword(), user.getSalt()));
-        // 插入
-        this.save(user);
-        // 清理缓存
-        cache.del(UserCacheKeyDefine.LOGIN_FAILURE.format(user.getUsername()));
-        // 返回用户ID
-        return user.getId();
-
     }
 
 

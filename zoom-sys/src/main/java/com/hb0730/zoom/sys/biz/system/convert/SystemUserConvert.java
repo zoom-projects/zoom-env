@@ -2,8 +2,7 @@ package com.hb0730.zoom.sys.biz.system.convert;
 
 import com.hb0730.zoom.base.mapstruct.BaseMapstruct;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
-import com.hb0730.zoom.sys.biz.system.mode.request.UserCreateRequest;
-import com.hb0730.zoom.sys.biz.system.mode.vo.SysUserDto;
+import com.hb0730.zoom.sys.biz.system.model.dto.SysUserDTO;
 import org.mapstruct.Mapper;
 
 /**
@@ -11,7 +10,6 @@ import org.mapstruct.Mapper;
  * @date 2024/9/25
  */
 @Mapper(componentModel = "spring", uses = {}, unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
-public interface SystemUserConvert extends BaseMapstruct<SysUserDto, SysUser> {
-    
-    SysUser to(UserCreateRequest request);
+public interface SystemUserConvert extends BaseMapstruct<SysUserDTO, SysUser> {
+
 }

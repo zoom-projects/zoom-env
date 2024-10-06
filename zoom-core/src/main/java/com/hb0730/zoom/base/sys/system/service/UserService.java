@@ -2,7 +2,6 @@ package com.hb0730.zoom.base.sys.system.service;
 
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
 import com.hb0730.zoom.base.sys.system.mapper.UserMapper;
-import com.hb0730.zoom.biz.service.ZoomBizService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +13,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class UserService extends ZoomBizService<UserMapper, SysUser> {
+public class UserService extends com.baomidou.mybatisplus.extension.service.impl.ServiceImpl<UserMapper, SysUser> implements com.baomidou.mybatisplus.extension.service.IService<SysUser> {
 
 }
