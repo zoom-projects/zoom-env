@@ -2,7 +2,7 @@ package com.hb0730.zoom.base.sys.system.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.hb0730.zoom.data.entity.BizEntity;
+import com.hb0730.zoom.base.entity.BizEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;

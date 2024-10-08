@@ -1,4 +1,4 @@
-package com.hb0730.zoom.data.service.superclass;
+package com.hb0730.zoom.base.service.superclass;
 
 import java.io.Serializable;
 
@@ -16,5 +16,5 @@ public interface IUpdateService<Id extends Serializable, D> {
      * @param dto dto
      * @return 是否成功
      */
-    boolean dtoUpdate(Id id, D dto);
+    boolean updateD(Id id, D dto);
 }

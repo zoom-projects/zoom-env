@@ -4,6 +4,7 @@ import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.utils.TreeUtil;
 import com.hb0730.zoom.sys.biz.system.model.dto.SysPermissionDTO;
 import com.hb0730.zoom.sys.biz.system.model.request.SysPermissionQuery;
+import com.hb0730.zoom.sys.biz.system.model.request.SysPermissionTreeQuery;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionTreeVO;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionVO;
 import com.hb0730.zoom.sys.biz.system.service.SysPermissionService;
@@ -46,8 +47,8 @@ public class SysPermissionController {
      */
     @GetMapping("/tree")
     @Schema(description = "菜单树")
-    public R<List<SysPermissionTreeVO>> tree() {
-        List<SysPermissionTreeVO> nodes = permissionService.tree();
+    public R<List<SysPermissionTreeVO>> tree(SysPermissionTreeQuery query) {
+        List<SysPermissionTreeVO> nodes = permissionService.tree(query);
         List<SysPermissionTreeVO> tree = TreeUtil.build(nodes);
         return R.OK(tree);
     }
@@ -61,22 +62,21 @@ public class SysPermissionController {
     @GetMapping("/list")
     @Operation(summary = "权限列表")
     public R<List<SysPermissionVO>> list(SysPermissionQuery query) {
-        List<SysPermissionDTO> permissionDtoList = permissionService.list(query);
-        List<SysPermissionVO> res = permissionService.getMapstruct().toVo(permissionDtoList);
+        List<SysPermissionVO> res = permissionService.listV(query);
         return R.OK(res);
     }
 
     @PostMapping("/save")
     @Operation(summary = "保存权限")
     public R<String> save(@RequestBody SysPermissionDTO dto) {
-        permissionService.dtoSave(dto);
+        permissionService.saveD(dto);
         return R.OK();
     }
 
     @Operation(summary = "更新权限")
     @PutMapping("/update/{id}")
     public R<String> update(@PathVariable String id, @RequestBody SysPermissionDTO dto) {
-        permissionService.dtoUpdate(dto.getId(), dto);
+        permissionService.updateD(dto.getId(), dto);
         return R.OK();
     }
 

@@ -5,15 +5,17 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.PairEnum;
 import com.hb0730.zoom.base.enums.MenuTypeEnums;
 import com.hb0730.zoom.base.exception.ZoomException;
+import com.hb0730.zoom.base.service.BaseService;
 import com.hb0730.zoom.base.sys.system.entity.SysPermission;
 import com.hb0730.zoom.base.utils.CollectionUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
-import com.hb0730.zoom.data.service.BaseService;
-import com.hb0730.zoom.sys.biz.system.convert.SystemPermissionConvert;
+import com.hb0730.zoom.sys.biz.system.convert.SysPermissionConvert;
 import com.hb0730.zoom.sys.biz.system.mapper.SysPermissionMapper;
 import com.hb0730.zoom.sys.biz.system.model.dto.SysPermissionDTO;
 import com.hb0730.zoom.sys.biz.system.model.request.SysPermissionQuery;
+import com.hb0730.zoom.sys.biz.system.model.request.SysPermissionTreeQuery;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionTreeVO;
+import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,19 +34,20 @@ public class SysPermissionService extends BaseService<
         String,
         SysPermission,
         SysPermissionMapper,
+        SysPermissionVO,
         SysPermissionDTO,
         SysPermissionQuery,
-        SystemPermissionConvert> {
+        SysPermissionConvert> {
 
     /**
      * 菜单树
      *
      * @return 菜单树
      */
-    public List<SysPermissionTreeVO> tree() {
+    public List<SysPermissionTreeVO> tree(SysPermissionTreeQuery query) {
         LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
-                .ne(SysPermission::getMenuType, 3)
                 .orderByAsc(SysPermission::getSort);
+
         List<SysPermission> tree = baseMapper.selectList(queryWrapper);
         return mapstruct.toTreeVo(tree);
     }
@@ -67,14 +70,14 @@ public class SysPermissionService extends BaseService<
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean dtoSave(SysPermissionDTO dto) {
+    public boolean saveD(SysPermissionDTO dto) {
         check(dto);
         String parentId = dto.getParentId();
         if (StrUtil.isBlank(parentId)) {
             dto.setParentId(null);
         }
         dto.setLeaf(true);
-        SysPermission entity = getMapstruct().toEntity(dto);
+        SysPermission entity = getMapstruct().dtoToEntity(dto);
         save(entity);
         if (StrUtil.isNotBlank(parentId)) {
             this.baseMapper.changeLeafById(parentId, 0);
@@ -92,9 +95,9 @@ public class SysPermissionService extends BaseService<
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean dtoUpdate(String id, SysPermissionDTO dto) {
+    public boolean updateD(String id, SysPermissionDTO dto) {
         check(dto);
-        SysPermission entity = getMapstruct().toEntity(dto);
+        SysPermission entity = getMapstruct().dtoToEntity(dto);
         entity.setId(id);
         // steps 1: 更新parentId
         if (StrUtil.isBlank(dto.getParentId())) {

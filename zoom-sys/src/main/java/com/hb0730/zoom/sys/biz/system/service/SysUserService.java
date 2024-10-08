@@ -6,7 +6,7 @@ import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
 import com.hb0730.zoom.cache.core.CacheUtil;
 import com.hb0730.zoom.core.SysConst;
-import com.hb0730.zoom.sys.biz.system.convert.SystemUserConvert;
+import com.hb0730.zoom.sys.biz.system.convert.SysUserConvert;
 import com.hb0730.zoom.sys.biz.system.mapper.SysUserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.Date;
 @Slf4j
 @RequiredArgsConstructor
 public class SysUserService extends com.baomidou.mybatisplus.extension.service.impl.ServiceImpl<SysUserMapper, SysUser> implements com.baomidou.mybatisplus.extension.service.IService<SysUser> {
-    private final SystemUserConvert userConvert;
+    private final SysUserConvert userConvert;
     private final CacheUtil cache;
 
     /**

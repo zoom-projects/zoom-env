@@ -1,4 +1,4 @@
-package com.hb0730.zoom.data.service.superclass;
+package com.hb0730.zoom.base.service.superclass;
 
 /**
  * 保存服务
@@ -14,5 +14,5 @@ public interface ISaveService<D> {
      * @param dto dto
      * @return 是否成功
      */
-    boolean dtoSave(D dto);
+    boolean saveD(D dto);
 }

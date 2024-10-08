@@ -16,15 +16,7 @@ import java.util.List;
  * @date 2024/10/5
  */
 @Mapper(componentModel = "spring", uses = {}, unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
-public interface SystemPermissionConvert extends BaseMapstruct<SysPermissionDTO, SysPermission> {
-    /**
-     * dto to entity
-     *
-     * @param dto dtos
-     * @return entity
-     */
-    List<SysPermissionVO> toVo(List<SysPermissionDTO> dto);
-
+public interface SysPermissionConvert extends BaseMapstruct<SysPermissionVO, SysPermissionDTO, SysPermission> {
     /**
      * entity to vo
      *

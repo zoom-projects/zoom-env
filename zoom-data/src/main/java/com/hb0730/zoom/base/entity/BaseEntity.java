@@ -1,4 +1,4 @@
-package com.hb0730.zoom.data.entity;
+package com.hb0730.zoom.base.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;

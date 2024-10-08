@@ -1,9 +1,9 @@
-package com.hb0730.zoom.data.service;
+package com.hb0730.zoom.base.service;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.hb0730.zoom.base.entity.BaseEntity;
 import com.hb0730.zoom.base.mapstruct.BaseMapstruct;
-import com.hb0730.zoom.data.entity.BaseEntity;
-import com.hb0730.zoom.data.service.superclass.impl.SuperServiceImpl;
+import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
 import com.hb0730.zoom.mybatis.query.doamin.PageParams;
 
 import java.io.Serializable;
@@ -21,7 +21,7 @@ import java.io.Serializable;
  * @date 2024/10/5
  * @see SuperServiceImpl
  */
-public class BaseService<ID extends Serializable, E extends BaseEntity, M extends BaseMapper<E>, D,
+public class BaseService<ID extends Serializable, E extends BaseEntity, M extends BaseMapper<E>, V extends Serializable, D,
         Q extends PageParams,
-        C extends BaseMapstruct<D, E>> extends SuperServiceImpl<ID, E, M, D, Q, C> {
+        C extends BaseMapstruct<V, D, E>> extends SuperServiceImpl<ID, E, M, V, D, Q, C> {
 }
