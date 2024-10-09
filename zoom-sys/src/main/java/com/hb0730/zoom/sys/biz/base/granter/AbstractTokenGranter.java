@@ -1,20 +1,20 @@
 package com.hb0730.zoom.sys.biz.base.granter;
 
-import cn.hutool.core.codec.Base62;
-import cn.hutool.core.convert.Convert;
 import com.hb0730.zoom.base.Pair;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.security.UserInfo;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
-import com.hb0730.zoom.base.utils.AesCryptoUtil;
 import com.hb0730.zoom.base.utils.JsonUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
 import com.hb0730.zoom.config.AuthenticationConfig;
 import com.hb0730.zoom.core.SysConst;
+import com.hb0730.zoom.sys.biz.base.convert.UserInfoConvert;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginToken;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginTokenIdentity;
+import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
+import com.hb0730.zoom.sys.biz.base.util.TokenUtil;
 import com.hb0730.zoom.sys.biz.system.service.SysUserService;
 import com.hb0730.zoom.sys.define.cache.UserCacheKeyDefine;
 import com.hb0730.zoom.sys.enums.LoginTokenStatusEnums;
@@ -41,6 +41,8 @@ public abstract class AbstractTokenGranter implements TokenGranter {
     private AuthenticationConfig authConfig;
     @Autowired
     private SysUserService userService;
+    @Autowired
+    private UserInfoConvert userInfoConvert;
 
     @Override
     public R<String> login(LoginInfo loginInfo) {
@@ -134,11 +136,29 @@ public abstract class AbstractTokenGranter implements TokenGranter {
     }
 
     @Override
+    public R<UserInfoVO> currentUser(String token) {
+        if (StrUtil.isBlank(token)) {
+            return R.NG("token不能为空");
+        }
+        LoginToken loginToken = getLoginToken(token);
+        if (loginToken == null) {
+            return R.NG("token无效");
+        }
+        // 获取用户信息
+        UserInfo userInfo = getUserInfoById(loginToken.getId());
+        if (userInfo == null) {
+            return R.NG("用户不存在");
+        }
+        return R.OK(userInfoConvert.do2vo(userInfo));
+    }
+
+
+    @Override
     public R<String> logout(String token) {
         if (StrUtil.isBlank(token)) {
             return R.NG("token不能为空");
         }
-        Pair<String, Long> parseToken = parseToken(token);
+        Pair<String, Long> parseToken = TokenUtil.parseToken(token);
         if (parseToken == null) {
             return R.NG("token无效");
         }
@@ -178,33 +198,13 @@ public abstract class AbstractTokenGranter implements TokenGranter {
     }
 
     /**
-     * 解析token
-     *
-     * @param token token
-     * @return id, loginTime
-     */
-    private Pair<String, Long> parseToken(String token) {
-        try {
-            if (StrUtil.isBlank(token)) {
-                return null;
-            }
-            String decrypt = AesCryptoUtil.decrypt(Base62.decodeStr(token));
-            String[] split = decrypt.split(":");
-            return new Pair<>(split[0], Convert.toLong(split[1]));
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return null;
-        }
-    }
-
-    /**
      * 获取loginToken 信息
      *
      * @param token token
      * @return token
      */
     protected LoginToken getLoginToken(String token) {
-        Pair<String, Long> tokenPair = parseToken(token);
+        Pair<String, Long> tokenPair = TokenUtil.parseToken(token);
         if (tokenPair == null) {
             return null;
         }
@@ -260,10 +260,7 @@ public abstract class AbstractTokenGranter implements TokenGranter {
      * @param user 用户
      */
     private UserInfo setUserCache(SysUser user) {
-        UserInfo userInfo = new UserInfo();
-        userInfo.setId(user.getId());
-        userInfo.setUsername(user.getUsername());
-        userInfo.setNickname(user.getNickname());
+        UserInfo userInfo = userInfoConvert.entityToDto(user);
         // 用户信息缓存
         String userCacheKey = UserCacheKeyDefine.USER_INFO.format(user.getId());
         // 查询用户角色
@@ -333,9 +330,8 @@ public abstract class AbstractTokenGranter implements TokenGranter {
             String refreshKey = UserCacheKeyDefine.LOGIN_REFRESH.format(id, loginTime);
             cache.setJson(refreshKey, loginToken, UserCacheKeyDefine.LOGIN_REFRESH.getTimeout(), UserCacheKeyDefine.LOGIN_REFRESH.getUnit());
         }
-        // 返回token
-        String encrypt = AesCryptoUtil.encrypt(id + ":" + loginTime);
-        return Base62.encode(encrypt);
+        // 生成 token
+        return TokenUtil.generateToken(id, loginTime);
     }
 
 

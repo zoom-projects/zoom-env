@@ -45,6 +45,10 @@
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-mybatis-ext</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-desensitize</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.hb0730</groupId>

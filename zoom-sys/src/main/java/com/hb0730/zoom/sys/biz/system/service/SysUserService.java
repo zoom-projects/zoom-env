@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
+import com.hb0730.zoom.base.utils.PasswdUtil;
+import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
 import com.hb0730.zoom.core.SysConst;
 import com.hb0730.zoom.sys.biz.system.convert.SysUserConvert;
 import com.hb0730.zoom.sys.biz.system.mapper.SysUserMapper;
+import com.hb0730.zoom.sys.biz.system.model.dto.RestPasswordDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -96,20 +99,40 @@ public class SysUserService extends com.baomidou.mybatisplus.extension.service.i
 
 
     /**
-     * 检查用户名是否存在
+     * 重置密码
      *
-     * @param domain 用户
-     * @return 是否存在
+     * @param dto 重置密码
+     * @return 是否成功
      */
-    public Boolean checkUsernamePresent(SysUser domain) {
-        // 构造条件
-        LambdaQueryWrapper<SysUser> wrapper = this.baseMapper.lambda()
-                // 更新时忽略当前记录
-                .ne(SysUser::getId, domain.getId())
-                .eq(SysUser::getUsername, domain.getUsername());
-        // 查询
-        return this.baseMapper
-                .of(wrapper)
-                .present();
+    public R<String> resetPassword(RestPasswordDTO dto) {
+        SysUser user = null;
+        String userId = dto.getUserId();
+        if (StrUtil.isNotBlank(userId)) {
+            user = getById(userId);
+        }
+        if (user == null && StrUtil.isNotBlank(dto.getUsername())) {
+            user = findByUsername(dto.getUsername());
+        }
+        if (user == null) {
+            return R.NG("用户不存在");
+        }
+        // 校验旧密码
+        if (!PasswdUtil.matches(dto.getOldPassword(), user.getSalt(), user.getPassword())) {
+            return R.NG("旧密码错误");
+        }
+        // 校验新密码
+        if (!PasswdUtil.checkPwd(dto.getNewPassword())) {
+            return R.NG("新密码不满足强密码要求");
+        }
+        // 重新生成盐
+        String salt = PasswdUtil.generateSalt();
+        // 生成新密码
+        String password = PasswdUtil.encrypt(dto.getNewPassword(), salt);
+        user.setPassword(password);
+        user.setSalt(salt);
+        baseMapper.updateById(user);
+        // 更新密码
+        return R.OK("重置密码成功");
     }
+
 }

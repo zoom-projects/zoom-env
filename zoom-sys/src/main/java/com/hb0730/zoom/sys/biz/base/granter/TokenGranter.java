@@ -2,6 +2,7 @@ package com.hb0730.zoom.sys.biz.base.granter;
 
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
+import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
 
 /**
  * 授予token接口
@@ -18,6 +19,13 @@ public interface TokenGranter {
      */
     R<String> login(LoginInfo loginInfo);
 
+    /**
+     * 获取当前用户
+     *
+     * @param token token
+     * @return 用户信息
+     */
+    R<UserInfoVO> currentUser(String token);
 
     /**
      * 退出

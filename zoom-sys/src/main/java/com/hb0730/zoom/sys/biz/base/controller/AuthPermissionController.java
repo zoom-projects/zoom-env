@@ -4,7 +4,7 @@ import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.security.SecurityUtils;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.sys.biz.base.model.vo.PermissionVO;
-import com.hb0730.zoom.sys.biz.base.service.PermissionService;
+import com.hb0730.zoom.sys.biz.base.service.AuthPermissionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,19 +23,19 @@ import java.util.Optional;
  * @date 2024/10/3
  */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth/menu")
 @Slf4j
 @RequiredArgsConstructor
 @Tag(name = "认证服务")
-public class PermissionController {
-    private final PermissionService permissionService;
+public class AuthPermissionController {
+    private final AuthPermissionService authPermissionService;
 
     /**
      * 获取用户权限
      *
      * @return 用户权限
      */
-    @GetMapping("/menu")
+    @GetMapping()
     @Operation(summary = "获取当前用户权限")
     public R<PermissionVO> getPermission(HttpServletRequest request) {
         // 获取登录 token
@@ -44,7 +44,7 @@ public class PermissionController {
             return R.NG("获取权限失败,token为空");
         }
         String token = tokenOptional.get();
-        PermissionVO permission = permissionService.getPermissionByToken(token);
+        PermissionVO permission = authPermissionService.getPermissionByToken(token);
         return R.OK(permission);
     }
 
@@ -54,13 +54,13 @@ public class PermissionController {
      * @param token token
      * @return 用户权限
      */
-    @GetMapping("/menu/token")
+    @GetMapping("/token")
     @Operation(summary = "根据token获取用户权限")
     public R<PermissionVO> getPermissionByToken(String token) {
         if (StrUtil.isBlank(token)) {
             return R.NG("获取权限失败,token为空");
         }
-        PermissionVO permission = permissionService.getPermissionByToken(token);
+        PermissionVO permission = authPermissionService.getPermissionByToken(token);
         return R.OK(permission);
     }
 }

@@ -4,7 +4,7 @@ import cn.hutool.core.convert.Convert;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.security.UserInfo;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
-import com.hb0730.zoom.base.utils.Md5Util;
+import com.hb0730.zoom.base.utils.PasswdUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.base.utils.ValidatorUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
@@ -65,8 +65,7 @@ public class PasswordTokenGranter extends AbstractTokenGranter implements UserSe
             return R.NG("账号已被锁定，请联系管理员重置密码");
         }
         // 2. 校验用户名或密码是否正确
-        String _password = Md5Util.md5Hex(loginInfo.getPassword(), user.getSalt());
-        if (!_password.equals(user.getPassword())) {
+        if (!PasswdUtil.matches(loginInfo.getPassword(), user.getSalt(), user.getPassword())) {
             // 记录登录失败次数
             cache.incr(loginFailureCount, 1);
             return R.NG("用户名或密码错误");

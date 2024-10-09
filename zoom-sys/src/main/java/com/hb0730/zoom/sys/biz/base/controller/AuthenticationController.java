@@ -10,6 +10,7 @@ import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
 import com.hb0730.zoom.sys.biz.base.model.request.PhoneLoginRequest;
 import com.hb0730.zoom.sys.biz.base.model.request.UsernameLoginRequest;
+import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -134,6 +136,22 @@ public class AuthenticationController {
         loginInfo.setUsername(request.getUsername());
         // 登录
         return tokenGranterBuilder.getGranter(LoginGrantEnums.PASSWORD).login(loginInfo);
+    }
+
+
+    /**
+     * 获取当前用户信息
+     */
+    @Operation(summary = "获取当前用户信息")
+    @GetMapping("/info")
+    public R<UserInfoVO> currentUser(HttpServletRequest request) {
+        // 获取登录 token
+        Optional<String> tokenOptional = SecurityUtils.obtainAuthorization(request);
+        if (tokenOptional.isEmpty()) {
+            return R.NG("获取用户信息失败,token为空");
+        }
+        String token = tokenOptional.get();
+        return tokenGranterBuilder.defaultGranter().currentUser(token);
     }
 
     /**
