@@ -6,11 +6,12 @@ import com.hb0730.zoom.base.security.SecurityUtils;
 import com.hb0730.zoom.base.utils.AesCryptoUtil;
 import com.hb0730.zoom.base.utils.HexUtil;
 import com.hb0730.zoom.base.utils.SecureUtil;
+import com.hb0730.zoom.operator.log.core.annotation.OperatorLog;
 import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
 import com.hb0730.zoom.sys.biz.base.model.request.PhoneLoginRequest;
 import com.hb0730.zoom.sys.biz.base.model.request.UsernameLoginRequest;
-import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
+import com.hb0730.zoom.sys.define.operator.AuthenticationOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +20,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,6 +54,7 @@ public class AuthenticationController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "登录成功,返回token", responseCode = "200"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "登录失败", responseCode = "400")
     })
+    @OperatorLog(value = AuthenticationOperatorType.LOGIN)
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "登录请求",
             required = true,
@@ -138,28 +139,13 @@ public class AuthenticationController {
         return tokenGranterBuilder.getGranter(LoginGrantEnums.PASSWORD).login(loginInfo);
     }
 
-
-    /**
-     * 获取当前用户信息
-     */
-    @Operation(summary = "获取当前用户信息")
-    @GetMapping("/info")
-    public R<UserInfoVO> currentUser(HttpServletRequest request) {
-        // 获取登录 token
-        Optional<String> tokenOptional = SecurityUtils.obtainAuthorization(request);
-        if (tokenOptional.isEmpty()) {
-            return R.NG("获取用户信息失败,token为空");
-        }
-        String token = tokenOptional.get();
-        return tokenGranterBuilder.defaultGranter().currentUser(token);
-    }
-
     /**
      * 用户登出
      */
     @PermitAll
     @PostMapping("/logout")
     @Operation(summary = "用户登出")
+    @OperatorLog(AuthenticationOperatorType.LOGOUT)
     public R<String> logout(HttpServletRequest request) {
         // 获取登录 token
         Optional<String> tokenOptional = SecurityUtils.obtainAuthorization(request);

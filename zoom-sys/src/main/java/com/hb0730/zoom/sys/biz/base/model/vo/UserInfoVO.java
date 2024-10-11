@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.biz.base.model.vo;
 
-import com.hb0730.zoom.base.enums.MaskEnums;
-import com.hb0730.zoom.desensitize.core.annotation.FieldMask;
+import com.hb0730.zoom.desensitize.core.annotation.Desensitize;
+import com.hb0730.zoom.desensitize.core.enums.DesensitizationType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -25,10 +25,10 @@ public class UserInfoVO implements Serializable {
     private String nickname;
     @Schema(description = "用户头像")
     private String avatar;
-    @FieldMask(MaskEnums.EMAIL)
+    @Desensitize(type = DesensitizationType.EMAIL)
     @Schema(description = "用户邮箱")
     private String email;
-    @FieldMask(MaskEnums.Mobile)
+    @Desensitize(type = DesensitizationType.MOBILE)
     @Schema(description = "用户手机")
     private String phone;
     @Schema(description = "用户角色")

@@ -5,11 +5,14 @@ import com.hb0730.zoom.base.security.SecurityUtils;
 import com.hb0730.zoom.base.utils.AesCryptoUtil;
 import com.hb0730.zoom.base.utils.HexUtil;
 import com.hb0730.zoom.base.utils.SecureUtil;
+import com.hb0730.zoom.operator.log.core.annotation.OperatorLog;
 import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
 import com.hb0730.zoom.sys.biz.base.model.request.RestPasswordRequest;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
 import com.hb0730.zoom.sys.biz.base.service.AuthUserService;
+import com.hb0730.zoom.sys.define.operator.AuthenticationOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
+@Tag(name = "认证服务")
 public class AuthUserController {
     private final TokenGranterBuilder tokenGranterBuilder;
     private final AuthUserService authUserService;
@@ -56,8 +60,9 @@ public class AuthUserController {
     /**
      * 重置密码
      */
-    @Operation(summary = "重置密码")
+    @Operation(summary = "重置当前用户密码")
     @PutMapping("/reset_password")
+    @OperatorLog(AuthenticationOperatorType.UPDATE_PASSWORD)
     public R<String> resetPassword(HttpServletRequest request,
                                    @RequestBody RestPasswordRequest data) {
 

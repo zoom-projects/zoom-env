@@ -8,6 +8,7 @@ import com.hb0730.zoom.sys.biz.system.model.vo.SysRoleVO;
 import com.hb0730.zoom.sys.biz.system.service.SysRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -34,6 +35,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "系统管理: 角色管理")
 public class SysRoleController {
     private final SysRoleService sysRoleService;
 

@@ -9,6 +9,7 @@ import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
 import com.hb0730.zoom.config.AuthenticationConfig;
 import com.hb0730.zoom.core.SysConst;
+import com.hb0730.zoom.operator.log.core.util.OperatorLogs;
 import com.hb0730.zoom.sys.biz.base.convert.UserInfoConvert;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginToken;
@@ -46,6 +47,10 @@ public abstract class AbstractTokenGranter implements TokenGranter {
 
     @Override
     public R<String> login(LoginInfo loginInfo) {
+        // 重新设置日志上下文
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUsername(loginInfo.getUsername());
+        OperatorLogs.setUser(userInfo);
         // 1. 检查参数
         R<String> r = checkParam(loginInfo);
         if (!r.isSuccess()) {
@@ -62,6 +67,10 @@ public abstract class AbstractTokenGranter implements TokenGranter {
             return R.NG("用户不存在,请注册");
         }
         SysUser user = userR.get();
+        // 重新设置日志上下文
+        userInfo.setId(user.getId());
+        userInfo.setUsername(user.getUsername());
+        OperatorLogs.setUser(userInfo);
         // 4. 检查密码
         r = checkPassword(loginInfo, user);
         if (!r.isSuccess()) {

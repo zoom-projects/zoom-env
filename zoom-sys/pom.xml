@@ -47,7 +47,11 @@
         </dependency>
         <dependency>
             <groupId>com.hb0730</groupId>
-            <artifactId>zoom-desensitize</artifactId>
+            <artifactId>zoom-desensitize-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-operator-log</artifactId>
         </dependency>
 
         <dependency>
