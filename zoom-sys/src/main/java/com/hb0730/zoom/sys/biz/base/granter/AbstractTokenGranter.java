@@ -269,7 +269,7 @@ public abstract class AbstractTokenGranter implements TokenGranter {
      * @param user 用户
      */
     private UserInfo setUserCache(SysUser user) {
-        UserInfo userInfo = userInfoConvert.entityToDto(user);
+        UserInfo userInfo = userInfoConvert.toObject(user);
         // 用户信息缓存
         String userCacheKey = UserCacheKeyDefine.USER_INFO.format(user.getId());
         // 查询用户角色

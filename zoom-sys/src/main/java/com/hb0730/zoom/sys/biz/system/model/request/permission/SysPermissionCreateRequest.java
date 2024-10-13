@@ -1,26 +1,19 @@
-package com.hb0730.zoom.sys.biz.system.model.dto;
+package com.hb0730.zoom.sys.biz.system.model.request.permission;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+
+import java.io.Serializable;
 
 /**
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2024/10/5
+ * @date 2024/10/11
  */
 @Data
-@EqualsAndHashCode
-@ToString
-@Schema(description = "菜单权限")
-public class SysPermissionDTO implements java.io.Serializable {
-    /**
-     * ID
-     */
-    @Schema(description = "ID")
-    private String id;
+@Schema(description = "更新&创建权限请求")
+public class SysPermissionCreateRequest implements Serializable {
     /**
      * 父级ID
      */
@@ -31,7 +24,7 @@ public class SysPermissionDTO implements java.io.Serializable {
      */
     @JsonIgnore
     @Schema(hidden = true)
-    private Boolean leaf;
+    private Boolean isLeaf;
 
     /*==========================路由信息==========================*/
     /**
@@ -71,65 +64,25 @@ public class SysPermissionDTO implements java.io.Serializable {
      * 是否隐藏
      */
     @Schema(description = "是否隐藏")
-    private Boolean hidden;
-
-    /**
-     * 是否隐藏
-     *
-     * @return 是否隐藏
-     */
-    @Schema(hidden = true)
-    public Integer getIsHidden() {
-        return hidden ? 1 : 0;
-    }
+    private Boolean isHidden;
 
     /**
      * 是否缓存,如果缓存，请保持routerName与组件名称一致
      */
     @Schema(description = "是否缓存,如果缓存，请保持routerName与组件名称一致")
-    private Boolean keepAlive;
-
-    /**
-     * 是否固定在标签视图
-     *
-     * @return 是否固定在标签视图
-     */
-    @Schema(hidden = true)
-    public Integer getIsKeepAlive() {
-        return keepAlive ? 1 : 0;
-    }
+    private Boolean isKeepAlive;
 
     /**
      * 是否固定在标签视图
      */
     @Schema(description = "是否固定在标签视图")
-    private Boolean affix;
-
-    /**
-     * 是否固定在标签视图
-     *
-     * @return 是否固定在标签视图
-     */
-    @Schema(hidden = true)
-    public Integer getIsAffix() {
-        return affix ? 1 : 0;
-    }
+    private Boolean isAffix;
 
     /**
      * 是否大屏
      */
     @Schema(description = "是否大屏")
-    private Boolean fullScreen;
-
-    /**
-     * 是否大屏
-     *
-     * @return 是否大屏
-     */
-    @Schema(hidden = true)
-    public Integer getIsFull() {
-        return fullScreen ? 1 : 0;
-    }
+    private Boolean isFullScreen;
 
     /**
      * iframe
@@ -161,5 +114,4 @@ public class SysPermissionDTO implements java.io.Serializable {
      */
     @Schema(description = "是否启用")
     private Integer status;
-
 }

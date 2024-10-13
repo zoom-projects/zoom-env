@@ -73,7 +73,7 @@ public class AuthPermissionService {
             buttons.stream().map(SysPermission::getPerms).forEach(btn::add);
         }
 
-        List<RouteVO> routes = RouteUtil.buildRoutes(permissionCovert.entityListToDtoList(sysPermissions));
+        List<RouteVO> routes = RouteUtil.buildRoutes(permissionCovert.toObjectList(sysPermissions));
         PermissionVO permissionVO = new PermissionVO();
         permissionVO.setMenu(routes);
         permissionVO.setAuth(btn);

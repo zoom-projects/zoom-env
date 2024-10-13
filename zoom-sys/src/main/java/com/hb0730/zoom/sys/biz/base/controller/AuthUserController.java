@@ -1,15 +1,20 @@
 package com.hb0730.zoom.sys.biz.base.controller;
 
 import com.hb0730.zoom.base.R;
+import com.hb0730.zoom.base.data.Page;
 import com.hb0730.zoom.base.security.SecurityUtils;
 import com.hb0730.zoom.base.utils.AesCryptoUtil;
 import com.hb0730.zoom.base.utils.HexUtil;
 import com.hb0730.zoom.base.utils.SecureUtil;
+import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.operator.log.core.annotation.OperatorLog;
 import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
 import com.hb0730.zoom.sys.biz.base.model.request.RestPasswordRequest;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
 import com.hb0730.zoom.sys.biz.base.service.AuthUserService;
+import com.hb0730.zoom.sys.biz.system.model.request.operator.log.SysOperatorLogQueryRequest;
+import com.hb0730.zoom.sys.biz.system.model.vo.SysOperatorLogVO;
+import com.hb0730.zoom.sys.biz.system.service.SysOperatorLogService;
 import com.hb0730.zoom.sys.define.operator.AuthenticationOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,6 +45,7 @@ import java.util.Optional;
 public class AuthUserController {
     private final TokenGranterBuilder tokenGranterBuilder;
     private final AuthUserService authUserService;
+    private final SysOperatorLogService operatorLogService;
 
 
     /**
@@ -85,5 +91,16 @@ public class AuthUserController {
         String token = tokenOptional.get();
         // 重置密码
         return authUserService.restPassword(token, data);
+    }
+
+    @Operation(summary = "查询操作日志")
+    @GetMapping("/operator_log/page")
+    public R<Page<SysOperatorLogVO>> queryOperatorLog(SysOperatorLogQueryRequest request) {
+        SecurityUtils.getLoginUserId().ifPresent(request::setOperatorId);
+        if (StrUtil.isBlank(request.getOperatorId())) {
+            return R.NG("获取用户信息失败,token为空");
+        }
+        Page<SysOperatorLogVO> page = operatorLogService.page(request);
+        return R.OK(page);
     }
 }

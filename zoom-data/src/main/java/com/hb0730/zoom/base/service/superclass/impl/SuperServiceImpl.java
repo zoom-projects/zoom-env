@@ -1,98 +1,72 @@
 package com.hb0730.zoom.base.service.superclass.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hb0730.zoom.base.data.Page;
 import com.hb0730.zoom.base.entity.BaseEntity;
-import com.hb0730.zoom.base.mapstruct.BaseMapstruct;
+import com.hb0730.zoom.base.mapstruct.BizMapstruct;
 import com.hb0730.zoom.base.service.superclass.ISuperService;
-import com.hb0730.zoom.mybatis.query.doamin.PageParams;
+import com.hb0730.zoom.mybatis.query.QueryHelper;
+import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * 业务基础实现
- *
- * @param <ID> 主键
- * @param <E>  实体
- * @param <M>  mapper
- * @param <D>  DTO
- * @param <Q>  查询参数
- * @param <C>  mapstruct
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2024/10/5
+ * @date 2024/10/11
  */
-public class SuperServiceImpl<
-        ID extends Serializable,
-        E extends BaseEntity,
-        M extends BaseMapper<E>,
+public class SuperServiceImpl<Id extends Serializable,
+        Q extends PageRequest,
         V extends Serializable,
-        D,
-        Q extends PageParams,
-        C extends BaseMapstruct<V, D, E>> extends ServiceImpl<M, E> implements ISuperService<ID, E, V, D, Q> {
+        E extends BaseEntity,
+        CreateReq extends Serializable,
+        UpdateReq extends Serializable,
+        M extends BaseMapper<E>,
+        C extends BizMapstruct<V, E, CreateReq, UpdateReq>
+        > extends ServiceImpl<M, E> implements ISuperService<Id, Q, V, E, CreateReq, UpdateReq> {
     @Autowired
     protected C mapstruct;
 
-    //
     @Override
-    public IPage<D> pageD(Q query) {
-        QueryWrapper<E> queryWrapper = queryWrapper(query);
-        IPage<E> page = new Page<>(query.getCurrent(), query.getSize());
-        page = this.page(page, queryWrapper);
-        return page.convert(mapstruct::entityToDto);
+    public Page<V> page(Q query) {
+        IPage<E> page = QueryHelper.toPage(query);
+        page = getBaseMapper().selectPage(page, getQueryWrapper(query));
+        List<V> voList = mapstruct.toVoList(page.getRecords());
+        return Page.of(page, voList);
     }
 
     @Override
-    public com.hb0730.zoom.base.data.Page<V> pageV(Q query) {
-        QueryWrapper<E> queryWrapper = queryWrapper(query);
-        IPage<E> page = new Page<>(query.getCurrent(), query.getSize());
-        page = this.page(page, queryWrapper);
-        return com.hb0730.zoom.base.data.Page.of(page, mapstruct.entityListToVoList(page.getRecords()));
+    public List<V> list(Q query) {
+        List<E> list = list(getQueryWrapper(query));
+        return mapstruct.toVoList(list);
     }
 
     @Override
-    public List<D> listD(Q query) {
-        QueryWrapper<E> queryWrapper = queryWrapper(query);
-        List<E> list = this.list(queryWrapper);
-        return mapstruct.entityListToDtoList(list);
-    }
-
-    @Override
-    public List<V> listV(Q query) {
-        QueryWrapper<E> queryWrapper = queryWrapper(query);
-        List<E> list = this.list(queryWrapper);
-        return mapstruct.entityListToVoList(list);
-    }
-
-    @Override
-    public D getD(ID id) {
-        E entity = this.getById(id);
-        return mapstruct.entityToDto(entity);
-    }
-
-    @Override
-    public V getV(ID id) {
-        E entity = this.getById(id);
-        return mapstruct.entityToVo(entity);
+    public V get(Id id) {
+        E entity = getById(id);
+        return mapstruct.toVo(entity);
     }
 
 
     @Override
-    public boolean saveD(D dto) {
-        E entity = mapstruct.dtoToEntity(dto);
-        return this.save(entity);
+    public boolean create(CreateReq createReq) {
+        E entity = mapstruct.createReqToEntity(createReq);
+        return save(entity);
     }
 
     @Override
-    public boolean updateD(ID id, D dto) {
-        E entity = mapstruct.dtoToEntity(dto);
-        entity.setId((String) id);
-        return this.updateById(entity);
+    public boolean updateById(Id id, UpdateReq updateReq) {
+        E entity = getById(id);
+        if (entity == null) {
+            return false;
+        }
+        entity = mapstruct.updateEntity(updateReq, entity);
+        return updateById(entity);
     }
+
 
     /**
      * 获取mapstruct
@@ -103,3 +77,4 @@ public class SuperServiceImpl<
         return mapstruct;
     }
 }
+

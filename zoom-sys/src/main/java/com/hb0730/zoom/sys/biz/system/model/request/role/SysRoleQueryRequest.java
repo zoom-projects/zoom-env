@@ -1,8 +1,8 @@
-package com.hb0730.zoom.sys.biz.system.model.request;
+package com.hb0730.zoom.sys.biz.system.model.request.role;
 
 import com.hb0730.zoom.mybatis.query.annotation.Equals;
 import com.hb0730.zoom.mybatis.query.annotation.Like;
-import com.hb0730.zoom.mybatis.query.doamin.PageParams;
+import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "角色查询")
-public class SysRoleQuery extends PageParams {
+public class SysRoleQueryRequest extends PageRequest {
     /**
      * 角色名称
      */

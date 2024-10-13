@@ -1,4 +1,4 @@
-package com.hb0730.zoom.sys.biz.system.model.dto;
+package com.hb0730.zoom.sys.biz.system.model.request.role;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -7,15 +7,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 角色
- *
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2024/10/8
+ * @date 2024/10/11
  */
 @Data
-public class SysRoleDTO implements Serializable {
-    @Schema(description = "id")
-    private String id;
+@Schema(description = "角色更新请求")
+public class SysRoleUpdateRequest implements Serializable {
     /**
      * 角色名称
      */

@@ -2,6 +2,8 @@ package com.hb0730.zoom.sys.biz.framework;
 
 import com.hb0730.zoom.operator.log.core.model.OperatorLogModel;
 import com.hb0730.zoom.operator.log.core.service.OperatorLogFrameworkService;
+import com.hb0730.zoom.sys.biz.system.service.SysOperatorLogService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +15,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class OperatorLogFrameworkServiceImpl implements OperatorLogFrameworkService {
+    private final SysOperatorLogService operatorLogService;
+
     @Override
     public void insert(OperatorLogModel model) {
-        log.info("操作日志:{}", model);
+        operatorLogService.insertOperatorLog(model);
     }
 }

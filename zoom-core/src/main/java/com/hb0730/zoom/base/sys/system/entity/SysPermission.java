@@ -25,16 +25,8 @@ public class SysPermission extends BizEntity {
     /**
      * 是否叶子节点: 1:是 0:不是
      */
-    private Integer isLeaf;
+    private Boolean isLeaf;
 
-    /**
-     * 是否叶子节点
-     *
-     * @return 是否叶子节点
-     */
-    public boolean getLeaf() {
-        return isLeaf != null && isLeaf == 1;
-    }
     /*==========================路由信息==========================*/
     /**
      * 路由地址
@@ -65,58 +57,22 @@ public class SysPermission extends BizEntity {
     /**
      * 是否隐藏
      */
-    private Integer isHidden;
-
-    /**
-     * 是否隐藏
-     *
-     * @return 是否隐藏
-     */
-    public boolean getHidden() {
-        return isHidden != null && isHidden == 1;
-    }
+    private Boolean isHidden;
 
     /**
      * 是否缓存,如果缓存，请保持routerName与组件名称一致
      */
-    private Integer isKeepAlive;
-
-    /**
-     * 是否固定在标签视图
-     *
-     * @return 是否固定在标签视图
-     */
-    public boolean getKeepAlive() {
-        return isKeepAlive != null && isKeepAlive == 1;
-    }
+    private Boolean isKeepAlive;
 
     /**
      * 是否固定在标签视图
      */
-    private Integer isAffix;
-
-    /**
-     * 是否固定在标签视图
-     *
-     * @return 是否固定在标签视图
-     */
-    public boolean getAffix() {
-        return isAffix != null && isAffix == 1;
-    }
-
+    private Boolean isAffix;
     /**
      * 是否大屏
      */
-    private Integer isFullScreen;
+    private Boolean isFullScreen;
 
-    /**
-     * 是否大屏
-     *
-     * @return 是否大屏
-     */
-    public boolean getFullScreen() {
-        return isFullScreen != null && isFullScreen == 1;
-    }
 
     /**
      * iframe
@@ -139,13 +95,12 @@ public class SysPermission extends BizEntity {
      */
     private Integer sort;
 
+
     /**
-     * 是否禁用
-     *
-     * @return 是否禁用
+     * 是否 禁用
      */
     public boolean isDisabled() {
-        return getStatus() != null && getStatus() == 0;
+        return null != getStatus() && getStatus() == 0;
     }
 
 }

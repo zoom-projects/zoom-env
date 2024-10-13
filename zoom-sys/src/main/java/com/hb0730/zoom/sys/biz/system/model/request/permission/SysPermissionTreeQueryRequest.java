@@ -1,4 +1,4 @@
-package com.hb0730.zoom.sys.biz.system.model.request;
+package com.hb0730.zoom.sys.biz.system.model.request.permission;
 
 import com.hb0730.zoom.base.utils.StrUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Data
 @Schema(description = "树形菜单权限查询条件")
-public class SysPermissionTreeQuery implements Serializable {
+public class SysPermissionTreeQueryRequest implements Serializable {
     /**
      * 需要查询的菜单类型
      */

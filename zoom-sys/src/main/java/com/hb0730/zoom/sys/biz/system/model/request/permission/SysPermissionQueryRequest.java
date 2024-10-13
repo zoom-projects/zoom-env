@@ -1,7 +1,7 @@
-package com.hb0730.zoom.sys.biz.system.model.request;
+package com.hb0730.zoom.sys.biz.system.model.request.permission;
 
 import com.hb0730.zoom.mybatis.query.annotation.Like;
-import com.hb0730.zoom.mybatis.query.doamin.PageParams;
+import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,11 +15,11 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "菜单&权限查询")
-public class SysPermissionQuery extends PageParams {
+public class SysPermissionQueryRequest extends PageRequest {
     @Like
     @Schema(description = "名称")
     private String title;
-    
+
     @Schema(description = "父级ID")
     private String parentId;
 }

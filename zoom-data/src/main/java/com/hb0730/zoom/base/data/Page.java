@@ -14,7 +14,6 @@ import java.util.List;
 @Schema(description = "分页")
 @Data
 public class Page<T> implements Serializable {
-    private static final long serialVersionUID = 1L;
     @Schema(description = "当前页")
     private long current = 1;
     @Schema(description = "每页显示条数")
@@ -69,5 +68,15 @@ public class Page<T> implements Serializable {
      */
     public static <T> Page<T> of(IPage<?> page, List<T> records) {
         return of(page.getCurrent(), page.getSize(), page.getPages(), page.getTotal(), records);
+    }
+
+    /**
+     * 创建空分页
+     *
+     * @param <T> 泛型
+     * @return 分页
+     */
+    public static <T> Page<T> empty() {
+        return new Page<>();
     }
 }

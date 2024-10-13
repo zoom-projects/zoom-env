@@ -5,15 +5,15 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.PairEnum;
 import com.hb0730.zoom.base.enums.MenuTypeEnums;
 import com.hb0730.zoom.base.exception.ZoomException;
-import com.hb0730.zoom.base.service.BaseService;
+import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysPermission;
 import com.hb0730.zoom.base.utils.CollectionUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.sys.biz.system.convert.SysPermissionConvert;
 import com.hb0730.zoom.sys.biz.system.mapper.SysPermissionMapper;
-import com.hb0730.zoom.sys.biz.system.model.dto.SysPermissionDTO;
-import com.hb0730.zoom.sys.biz.system.model.request.SysPermissionQuery;
-import com.hb0730.zoom.sys.biz.system.model.request.SysPermissionTreeQuery;
+import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionCreateRequest;
+import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionQueryRequest;
+import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionTreeQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionTreeVO;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionVO;
 import lombok.extern.slf4j.Slf4j;
@@ -30,21 +30,16 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class SysPermissionService extends BaseService<
-        String,
-        SysPermission,
-        SysPermissionMapper,
-        SysPermissionVO,
-        SysPermissionDTO,
-        SysPermissionQuery,
-        SysPermissionConvert> {
+public class SysPermissionService extends SuperServiceImpl<String, SysPermissionQueryRequest, SysPermissionVO,
+        SysPermission, SysPermissionCreateRequest, SysPermissionCreateRequest,
+        SysPermissionMapper, SysPermissionConvert> {
 
     /**
      * 菜单树
      *
      * @return 菜单树
      */
-    public List<SysPermissionTreeVO> tree(SysPermissionTreeQuery query) {
+    public List<SysPermissionTreeVO> tree(SysPermissionTreeQueryRequest query) {
         LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
                 .orderByAsc(SysPermission::getSort);
 
@@ -63,21 +58,21 @@ public class SysPermissionService extends BaseService<
     }
 
     /**
-     * 保存
+     * 创建
      *
-     * @param dto dto
+     * @param req req
      * @return 是否成功
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean saveD(SysPermissionDTO dto) {
-        check(dto);
-        String parentId = dto.getParentId();
+    public boolean create(SysPermissionCreateRequest req) {
+        check(req);
+        String parentId = req.getParentId();
         if (StrUtil.isBlank(parentId)) {
-            dto.setParentId(null);
+            req.setParentId(null);
         }
-        dto.setLeaf(true);
-        SysPermission entity = getMapstruct().dtoToEntity(dto);
+        req.setIsLeaf(true);
+        SysPermission entity = getMapstruct().createReqToEntity(req);
         save(entity);
         if (StrUtil.isNotBlank(parentId)) {
             this.baseMapper.changeLeafById(parentId, 0);
@@ -86,28 +81,21 @@ public class SysPermissionService extends BaseService<
     }
 
 
-    /**
-     * 更新
-     *
-     * @param id  id
-     * @param dto dto
-     * @return 是否成功
-     */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean updateD(String id, SysPermissionDTO dto) {
-        check(dto);
-        SysPermission entity = getMapstruct().dtoToEntity(dto);
+    public boolean updateById(String id, SysPermissionCreateRequest req) {
+        check(req);
+        SysPermission entity = getMapstruct().updateReqToEntity(req);
         entity.setId(id);
         // steps 1: 更新parentId
-        if (StrUtil.isBlank(dto.getParentId())) {
+        if (StrUtil.isBlank(req.getParentId())) {
             entity.setParentId(null);
         }
         // steps 2: 更新是否是叶子节点
         LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
-                .eq(SysPermission::getParentId, dto.getId());
+                .eq(SysPermission::getParentId, id);
         Long count = baseMapper.of(queryWrapper).count();
-        entity.setIsLeaf(count == 0 ? 1 : 0);
+        entity.setIsLeaf(count == 0);
 
         // 如果当前菜单的父菜单变了，则需要修改新父菜单和老父菜单的，叶子节点状态
         SysPermission permission = getById(id);
@@ -179,7 +167,7 @@ public class SysPermissionService extends BaseService<
      *
      * @param dto dto
      */
-    public void check(SysPermissionDTO dto) {
+    public void check(SysPermissionCreateRequest dto) {
         Integer menuType = dto.getMenuType();
         MenuTypeEnums menuTypeEnums = PairEnum.of(MenuTypeEnums.class, menuType)
                 .orElseThrow(() -> new ZoomException("菜单类型错误"));
@@ -204,7 +192,7 @@ public class SysPermissionService extends BaseService<
     /**
      * 类型为：菜单，参数检测
      */
-    public void checkMenu(SysPermissionDTO dto) {
+    public void checkMenu(SysPermissionCreateRequest dto) {
         String title = dto.getTitle();
         if (title == null || title.isEmpty()) {
             throw new ZoomException("菜单名称不能为空");
@@ -223,7 +211,7 @@ public class SysPermissionService extends BaseService<
     /**
      * 类型为：按钮，参数检测
      */
-    public void checkButton(SysPermissionDTO dto) {
+    public void checkButton(SysPermissionCreateRequest dto) {
         String title = dto.getTitle();
         if (title == null || title.isEmpty()) {
             throw new ZoomException("按钮名称不能为空");
@@ -238,7 +226,7 @@ public class SysPermissionService extends BaseService<
     /**
      * 类型为：外链，参数检测
      */
-    public void checkLink(SysPermissionDTO dto) {
+    public void checkLink(SysPermissionCreateRequest dto) {
         String title = dto.getTitle();
         if (title == null || title.isEmpty()) {
             throw new ZoomException("外链名称不能为空");
@@ -248,7 +236,7 @@ public class SysPermissionService extends BaseService<
     /**
      * 类型为：iframe，参数检测
      */
-    public void checkIframe(SysPermissionDTO dto) {
+    public void checkIframe(SysPermissionCreateRequest dto) {
         String title = dto.getTitle();
         if (title == null || title.isEmpty()) {
             throw new ZoomException("iframe名称不能为空");

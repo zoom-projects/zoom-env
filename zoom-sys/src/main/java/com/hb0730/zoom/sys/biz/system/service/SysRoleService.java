@@ -2,14 +2,15 @@ package com.hb0730.zoom.sys.biz.system.service;
 
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.exception.ZoomException;
-import com.hb0730.zoom.base.service.BaseService;
+import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysRole;
 import com.hb0730.zoom.base.sys.system.entity.SysRolePermission;
 import com.hb0730.zoom.base.utils.CollectionUtil;
 import com.hb0730.zoom.sys.biz.system.convert.SysRoleConvert;
 import com.hb0730.zoom.sys.biz.system.mapper.SysRoleMapper;
-import com.hb0730.zoom.sys.biz.system.model.dto.SysRoleDTO;
-import com.hb0730.zoom.sys.biz.system.model.request.SysRoleQuery;
+import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleCreateRequest;
+import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleQueryRequest;
+import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleUpdateRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysRoleVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +28,8 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysRoleService extends BaseService<String, SysRole, SysRoleMapper, SysRoleVO, SysRoleDTO, SysRoleQuery,
-        SysRoleConvert> {
+public class SysRoleService extends SuperServiceImpl<String, SysRoleQueryRequest, SysRoleVO, SysRole,
+        SysRoleCreateRequest, SysRoleUpdateRequest, SysRoleMapper, SysRoleConvert> {
     private final SysRolePermissionService sysRolePermissionService;
 
 
@@ -48,22 +49,23 @@ public class SysRoleService extends BaseService<String, SysRole, SysRoleMapper, 
     }
 
     @Override
-    public boolean saveD(SysRoleDTO dto) {
-        R<String> jr = hasCode(dto.getId(), dto.getRoleCode());
+    public boolean create(SysRoleCreateRequest req) {
+        R<String> jr = hasCode(null, req.getRoleCode());
         if (!jr.isSuccess()) {
             throw new ZoomException(jr.getMessage());
         }
-        return super.saveD(dto);
+        return super.create(req);
     }
 
     @Override
-    public boolean updateD(String id, SysRoleDTO dto) {
-        R<String> jr = hasCode(id, dto.getRoleCode());
+    public boolean updateById(String id, SysRoleUpdateRequest req) {
+        R<String> jr = hasCode(id, req.getRoleCode());
         if (!jr.isSuccess()) {
             throw new ZoomException(jr.getMessage());
         }
-        return super.updateD(id, dto);
+        return super.updateById(id, req);
     }
+
 
     /**
      * 删除

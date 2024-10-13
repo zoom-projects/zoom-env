@@ -2,14 +2,13 @@ package com.hb0730.zoom.sys.biz.system.controller;
 
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.utils.TreeUtil;
-import com.hb0730.zoom.sys.biz.system.model.dto.SysPermissionDTO;
-import com.hb0730.zoom.sys.biz.system.model.request.SysPermissionQuery;
-import com.hb0730.zoom.sys.biz.system.model.request.SysPermissionTreeQuery;
+import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionCreateRequest;
+import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionQueryRequest;
+import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionTreeQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionTreeVO;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionVO;
 import com.hb0730.zoom.sys.biz.system.service.SysPermissionService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +33,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/sys/permission")
 @Slf4j
-@Tag(name = "系统管理: 管理")
+@Tag(name = "基础设施: 管理")
 @Validated
 @RequiredArgsConstructor
 public class SysPermissionController {
@@ -45,9 +44,9 @@ public class SysPermissionController {
      *
      * @return 菜单树
      */
-    @GetMapping("/tree")
-    @Schema(description = "菜单树")
-    public R<List<SysPermissionTreeVO>> tree(SysPermissionTreeQuery query) {
+//    @GetMapping("/tree")
+//    @Operation(description = "菜单树")
+    public R<List<SysPermissionTreeVO>> tree(SysPermissionTreeQueryRequest query) {
         List<SysPermissionTreeVO> nodes = permissionService.tree(query);
         List<SysPermissionTreeVO> tree = TreeUtil.build(nodes);
         return R.OK(tree);
@@ -61,22 +60,22 @@ public class SysPermissionController {
      */
     @GetMapping("/list")
     @Operation(summary = "权限列表")
-    public R<List<SysPermissionVO>> list(SysPermissionQuery query) {
-        List<SysPermissionVO> res = permissionService.listV(query);
+    public R<List<SysPermissionVO>> list(SysPermissionQueryRequest query) {
+        List<SysPermissionVO> res = permissionService.list(query);
         return R.OK(res);
     }
 
     @PostMapping("/save")
     @Operation(summary = "保存权限")
-    public R<String> save(@RequestBody SysPermissionDTO dto) {
-        permissionService.saveD(dto);
+    public R<String> save(@RequestBody SysPermissionCreateRequest request) {
+        permissionService.create(request);
         return R.OK();
     }
 
     @Operation(summary = "更新权限")
     @PutMapping("/update/{id}")
-    public R<String> update(@PathVariable String id, @RequestBody SysPermissionDTO dto) {
-        permissionService.updateD(dto.getId(), dto);
+    public R<String> update(@PathVariable String id, @RequestBody SysPermissionCreateRequest request) {
+        permissionService.updateById(id, request);
         return R.OK();
     }
 

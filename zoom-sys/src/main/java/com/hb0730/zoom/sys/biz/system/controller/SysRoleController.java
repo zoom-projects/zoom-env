@@ -2,8 +2,9 @@ package com.hb0730.zoom.sys.biz.system.controller;
 
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.data.Page;
-import com.hb0730.zoom.sys.biz.system.model.dto.SysRoleDTO;
-import com.hb0730.zoom.sys.biz.system.model.request.SysRoleQuery;
+import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleCreateRequest;
+import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleQueryRequest;
+import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleUpdateRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysRoleVO;
 import com.hb0730.zoom.sys.biz.system.service.SysRoleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +36,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Validated
-@Tag(name = "系统管理: 角色管理")
+@Tag(name = "基础设施: 角色管理")
 public class SysRoleController {
     private final SysRoleService sysRoleService;
 
@@ -60,27 +61,27 @@ public class SysRoleController {
 
     @GetMapping("/page")
     @Operation(summary = "分页查询")
-    public R<Page<SysRoleVO>> page(SysRoleQuery query) {
-        return R.OK(sysRoleService.pageV(query));
+    public R<Page<SysRoleVO>> page(SysRoleQueryRequest query) {
+        return R.OK(sysRoleService.page(query));
     }
 
     @GetMapping("/list")
     @Operation(summary = "查询所有")
-    public R<List<SysRoleVO>> list(SysRoleQuery query) {
-        return R.OK(sysRoleService.listV(query));
+    public R<List<SysRoleVO>> list(SysRoleQueryRequest query) {
+        return R.OK(sysRoleService.list(query));
     }
 
     @Operation(summary = "保存")
     @PostMapping("/save")
-    public R<String> save(@RequestBody SysRoleDTO dto) {
-        sysRoleService.saveD(dto);
+    public R<String> save(@RequestBody SysRoleCreateRequest request) {
+        sysRoleService.create(request);
         return R.OK();
     }
 
     @Operation(summary = "更新")
     @PutMapping("/update/{id}")
-    public R<String> update(@PathVariable String id, @RequestBody SysRoleDTO dto) {
-        sysRoleService.updateD(id, dto);
+    public R<String> update(@PathVariable String id, @RequestBody SysRoleUpdateRequest request) {
+        sysRoleService.updateById(id, request);
         return R.OK();
     }
 
