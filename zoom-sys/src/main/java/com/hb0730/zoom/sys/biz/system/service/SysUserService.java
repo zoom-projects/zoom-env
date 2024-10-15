@@ -346,6 +346,13 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
     }
 
 
+    /**
+     * 保存用户角色
+     *
+     * @param id        用户ID
+     * @param userRoles 用户角色
+     * @return 是否成功
+     */
     @Transactional(rollbackFor = Exception.class)
     public boolean saveRoles(String id, List<SysUserRoleUpdateRequest> userRoles) {
         userRoleService.deleteByUserId(id);
@@ -361,5 +368,21 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
             roles.add(role);
         }
         return userRoleService.saveBatch(roles);
+    }
+
+    /**
+     * 获取有效的角色
+     *
+     * @param userId 用户ID
+     * @return 角色
+     */
+    public List<SysUserRole> findEffectiveRoles(String userId) {
+        LambdaQueryWrapper<SysUserRole> queryWrapper = Wrappers.lambdaQuery(SysUserRole.class)
+                .eq(SysUserRole::getUserId, userId)
+                .and(wrapper -> wrapper.isNull(SysUserRole::getEndTime)
+                        .or()
+                        .ge(SysUserRole::getEndTime, new Date()));
+        return userRoleService.list(queryWrapper);
+
     }
 }

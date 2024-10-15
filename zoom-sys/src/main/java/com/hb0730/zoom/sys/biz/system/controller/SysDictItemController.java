@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +54,7 @@ public class SysDictItemController {
     @Operation(summary = "保存数据字典项")
     @OperatorLog(DictItemOperatorType.ADD)
     @CacheEvict(value = SysDictCacheKeyDefine.DICT_ITEMS_KEY, allEntries = true)
+    @PreAuthorize("hasAuthority('sys:dict:item:add')")
     public R<String> save(@RequestBody SysDictItemCreateRequest request) {
         service.create(request);
         return R.OK();
@@ -62,6 +64,7 @@ public class SysDictItemController {
     @Operation(summary = "更新数据字典项")
     @OperatorLog(DictItemOperatorType.UPDATE)
     @CacheEvict(value = SysDictCacheKeyDefine.DICT_ITEMS_KEY, allEntries = true)
+    @PreAuthorize("hasAuthority('sys:dict:item:update')")
     public R<String> update(@PathVariable String id, @RequestBody SysDictItemCreateRequest request) {
         service.updateById(id, request);
         return R.OK();
@@ -70,6 +73,7 @@ public class SysDictItemController {
     @DeleteMapping("/del")
     @Operation(summary = "删除数据字典项")
     @OperatorLog(DictItemOperatorType.DELETE)
+    @PreAuthorize("hasAuthority('sys:dict:item:delete')")
     @CacheEvict(value = SysDictCacheKeyDefine.DICT_ITEMS_KEY, allEntries = true)
     public R<String> delete(String id) {
         service.removeById(id);

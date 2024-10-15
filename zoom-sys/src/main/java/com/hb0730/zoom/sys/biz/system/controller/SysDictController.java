@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,6 +86,7 @@ public class SysDictController {
     @PostMapping("/save")
     @Operation(summary = "数据字典保存")
     @OperatorLog(DictItemOperatorType.ADD)
+    @PreAuthorize("hasAuthority('sys:dict:add')")
     public R<String> save(@RequestBody SysDictCreateRequest request) {
         sysDictService.create(request);
         return R.OK();
@@ -100,6 +102,7 @@ public class SysDictController {
     @PutMapping("/update/{id}")
     @Operation(summary = "数据字典更新")
     @OperatorLog(DictItemOperatorType.UPDATE)
+    @PreAuthorize("hasAuthority('sys:dict:update')")
     public R<String> update(@PathVariable String id, @RequestBody SysDictCreateRequest request) {
         sysDictService.updateById(id, request);
         return R.OK();
@@ -114,6 +117,7 @@ public class SysDictController {
     @DeleteMapping("/del")
     @Operation(summary = "数据字典删除")
     @OperatorLog(DictItemOperatorType.DELETE)
+    @PreAuthorize("hasAuthority('sys:dict:delete')")
     @CacheEvict(value = SysDictCacheKeyDefine.DICT_ITEMS_KEY, allEntries = true)
     public R<String> del(@Parameter String id) {
         sysDictService.removeById(id);

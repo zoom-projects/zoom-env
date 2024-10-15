@@ -19,6 +19,7 @@ import com.hb0730.zoom.sys.define.operator.SysUserOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,6 +79,7 @@ public class SysUserController {
     @Operation(summary = "保存用户")
     @PostMapping("/save")
     @OperatorLog(SysUserOperatorType.ADD)
+    @PreAuthorize("hasAuthority('sys:user:add')")
     public R<String> save(@Validated @RequestBody SysUserCreateRequest request) {
         // 解密
         String iv = request.getCaptchaKey();
@@ -114,6 +116,7 @@ public class SysUserController {
     @Operation(summary = "更新用户")
     @PutMapping("/update/{id}")
     @OperatorLog(SysUserOperatorType.EDIT)
+    @PreAuthorize("hasAuthority('sys:user:update')")
     public R<String> update(@PathVariable String id, @RequestBody SysUserUpdateRequest request) {
         // 解密
         String iv = request.getCaptchaKey();
@@ -146,6 +149,7 @@ public class SysUserController {
     @Operation(summary = "重置密码")
     @PutMapping("/rest_password/{id}")
     @OperatorLog(SysUserOperatorType.RESET_PASSWORD)
+    @PreAuthorize("hasAuthority('sys:user:reset_password')")
     public R<String> resetPassword(@PathVariable String id, @Validated @RequestBody SysUserRestPasswordRequest request) {
         // 解密
         String iv = request.getCaptchaKey();
@@ -163,6 +167,7 @@ public class SysUserController {
     @DeleteMapping("/del")
     @Operation(summary = "删除用户")
     @OperatorLog(SysUserOperatorType.DELETE)
+    @PreAuthorize("hasAuthority('sys:user:delete')")
     public R<String> delete(String id) {
         sysUserService.deleteById(id);
         return R.OK("删除成功");
@@ -184,6 +189,7 @@ public class SysUserController {
 
     @Operation(summary = "保存用户角色")
     @PutMapping("/roles/{id}")
+    @PreAuthorize("hasAuthority('sys:user:assign_role')")
     @OperatorLog(SysUserOperatorType.GRANT_ROLE)
     public R<String> saveRoles(@PathVariable String id, @RequestBody List<SysUserRoleUpdateRequest> roles) {
         sysUserService.saveRoles(id, roles);

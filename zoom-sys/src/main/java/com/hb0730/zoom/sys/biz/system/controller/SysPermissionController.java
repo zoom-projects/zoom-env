@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,6 +71,7 @@ public class SysPermissionController {
     @PostMapping("/save")
     @Operation(summary = "保存权限")
     @OperatorLog(SysPermissionOperatorType.ADD)
+    @PreAuthorize("hasAuthority('sys:permission:add')")
     public R<String> save(@RequestBody SysPermissionCreateRequest request) {
         permissionService.create(request);
         return R.OK();
@@ -78,6 +80,7 @@ public class SysPermissionController {
     @Operation(summary = "更新权限")
     @PutMapping("/update/{id}")
     @OperatorLog(SysPermissionOperatorType.EDIT)
+    @PreAuthorize("hasAuthority('sys:permission:update')")
     public R<String> update(@PathVariable String id, @RequestBody SysPermissionCreateRequest request) {
         permissionService.updateById(id, request);
         return R.OK();
@@ -92,6 +95,7 @@ public class SysPermissionController {
     @Operation(summary = "删除权限")
     @DeleteMapping("/del")
     @OperatorLog(SysPermissionOperatorType.DELETE)
+    @PreAuthorize("hasAuthority('sys:permission:delete')")
     public R<String> deletePermission(String id) {
         permissionService.deletePermission(id);
         return R.OK();

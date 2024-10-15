@@ -2,8 +2,14 @@ package com.hb0730.zoom.sys.biz.base.granter;
 
 import com.hb0730.zoom.base.Pair;
 import com.hb0730.zoom.base.R;
+import com.hb0730.zoom.base.enums.EnableStatusEnum;
+import com.hb0730.zoom.base.enums.MenuTypeEnums;
 import com.hb0730.zoom.base.security.UserInfo;
+import com.hb0730.zoom.base.sys.system.entity.SysPermission;
+import com.hb0730.zoom.base.sys.system.entity.SysRole;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
+import com.hb0730.zoom.base.sys.system.entity.SysUserRole;
+import com.hb0730.zoom.base.utils.CollectionUtil;
 import com.hb0730.zoom.base.utils.JsonUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
@@ -16,6 +22,9 @@ import com.hb0730.zoom.sys.biz.base.model.dto.LoginToken;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginTokenIdentity;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
 import com.hb0730.zoom.sys.biz.base.util.TokenUtil;
+import com.hb0730.zoom.sys.biz.system.service.SysPermissionService;
+import com.hb0730.zoom.sys.biz.system.service.SysRolePermissionService;
+import com.hb0730.zoom.sys.biz.system.service.SysRoleService;
 import com.hb0730.zoom.sys.biz.system.service.SysUserService;
 import com.hb0730.zoom.sys.define.cache.UserCacheKeyDefine;
 import com.hb0730.zoom.sys.enums.LoginTokenStatusEnums;
@@ -44,6 +53,12 @@ public abstract class AbstractTokenGranter implements TokenGranter {
     private SysUserService userService;
     @Autowired
     private UserInfoConvert userInfoConvert;
+    @Autowired
+    private SysRoleService roleService;
+    @Autowired
+    private SysRolePermissionService rolePermissionService;
+    @Autowired
+    private SysPermissionService permissionService;
 
     @Override
     public R<String> login(LoginInfo loginInfo) {
@@ -175,7 +190,8 @@ public abstract class AbstractTokenGranter implements TokenGranter {
         Long current = parseToken.getMessage();
         // 删除 loginToken & refreshToken
         cache.del(UserCacheKeyDefine.LOGIN_TOKEN.format(id, current),
-                UserCacheKeyDefine.LOGIN_REFRESH.format(id, current));
+                UserCacheKeyDefine.LOGIN_REFRESH.format(id, current),
+                UserCacheKeyDefine.USER_INFO.format(id));
         return R.OK();
     }
 
@@ -272,7 +288,37 @@ public abstract class AbstractTokenGranter implements TokenGranter {
         UserInfo userInfo = userInfoConvert.toObject(user);
         // 用户信息缓存
         String userCacheKey = UserCacheKeyDefine.USER_INFO.format(user.getId());
-        // 查询用户角色
+
+        List<SysUserRole> roles = userService.findEffectiveRoles(user.getId());
+        List<String> btn = new ArrayList<>();
+        List<String> roleCodes = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(roles)) {
+            List<String> roleIds = roles.stream().map(SysUserRole::getRoleId).toList();
+
+            List<String> permissionIds = rolePermissionService.getPermsByRoleIds(roleIds);
+            // 获取角色
+            List<SysRole> sysRoles = roleService.listByIds(roleIds);
+            if (CollectionUtil.isNotEmpty(sysRoles)) {
+                // 过滤禁用
+                roleCodes = sysRoles.stream()
+                        .filter(r -> EnableStatusEnum.ENABLE.getCode().equals(r.getStatus()))
+                        .map(SysRole::getRoleCode).toList();
+            }
+
+            // 获取按钮权限
+            if (CollectionUtil.isNotEmpty(permissionIds)) {
+                List<SysPermission> sysPermissions = permissionService.listByIds(permissionIds);
+                //过滤禁用&按钮
+                btn = sysPermissions.stream()
+                        .filter(p -> MenuTypeEnums.BUTTON.getCode().equals(p.getMenuType()))
+                        .filter(p -> EnableStatusEnum.ENABLE.getCode().equals(p.getStatus()))
+                        .map(SysPermission::getPerms).toList();
+            }
+        }
+
+        userInfo.setRoles(roleCodes);
+        userInfo.setPermissions(btn);
+
         // 缓存
         cache.setJson(userCacheKey, userInfo, UserCacheKeyDefine.USER_INFO.getTimeout(),
                 UserCacheKeyDefine.USER_INFO.getUnit());

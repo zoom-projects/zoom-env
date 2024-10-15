@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +77,7 @@ public class SysRoleController {
     @Operation(summary = "保存")
     @PostMapping("/save")
     @OperatorLog(SysRoleOperatorType.ADD)
+    @PreAuthorize("hasAuthority('sys:role:add')")
     public R<String> save(@RequestBody SysRoleCreateRequest request) {
         sysRoleService.create(request);
         return R.OK();
@@ -84,6 +86,7 @@ public class SysRoleController {
     @Operation(summary = "更新")
     @PutMapping("/update/{id}")
     @OperatorLog(SysRoleOperatorType.EDIT)
+    @PreAuthorize("hasAuthority('sys:role:update')")
     public R<String> update(@PathVariable String id, @RequestBody SysRoleUpdateRequest request) {
         sysRoleService.updateById(id, request);
         return R.OK();
@@ -112,6 +115,7 @@ public class SysRoleController {
     @Operation(summary = "赋权")
     @PutMapping("/perms/{id}")
     @OperatorLog(SysRoleOperatorType.GRANT)
+    @PreAuthorize("hasAuthority('sys:role:grant')")
     public R<String> grant(@PathVariable String id, @RequestBody List<String> permissionIds) {
         sysRoleService.grant(id, permissionIds);
         return R.OK();
@@ -120,6 +124,7 @@ public class SysRoleController {
     @Operation(summary = "删除")
     @DeleteMapping("/del")
     @OperatorLog(SysRoleOperatorType.DELETE)
+    @PreAuthorize("hasAuthority('sys:role:delete')")
     public R<String> del(String id) {
         sysRoleService.deleteById(id);
         return R.OK();

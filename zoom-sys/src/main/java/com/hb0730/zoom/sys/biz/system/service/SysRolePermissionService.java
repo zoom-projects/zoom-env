@@ -47,4 +47,21 @@ public class SysRolePermissionService extends ServiceImpl<SysRolePermissionMappe
                         .toList()).orElse(List.of());
 
     }
+
+    /**
+     * 获取角色权限
+     *
+     * @param roleIds 角色id
+     * @return 权限
+     */
+    public List<String> getPermsByRoleIds(List<String> roleIds) {
+        Optional<List<SysRolePermission>> permissions = baseMapper.of(
+                query -> query.in(SysRolePermission::getRoleId, roleIds)
+        ).listOptional();
+        return permissions
+                .map(sysRolePermissions -> sysRolePermissions.stream()
+                        .map(SysRolePermission::getPermissionId)
+                        .toList()).orElse(List.of());
+
+    }
 }

@@ -4,6 +4,7 @@ import com.hb0730.zoom.base.Pair;
 import com.hb0730.zoom.base.enums.MenuTypeEnums;
 import com.hb0730.zoom.base.exception.ZoomException;
 import com.hb0730.zoom.base.sys.system.entity.SysPermission;
+import com.hb0730.zoom.base.sys.system.entity.SysUserRole;
 import com.hb0730.zoom.base.utils.CollectionUtil;
 import com.hb0730.zoom.sys.biz.base.convert.PermissionCovert;
 import com.hb0730.zoom.sys.biz.base.model.vo.PermissionVO;
@@ -11,6 +12,8 @@ import com.hb0730.zoom.sys.biz.base.model.vo.RouteVO;
 import com.hb0730.zoom.sys.biz.base.util.RouteUtil;
 import com.hb0730.zoom.sys.biz.base.util.TokenUtil;
 import com.hb0730.zoom.sys.biz.system.service.SysPermissionService;
+import com.hb0730.zoom.sys.biz.system.service.SysRolePermissionService;
+import com.hb0730.zoom.sys.biz.system.service.SysUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,8 +31,10 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthPermissionService {
+    private final SysRolePermissionService rolePermissionService;
     private final SysPermissionService permissionService;
     private final PermissionCovert permissionCovert;
+    private final SysUserService userService;
 
 
     /**
@@ -54,10 +59,17 @@ public class AuthPermissionService {
      * @return 用户权限
      */
     public PermissionVO getPermissionByUserId(String userId) {
-        List<SysPermission> sysPermissions = permissionService.findByUserId(userId);
-        if (CollectionUtil.isEmpty(sysPermissions)) {
-            return null;
+        List<SysUserRole> roles = userService.findEffectiveRoles(userId);
+        if (CollectionUtil.isEmpty(roles)) {
+            return new PermissionVO();
         }
+        List<String> roleIds = new ArrayList<>();
+        roles.forEach(sysUserRole -> roleIds.add(sysUserRole.getRoleId()));
+        List<String> permissionIds = rolePermissionService.getPermsByRoleIds(roleIds);
+        if (CollectionUtil.isEmpty(permissionIds)) {
+            return new PermissionVO();
+        }
+        List<SysPermission> sysPermissions = permissionService.listByIds(permissionIds);
         // 过滤掉禁用的
         sysPermissions.removeIf(SysPermission::isDisabled);
         if (CollectionUtil.isEmpty(sysPermissions)) {
@@ -65,15 +77,18 @@ public class AuthPermissionService {
         }
 
         // 获取button
-        List<SysPermission> buttons = CollectionUtil.filter(sysPermissions,
-                sysPermission -> MenuTypeEnums.BUTTON.getCode().equals(sysPermission.getMenuType()));
+        List<SysPermission> buttons =
+                sysPermissions.stream().filter(sysPermission -> MenuTypeEnums.BUTTON.getCode().equals(sysPermission.getMenuType())).toList();
+        // 获取权限
+        List<SysPermission> menus =
+                sysPermissions.stream().filter(sysPermission -> !MenuTypeEnums.BUTTON.getCode().equals(sysPermission.getMenuType())).toList();
 
         List<String> btn = new ArrayList<>();
         if (CollectionUtil.isNotEmpty(buttons)) {
             buttons.stream().map(SysPermission::getPerms).forEach(btn::add);
         }
 
-        List<RouteVO> routes = RouteUtil.buildRoutes(permissionCovert.toObjectList(sysPermissions));
+        List<RouteVO> routes = RouteUtil.buildRoutes(permissionCovert.toObjectList(menus));
         PermissionVO permissionVO = new PermissionVO();
         permissionVO.setMenu(routes);
         permissionVO.setAuth(btn);
