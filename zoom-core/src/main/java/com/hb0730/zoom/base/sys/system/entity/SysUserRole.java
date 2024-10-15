@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 /**
  * 用户角色
  *
@@ -23,4 +25,8 @@ public class SysUserRole extends BaseEntity {
      * 角色ID
      */
     private String roleId;
+    /**
+     * 结束时间
+     */
+    private Date endTime;
 }

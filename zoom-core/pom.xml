@@ -28,6 +28,11 @@
 
         <dependency>
             <groupId>com.hb0730</groupId>
+            <artifactId>zoom-mybatis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hb0730</groupId>
             <artifactId>zoom-base</artifactId>
         </dependency>
 

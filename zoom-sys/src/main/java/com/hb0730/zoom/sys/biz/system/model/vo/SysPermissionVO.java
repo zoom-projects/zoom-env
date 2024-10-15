@@ -17,6 +17,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode
 @ToString
+@Schema(description = "菜单权限")
 public class SysPermissionVO implements Serializable {
     /**
      * ID

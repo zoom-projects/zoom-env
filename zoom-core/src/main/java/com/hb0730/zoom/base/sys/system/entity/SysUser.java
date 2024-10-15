@@ -1,8 +1,8 @@
 package com.hb0730.zoom.base.sys.system.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.hb0730.zoom.base.entity.BaseEntity;
+import com.hb0730.zoom.mybatis.core.annotation.FieldEncrypt;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -42,31 +42,45 @@ public class SysUser extends BaseEntity {
     /**
      * 用户邮箱
      */
+    @FieldEncrypt
     private String email;
-
+    /**
+     * 用户邮箱hash
+     */
+    private String hashEmail;
     /**
      * 用户手机号
      */
+    @FieldEncrypt
     private String phone;
+    /**
+     * 用户手机号hash
+     */
+    private String hashPhone;
 
     /**
      * 用户性别 0-未知 1-男 2-女
      */
     private Integer gender;
-
-    /**
-     * 用户状态 0-禁用 1-启用
-     */
-    private Integer status;
     /**
      * 最后登录时间
      */
     private Date lastLoginTime;
 
     /**
-     * 删除标记
+     * 是否系统用户
+     */
+    private Boolean isSystem;
+
+    /**
+     * 状态 0-禁用 1-启用
+     */
+    private Boolean status;
+
+    /**
+     * 删除标识
      */
     @TableLogic
-    @TableField(value = "del_flag")
-    private Integer delFlag;
+    private Boolean delFlag;
+
 }

@@ -2,11 +2,13 @@ package com.hb0730.zoom.sys.biz.system.controller;
 
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.data.Page;
+import com.hb0730.zoom.operator.log.core.annotation.OperatorLog;
 import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleUpdateRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysRoleVO;
 import com.hb0730.zoom.sys.biz.system.service.SysRoleService;
+import com.hb0730.zoom.sys.define.operator.SysRoleOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -73,6 +75,7 @@ public class SysRoleController {
 
     @Operation(summary = "保存")
     @PostMapping("/save")
+    @OperatorLog(SysRoleOperatorType.ADD)
     public R<String> save(@RequestBody SysRoleCreateRequest request) {
         sysRoleService.create(request);
         return R.OK();
@@ -80,6 +83,7 @@ public class SysRoleController {
 
     @Operation(summary = "更新")
     @PutMapping("/update/{id}")
+    @OperatorLog(SysRoleOperatorType.EDIT)
     public R<String> update(@PathVariable String id, @RequestBody SysRoleUpdateRequest request) {
         sysRoleService.updateById(id, request);
         return R.OK();
@@ -107,6 +111,7 @@ public class SysRoleController {
      */
     @Operation(summary = "赋权")
     @PutMapping("/perms/{id}")
+    @OperatorLog(SysRoleOperatorType.GRANT)
     public R<String> grant(@PathVariable String id, @RequestBody List<String> permissionIds) {
         sysRoleService.grant(id, permissionIds);
         return R.OK();
@@ -114,6 +119,7 @@ public class SysRoleController {
 
     @Operation(summary = "删除")
     @DeleteMapping("/del")
+    @OperatorLog(SysRoleOperatorType.DELETE)
     public R<String> del(String id) {
         sysRoleService.deleteById(id);
         return R.OK();

@@ -30,6 +30,12 @@ public class SysOperatorLogQueryRequest extends PageRequest {
     @Equals
     private String riskLevel;
     /**
+     * 操作结果
+     */
+    @Schema(description = "操作结果")
+    @Equals
+    private Integer result;
+    /**
      * 操作时间
      */
     @Schema(description = "操作时间")

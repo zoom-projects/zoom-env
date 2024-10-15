@@ -2,12 +2,14 @@ package com.hb0730.zoom.sys.biz.system.controller;
 
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.utils.TreeUtil;
+import com.hb0730.zoom.operator.log.core.annotation.OperatorLog;
 import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionTreeQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionTreeVO;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionVO;
 import com.hb0730.zoom.sys.biz.system.service.SysPermissionService;
+import com.hb0730.zoom.sys.define.operator.SysPermissionOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +35,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/sys/permission")
 @Slf4j
-@Tag(name = "基础设施: 管理")
+@Tag(name = "基础设施: 菜单&权限管理")
 @Validated
 @RequiredArgsConstructor
 public class SysPermissionController {
@@ -67,6 +69,7 @@ public class SysPermissionController {
 
     @PostMapping("/save")
     @Operation(summary = "保存权限")
+    @OperatorLog(SysPermissionOperatorType.ADD)
     public R<String> save(@RequestBody SysPermissionCreateRequest request) {
         permissionService.create(request);
         return R.OK();
@@ -74,6 +77,7 @@ public class SysPermissionController {
 
     @Operation(summary = "更新权限")
     @PutMapping("/update/{id}")
+    @OperatorLog(SysPermissionOperatorType.EDIT)
     public R<String> update(@PathVariable String id, @RequestBody SysPermissionCreateRequest request) {
         permissionService.updateById(id, request);
         return R.OK();
@@ -87,6 +91,7 @@ public class SysPermissionController {
      */
     @Operation(summary = "删除权限")
     @DeleteMapping("/del")
+    @OperatorLog(SysPermissionOperatorType.DELETE)
     public R<String> deletePermission(String id) {
         permissionService.deletePermission(id);
         return R.OK();
