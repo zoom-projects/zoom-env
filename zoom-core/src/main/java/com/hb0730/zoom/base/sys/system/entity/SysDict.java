@@ -40,4 +40,9 @@ public class SysDict extends BizEntity {
      * 扩展参数
      */
     private String extraSchema;
+
+    /**
+     * 状态
+     */
+    private Boolean status = true;
 }

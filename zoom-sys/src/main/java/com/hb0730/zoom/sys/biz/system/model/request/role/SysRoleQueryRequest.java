@@ -35,5 +35,5 @@ public class SysRoleQueryRequest extends PageRequest {
      */
     @Schema(description = "角色状态")
     @Equals
-    private Integer status;
+    private Boolean status = true;
 }

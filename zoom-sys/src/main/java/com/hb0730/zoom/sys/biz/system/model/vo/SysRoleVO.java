@@ -32,7 +32,7 @@ public class SysRoleVO implements Serializable {
      * 角色状态
      */
     @Schema(description = "角色状态,0:禁用,1:启用")
-    private Integer status;
+    private Boolean status;
     /**
      * 备注
      */

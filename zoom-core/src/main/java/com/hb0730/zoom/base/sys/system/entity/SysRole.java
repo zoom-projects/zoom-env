@@ -27,4 +27,9 @@ public class SysRole extends BizEntity {
      * 备注
      */
     private String remark;
+
+    /**
+     * 状态
+     */
+    private Boolean status = true;
 }

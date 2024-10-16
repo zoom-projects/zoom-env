@@ -29,7 +29,7 @@ public class SysRoleUpdateRequest implements Serializable {
      * 角色状态
      */
     @Schema(description = "角色状态,0:禁用,1:启用")
-    private Integer status = 1;
+    private Boolean status = true;
     /**
      * 备注
      */

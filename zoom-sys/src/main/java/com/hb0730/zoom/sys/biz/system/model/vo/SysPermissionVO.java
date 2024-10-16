@@ -119,7 +119,7 @@ public class SysPermissionVO implements Serializable {
      * 是否启用
      */
     @Schema(description = "是否启用")
-    private Integer status;
+    private Boolean status;
 
 
 }

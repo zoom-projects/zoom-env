@@ -1,7 +1,6 @@
 package com.hb0730.zoom.base.sys.notifty.entity;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.hb0730.zoom.base.entity.BaseEntity;
+import com.hb0730.zoom.base.entity.BizEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -15,7 +14,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class SysMessageTemplate extends BaseEntity {
+public class SysMessageTemplate extends BizEntity {
 
     /**
      * 模板类型
@@ -38,17 +37,14 @@ public class SysMessageTemplate extends BaseEntity {
     /**
      * 模板内容{0}为占位符
      */
-    private String templateContent;
-
+    private String templateContentText;
     /**
-     * 状态，0-禁用 1-启用
+     * 模板内容{0}为占位符
      */
-    private Integer status;
+    private String templateContentHtml;
     /**
-     * 删除标识
+     * 状态
      */
-    @TableLogic
-    private Integer delFlag;
-
+    private Boolean status = true;
 
 }

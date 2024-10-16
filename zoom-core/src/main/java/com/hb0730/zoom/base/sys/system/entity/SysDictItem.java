@@ -45,4 +45,8 @@ public class SysDictItem extends BizEntity {
      * 排序
      */
     private Integer sort;
+    /**
+     * 状态
+     */
+    private Boolean status = true;
 }

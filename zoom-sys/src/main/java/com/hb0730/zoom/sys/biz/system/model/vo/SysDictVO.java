@@ -44,7 +44,7 @@ public class SysDictVO implements Serializable {
      * 状态值 1有效 0无效
      */
     @Schema(description = "状态值 1有效 0无效")
-    private Integer status;
+    private Boolean status;
     /**
      * 额外参数
      */

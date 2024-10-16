@@ -16,12 +16,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class BizEntity extends BaseEntity {
     /**
-     * 状态 0-禁用 1-启用
-     */
-    private Integer status = 1;
-    /**
      * 删除标识
      */
     @TableLogic
-    private Integer delFlag = 0;
+    private Boolean delFlag = false;
 }

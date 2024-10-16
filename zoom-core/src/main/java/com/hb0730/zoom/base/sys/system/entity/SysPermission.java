@@ -95,12 +95,16 @@ public class SysPermission extends BizEntity {
      */
     private Integer sort;
 
+    /**
+     * 状态
+     */
+    private Boolean status = true;
 
     /**
      * 是否 禁用
      */
     public boolean isDisabled() {
-        return null != getStatus() && getStatus() == 0;
+        return null != status && !status;
     }
 
 }

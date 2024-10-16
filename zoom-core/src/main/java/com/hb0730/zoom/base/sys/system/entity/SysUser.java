@@ -1,7 +1,6 @@
 package com.hb0730.zoom.base.sys.system.entity;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.hb0730.zoom.base.entity.BaseEntity;
+import com.hb0730.zoom.base.entity.BizEntity;
 import com.hb0730.zoom.mybatis.core.annotation.FieldEncrypt;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +17,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class SysUser extends BaseEntity {
+public class SysUser extends BizEntity {
     /**
      * 用户账号
      */
@@ -73,14 +72,8 @@ public class SysUser extends BaseEntity {
     private Boolean isSystem;
 
     /**
-     * 状态 0-禁用 1-启用
+     * 用户状态 0-正常 1-禁用
      */
-    private Boolean status;
-
-    /**
-     * 删除标识
-     */
-    @TableLogic
-    private Boolean delFlag;
+    private Boolean status = true;
 
 }

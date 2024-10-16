@@ -38,7 +38,7 @@ public class SysDictCreateRequest implements Serializable {
      * 状态
      */
     @Schema(description = "状态")
-    private Integer status;
+    private Boolean status;
 
     /**
      * 额外参数
