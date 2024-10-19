@@ -9,6 +9,7 @@ import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.base.utils.ValidatorUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
 import com.hb0730.zoom.config.AuthenticationConfig;
+import com.hb0730.zoom.mybatis.core.encrypt.MybatisEncryptService;
 import com.hb0730.zoom.security.core.service.UserService;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginToken;
@@ -32,6 +33,7 @@ public class PasswordTokenGranter extends AbstractTokenGranter implements UserSe
     private final CacheUtil cache;
     private final AuthenticationConfig authConfig;
     private final SysUserService userService;
+    private final MybatisEncryptService encryptService;
 
     @Override
     protected R<String> checkParam(LoginInfo loginInfo) {
@@ -45,9 +47,11 @@ public class PasswordTokenGranter extends AbstractTokenGranter implements UserSe
 
     @Override
     protected Optional<SysUser> getUser(LoginInfo loginInfo) {
+        String _username = encryptService.encrypt(loginInfo.getUsername());
         boolean email = ValidatorUtil.isEmail(loginInfo.getUsername());
         if (email) {
-            return Optional.ofNullable(userService.findByEmail(loginInfo.getUsername()));
+
+            return Optional.ofNullable(userService.findByEmail(_username));
         }
         boolean phone = ValidatorUtil.isMobile(loginInfo.getUsername());
         if (phone) {

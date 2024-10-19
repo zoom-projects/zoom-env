@@ -2,7 +2,6 @@ package com.hb0730.zoom.sys.biz.base.granter;
 
 import com.hb0730.zoom.base.Pair;
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.enums.EnableStatusEnum;
 import com.hb0730.zoom.base.enums.MenuTypeEnums;
 import com.hb0730.zoom.base.security.UserInfo;
 import com.hb0730.zoom.base.sys.system.entity.SysPermission;
@@ -14,7 +13,6 @@ import com.hb0730.zoom.base.utils.JsonUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
 import com.hb0730.zoom.config.AuthenticationConfig;
-import com.hb0730.zoom.core.SysConst;
 import com.hb0730.zoom.operator.log.core.util.OperatorLogs;
 import com.hb0730.zoom.sys.biz.base.convert.UserInfoConvert;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
@@ -149,13 +147,7 @@ public abstract class AbstractTokenGranter implements TokenGranter {
             return R.NG("该用户不存在，请注册");
         }
         // 情况2：根据用户信息查询，该用户已注销
-        if (SysConst.DEL_FLAG_1.equals(user.getDelFlag())) {
-            return R.NG("该用户已注销");
-        }
         // 情况3：根据用户信息查询，该用户已冻结
-        if (SysConst.USER_FREEZE.equals(user.getStatus())) {
-            return R.NG("该用户已冻结");
-        }
         return R.OK();
     }
 
@@ -301,7 +293,7 @@ public abstract class AbstractTokenGranter implements TokenGranter {
             if (CollectionUtil.isNotEmpty(sysRoles)) {
                 // 过滤禁用
                 roleCodes = sysRoles.stream()
-                        .filter(r -> EnableStatusEnum.ENABLE.getCode().equals(r.getStatus()))
+                        .filter(SysRole::getStatus)
                         .map(SysRole::getRoleCode).toList();
             }
 
@@ -311,7 +303,7 @@ public abstract class AbstractTokenGranter implements TokenGranter {
                 //过滤禁用&按钮
                 btn = sysPermissions.stream()
                         .filter(p -> MenuTypeEnums.BUTTON.getCode().equals(p.getMenuType()))
-                        .filter(p -> EnableStatusEnum.ENABLE.getCode().equals(p.getStatus()))
+                        .filter(SysPermission::getStatus)
                         .map(SysPermission::getPerms).toList();
             }
         }

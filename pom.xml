@@ -19,6 +19,8 @@
         <module>zoom-data</module>
         <module>zoom-sys</module>
         <module>zoom-conf</module>
+        <module>zoom-base-rpc</module>
+        <module>zoom-job</module>
     </modules>
 
     <properties>

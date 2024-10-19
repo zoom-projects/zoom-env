@@ -10,7 +10,7 @@
         <relativePath/>
     </parent>
 
-    <artifactId>zoom-core</artifactId>
+    <artifactId>zoom-job</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -18,32 +18,23 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.hb0730</groupId>
-            <artifactId>zoom-mybatis</artifactId>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.hb0730</groupId>
-            <artifactId>zoom-base</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>com.hb0730</groupId>
-            <artifactId>zoom-data</artifactId>
-            <version>${zoom.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-base-rpc</artifactId>
-            <version>${zoom.version}</version>
+            <version>${parent.version}</version>
         </dependency>
     </dependencies>
+
 </project>

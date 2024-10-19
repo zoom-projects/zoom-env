@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +50,7 @@ public class SysMessageTemplateController {
 
     @GetMapping("/page")
     @Operation(summary = "分页查询消息模板")
+    @PreAuthorize("hasAuthority('sys:message:template:query')")
     public R<Page<SysMessageTemplateVO>> page(SysMessageTemplateQueryRequest request) {
         return R.OK(service.page(request));
     }
@@ -62,6 +64,7 @@ public class SysMessageTemplateController {
     @PostMapping("/save")
     @Operation(summary = "保存消息模板")
     @OperatorLog(SysMessageTemplateOperatorType.ADD)
+    @PreAuthorize("hasAuthority('sys:message:template:add')")
     public R<String> save(@Validated @RequestBody SysMessageTemplateCreateRequest request) {
         service.create(request);
         return R.OK();
@@ -70,6 +73,7 @@ public class SysMessageTemplateController {
     @PutMapping("/update/{id}")
     @Operation(summary = "更新消息模板")
     @OperatorLog(SysMessageTemplateOperatorType.EDIT)
+    @PreAuthorize("hasAuthority('sys:message:template:update')")
     public R<String> update(@PathVariable String id, @Validated @RequestBody SysMessageTemplateUpdateRequest request) {
         service.updateById(id, request);
         return R.OK();
@@ -78,6 +82,7 @@ public class SysMessageTemplateController {
     @DeleteMapping("/del")
     @Operation(summary = "删除消息模板")
     @OperatorLog(SysMessageTemplateOperatorType.DELETE)
+    @PreAuthorize("hasAuthority('sys:message:template:delete')")
     public R<String> delete(String id) {
         service.removeById(id);
         return R.OK();

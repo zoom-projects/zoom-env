@@ -11,6 +11,7 @@ import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
 import com.hb0730.zoom.sys.biz.base.model.request.PhoneLoginRequest;
 import com.hb0730.zoom.sys.biz.base.model.request.UsernameLoginRequest;
+import com.hb0730.zoom.sys.biz.base.service.CaptchaService;
 import com.hb0730.zoom.sys.define.operator.AuthenticationOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -19,6 +20,7 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -43,6 +47,8 @@ import java.util.Optional;
 @Validated
 public class AuthenticationController {
     private final TokenGranterBuilder tokenGranterBuilder;
+    @Autowired
+    private CaptchaService captchaService;
 
     /**
      * 用户登录
@@ -101,6 +107,36 @@ public class AuthenticationController {
         }
 
         return R.NG("登录失败，暂未实现");
+    }
+
+    /**
+     * 获取验证码
+     *
+     * @param type 类型
+     * @param body 参数
+     * @return 验证码
+     */
+    @PostMapping("/captcha/{type}")
+    @Operation(summary = "获取验证码")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "获取验证码", responseCode = "200"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "获取验证码失败", responseCode = "400")
+    })
+    @PermitAll
+    public R<?> getCaptchaCode(@PathVariable String type, @RequestBody Map<String, String> body) {
+        List<String> types = Arrays.asList(LoginGrantEnums.MOBILE.getCode(), LoginGrantEnums.EMAIL.getCode());
+        if (!types.contains(type)) {
+            return R.NG("暂不支持该类型方式获取验证码");
+        }
+        // 解密
+        String iv = body.get("captchaKey");
+        String timestamp = body.get("timestamp");
+        String key = SecureUtil.sha256(iv + timestamp);
+        byte[] _key = HexUtil.decodeHex(key);
+        byte[] _iv = iv.getBytes();
+        String account = AesCryptoUtil.decrypt(body.get("value"), AesCryptoUtil.mode, _key, _iv);
+        // 获取验证码
+        return captchaService.sendCode(type, account);
     }
 
 

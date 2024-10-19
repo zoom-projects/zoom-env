@@ -1,23 +1,18 @@
-package com.hb0730.zoom.base.sys.notifty.entity;
+package com.hb0730.zoom.sys.biz.message.model.vo;
 
-import com.hb0730.zoom.base.entity.BizEntity;
-import com.hb0730.zoom.mybatis.core.annotation.FieldEncrypt;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 import java.util.Date;
 
 /**
- * 消息
- *
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2024/10/3
+ * @date 2024/10/18
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-public class SysMessage extends BizEntity {
+@Schema(description = "消息")
+public class SysMessageVO implements java.io.Serializable {
+    private String id;
     /**
      * 消息类型
      */
@@ -29,17 +24,14 @@ public class SysMessage extends BizEntity {
     /**
      * 消息接收者
      */
-    @FieldEncrypt(decrypt = false)
     private String msgReceiver;
     /**
      * 消息参数
      */
-    @FieldEncrypt(decrypt = false)
     private String msgParam;
     /**
      * 消息内容
      */
-    @FieldEncrypt(decrypt = false)
     private String msgContent;
 
     /**
@@ -66,5 +58,4 @@ public class SysMessage extends BizEntity {
      * 备注
      */
     private String remark;
-
 }
