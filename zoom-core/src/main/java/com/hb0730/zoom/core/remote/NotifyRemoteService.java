@@ -1,8 +1,8 @@
 package com.hb0730.zoom.core.remote;
 
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.service.dto.SaveMessageDTO;
-import com.hb0730.zoom.base.service.remote.SysNotifyRpcService;
+import com.hb0730.zoom.base.ext.services.dto.SaveMessageDTO;
+import com.hb0730.zoom.base.ext.services.remote.SysNotifyRpcService;
 import com.hb0730.zoom.base.sys.notifty.service.MessageService;
 import com.hb0730.zoom.sofa.rpc.core.annotation.RemoteService;
 import lombok.extern.slf4j.Slf4j;

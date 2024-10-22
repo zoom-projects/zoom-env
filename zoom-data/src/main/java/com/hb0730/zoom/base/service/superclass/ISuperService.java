@@ -26,4 +26,12 @@ public interface ISuperService<
         IQueryService<Id, Q, V, E>,
         ISaveService<CreateReq>,
         IUpdateService<Id, UpdateReq> {
+
+    /**
+     * delete by id
+     *
+     * @param id .
+     * @return .
+     */
+    boolean deleteById(Id id);
 }

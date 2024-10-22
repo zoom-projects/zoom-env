@@ -2,7 +2,7 @@ package com.hb0730.zoom.sys.biz.base.controller;
 
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.data.Page;
-import com.hb0730.zoom.base.security.SecurityUtils;
+import com.hb0730.zoom.base.ext.security.SecurityUtils;
 import com.hb0730.zoom.base.utils.AesCryptoUtil;
 import com.hb0730.zoom.base.utils.HexUtil;
 import com.hb0730.zoom.base.utils.SecureUtil;

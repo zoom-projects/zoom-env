@@ -76,5 +76,10 @@ public class SuperServiceImpl<Id extends Serializable,
     public C getMapstruct() {
         return mapstruct;
     }
+
+    @Override
+    public boolean deleteById(Id id) {
+        return removeById(id);
+    }
 }
 

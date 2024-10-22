@@ -34,15 +34,14 @@
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-base</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-operator-log</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-data</artifactId>
-            <version>${zoom.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hb0730</groupId>
-            <artifactId>zoom-base-rpc</artifactId>
             <version>${zoom.version}</version>
         </dependency>
     </dependencies>

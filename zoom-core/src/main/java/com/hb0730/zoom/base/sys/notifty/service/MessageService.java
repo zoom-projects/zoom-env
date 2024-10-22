@@ -2,7 +2,7 @@ package com.hb0730.zoom.base.sys.notifty.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.service.dto.SaveMessageDTO;
+import com.hb0730.zoom.base.ext.services.dto.SaveMessageDTO;
 import com.hb0730.zoom.base.sys.notifty.entity.SysMessage;
 import com.hb0730.zoom.base.sys.notifty.entity.SysMessageTemplate;
 import com.hb0730.zoom.base.sys.notifty.mapper.MessageMapper;

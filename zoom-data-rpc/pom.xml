@@ -10,7 +10,7 @@
         <relativePath/>
     </parent>
 
-    <artifactId>zoom-base-rpc</artifactId>
+    <artifactId>zoom-data-rpc</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -19,10 +19,21 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-sofa-rpc</artifactId>
         </dependency>
-    </dependencies>
 
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-data</artifactId>
+            <version>${zoom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-conf</artifactId>
+            <version>${zoom.version}</version>
+        </dependency>
+    </dependencies>
 </project>

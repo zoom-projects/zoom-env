@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.biz.base.controller;
 
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.security.SecurityUtils;
+import com.hb0730.zoom.base.ext.security.SecurityUtils;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.sys.biz.base.model.vo.PermissionVO;
 import com.hb0730.zoom.sys.biz.base.service.AuthPermissionService;

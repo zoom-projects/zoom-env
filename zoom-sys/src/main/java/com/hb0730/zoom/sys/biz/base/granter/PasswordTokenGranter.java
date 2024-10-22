@@ -2,7 +2,7 @@ package com.hb0730.zoom.sys.biz.base.granter;
 
 import cn.hutool.core.convert.Convert;
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.security.UserInfo;
+import com.hb0730.zoom.base.meta.UserInfo;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
 import com.hb0730.zoom.base.utils.PasswdUtil;
 import com.hb0730.zoom.base.utils.StrUtil;

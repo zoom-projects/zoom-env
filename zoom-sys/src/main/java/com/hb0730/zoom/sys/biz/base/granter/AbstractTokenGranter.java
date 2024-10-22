@@ -3,7 +3,7 @@ package com.hb0730.zoom.sys.biz.base.granter;
 import com.hb0730.zoom.base.Pair;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.enums.MenuTypeEnums;
-import com.hb0730.zoom.base.security.UserInfo;
+import com.hb0730.zoom.base.meta.UserInfo;
 import com.hb0730.zoom.base.sys.system.entity.SysPermission;
 import com.hb0730.zoom.base.sys.system.entity.SysRole;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
@@ -280,6 +280,8 @@ public abstract class AbstractTokenGranter implements TokenGranter {
         UserInfo userInfo = userInfoConvert.toObject(user);
         // 用户信息缓存
         String userCacheKey = UserCacheKeyDefine.USER_INFO.format(user.getId());
+        String _cacheKey = UserCacheKeyDefine.USER_INFO.format(user.getUsername());
+
 
         List<SysUserRole> roles = userService.findEffectiveRoles(user.getId());
         List<String> btn = new ArrayList<>();
@@ -313,6 +315,9 @@ public abstract class AbstractTokenGranter implements TokenGranter {
 
         // 缓存
         cache.setJson(userCacheKey, userInfo, UserCacheKeyDefine.USER_INFO.getTimeout(),
+                UserCacheKeyDefine.USER_INFO.getUnit());
+        // 缓存
+        cache.setJson(_cacheKey, userInfo, UserCacheKeyDefine.USER_INFO.getTimeout(),
                 UserCacheKeyDefine.USER_INFO.getUnit());
 
         return userInfo;

@@ -65,6 +65,7 @@ public class SysRoleController {
     @GetMapping("/page")
     @Operation(summary = "分页查询")
     public R<Page<SysRoleVO>> page(SysRoleQueryRequest query) {
+        log.info("分页查询角色:{}", query);
         return R.OK(sysRoleService.page(query));
     }
 
@@ -117,6 +118,7 @@ public class SysRoleController {
     @OperatorLog(SysRoleOperatorType.GRANT)
     @PreAuthorize("hasAuthority('sys:role:grant')")
     public R<String> grant(@PathVariable String id, @RequestBody List<String> permissionIds) {
+        log.info("角色赋权:{}", id);
         sysRoleService.grant(id, permissionIds);
         return R.OK();
     }

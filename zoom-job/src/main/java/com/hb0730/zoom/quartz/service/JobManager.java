@@ -1,7 +1,7 @@
 package com.hb0730.zoom.quartz.service;
 
 import com.hb0730.zoom.base.exception.ZoomException;
-import com.hb0730.zoom.base.service.dto.QuartzJobDTO;
+import com.hb0730.zoom.base.ext.services.dto.QuartzJobDTO;
 import com.hb0730.zoom.base.utils.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

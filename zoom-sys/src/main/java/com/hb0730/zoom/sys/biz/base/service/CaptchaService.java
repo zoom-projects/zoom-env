@@ -2,7 +2,7 @@ package com.hb0730.zoom.sys.biz.base.service;
 
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.enums.LoginCaptchaMsgTypeEnums;
-import com.hb0730.zoom.base.service.dto.SaveMessageDTO;
+import com.hb0730.zoom.base.ext.services.dto.SaveMessageDTO;
 import com.hb0730.zoom.base.sys.notifty.service.MessageService;
 import com.hb0730.zoom.base.utils.Md5Util;
 import com.hb0730.zoom.base.utils.RandomUtil;

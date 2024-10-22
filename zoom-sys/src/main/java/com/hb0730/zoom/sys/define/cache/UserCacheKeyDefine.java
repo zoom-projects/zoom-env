@@ -1,11 +1,13 @@
 package com.hb0730.zoom.sys.define.cache;
 
-import com.hb0730.zoom.base.security.UserInfo;
+import com.hb0730.zoom.base.meta.UserInfo;
 import com.hb0730.zoom.cache.core.define.CacheKeyBuilder;
 import com.hb0730.zoom.cache.core.define.CacheKeyDefine;
 import com.hb0730.zoom.cache.core.define.struct.RedisCacheStruct;
 
 import java.util.concurrent.TimeUnit;
+
+import static com.hb0730.zoom.base.ZoomConst.LOGIN_USER_CACHE_PREFIX;
 
 /**
  * 用户缓存定义
@@ -25,8 +27,8 @@ public interface UserCacheKeyDefine {
      */
     CacheKeyDefine USER_INFO = CacheKeyBuilder
             .create()
-            .key("user:info:{}")
-            .desc("用户信息 {id}")
+            .key(LOGIN_USER_CACHE_PREFIX + ":{}")
+            .desc("用户信息 {id or username}")
             .type(UserInfo.class)
             .struct(RedisCacheStruct.STRING)
             .timeout(8, TimeUnit.HOURS)

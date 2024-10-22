@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.biz.quartz.convert;
 
+import com.hb0730.zoom.base.ext.services.dto.QuartzJobDTO;
 import com.hb0730.zoom.base.mapstruct.BizMapstruct;
-import com.hb0730.zoom.base.service.dto.QuartzJobDTO;
 import com.hb0730.zoom.sys.biz.quartz.entity.SysQuartzJob;
 import com.hb0730.zoom.sys.biz.quartz.model.request.SysQuartzCreateRequest;
 import com.hb0730.zoom.sys.biz.quartz.model.vo.SysQuartzJobVO;

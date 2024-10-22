@@ -2,7 +2,7 @@ package com.hb0730.zoom.sys.biz.quartz.service;
 
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.exception.ZoomException;
-import com.hb0730.zoom.base.service.dto.QuartzJobDTO;
+import com.hb0730.zoom.base.ext.services.dto.QuartzJobDTO;
 import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
 import com.hb0730.zoom.sys.biz.quartz.convert.SysQuartzJobConvert;
 import com.hb0730.zoom.sys.biz.quartz.entity.SysQuartzJob;

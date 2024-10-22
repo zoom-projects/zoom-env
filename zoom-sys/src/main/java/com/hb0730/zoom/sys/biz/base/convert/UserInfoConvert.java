@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.biz.base.convert;
 
 import com.hb0730.zoom.base.mapstruct.BaseMapstruct;
-import com.hb0730.zoom.base.security.UserInfo;
+import com.hb0730.zoom.base.meta.UserInfo;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
 
