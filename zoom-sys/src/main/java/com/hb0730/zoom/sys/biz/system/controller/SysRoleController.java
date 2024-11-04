@@ -132,5 +132,33 @@ public class SysRoleController {
         return R.OK();
     }
 
+    /**
+     * 获取开放接口
+     *
+     * @param id 角色id
+     * @return 权限
+     */
+    @GetMapping("/open_apis")
+    @Operation(summary = "获取开放接口")
+    public R<List<String>> getOpenApis(String id) {
+        List<String> perms = sysRoleService.getOpenApis(id);
+        return R.OK(perms);
+    }
+
+    /**
+     * 赋权
+     *
+     * @param id         角色id
+     * @param openApiIds 权限id
+     * @return 是否成功
+     */
+    @PutMapping("/open_apis/{id}")
+    @Operation(summary = "赋权")
+    @OperatorLog(SysRoleOperatorType.OPEN_API)
+    @PreAuthorize("hasAuthority('sys:role:open:api:grant')")
+    public R<String> grantOpenApi(@PathVariable String id, @RequestBody List<String> openApiIds) {
+        sysRoleService.grantOpenApi(id, openApiIds);
+        return R.OK();
+    }
 
 }

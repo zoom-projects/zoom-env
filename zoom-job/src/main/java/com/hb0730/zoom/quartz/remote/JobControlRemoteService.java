@@ -1,8 +1,8 @@
 package com.hb0730.zoom.quartz.remote;
 
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.service.dto.QuartzJobDTO;
-import com.hb0730.zoom.base.service.remote.JobControlRpcService;
+import com.hb0730.zoom.base.ext.services.dto.QuartzJobDTO;
+import com.hb0730.zoom.base.ext.services.remote.JobControlRpcService;
 import com.hb0730.zoom.quartz.service.JobManager;
 import com.hb0730.zoom.sofa.rpc.core.annotation.RemoteService;
 import lombok.extern.slf4j.Slf4j;

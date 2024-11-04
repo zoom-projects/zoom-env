@@ -15,6 +15,7 @@ public class SysRoleOperatorType extends InitializingOperatorTypes {
     public static final String EDIT = "sys:role:edit";
     public static final String DELETE = "sys:role:delete";
     public static final String GRANT = "sys:role:grant";
+    public static final String OPEN_API = "sys:role:open_api:grant";
 
     @Override
     public OperatorType[] types() {
@@ -22,7 +23,8 @@ public class SysRoleOperatorType extends InitializingOperatorTypes {
                 new OperatorType(OperatorRiskLevel.L, ADD, "新增角色"),
                 new OperatorType(OperatorRiskLevel.M, EDIT, "修改角色"),
                 new OperatorType(OperatorRiskLevel.H, DELETE, "删除角色"),
-                new OperatorType(OperatorRiskLevel.M, GRANT, "授权")
+                new OperatorType(OperatorRiskLevel.M, GRANT, "授权"),
+                new OperatorType(OperatorRiskLevel.M, OPEN_API, "分配开放接口")
         };
     }
 }

@@ -7,14 +7,19 @@ import com.hb0730.zoom.base.utils.AesCryptoUtil;
 import com.hb0730.zoom.base.utils.HexUtil;
 import com.hb0730.zoom.base.utils.SecureUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
+import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import com.hb0730.zoom.operator.log.core.annotation.OperatorLog;
 import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
 import com.hb0730.zoom.sys.biz.base.model.request.RestPasswordRequest;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
 import com.hb0730.zoom.sys.biz.base.service.AuthUserService;
 import com.hb0730.zoom.sys.biz.system.model.request.operator.log.SysOperatorLogQueryRequest;
+import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserAccessTokenCreateRequest;
+import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserAccessTokenQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysOperatorLogVO;
+import com.hb0730.zoom.sys.biz.system.model.vo.SysUserAccessTokenVO;
 import com.hb0730.zoom.sys.biz.system.service.SysOperatorLogService;
+import com.hb0730.zoom.sys.biz.system.service.SysUserAccessTokenService;
 import com.hb0730.zoom.sys.define.operator.AuthenticationOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +27,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +54,7 @@ public class AuthUserController {
     private final TokenGranterBuilder tokenGranterBuilder;
     private final AuthUserService authUserService;
     private final SysOperatorLogService operatorLogService;
+    private final SysUserAccessTokenService sysUserAccessTokenService;
 
 
     /**
@@ -103,4 +112,65 @@ public class AuthUserController {
         Page<SysOperatorLogVO> page = operatorLogService.page(request);
         return R.OK(page);
     }
+
+    /**
+     * 查询用户访问令牌
+     */
+    @Operation(summary = "查询用户访问令牌")
+    @GetMapping("/access_token")
+    public R<Page<SysUserAccessTokenVO>> queryAccessToken(PageRequest request) {
+        SysUserAccessTokenQueryRequest queryRequest = SysUserAccessTokenQueryRequest.of(request);
+        SecurityUtils.getLoginUserId().ifPresent(queryRequest::setUserId);
+        if (StrUtil.isBlank(queryRequest.getUserId())) {
+            return R.NG("获取用户信息失败,token为空");
+        }
+        Page<SysUserAccessTokenVO> page = sysUserAccessTokenService.page(queryRequest);
+        return R.OK(page);
+    }
+
+    @PostMapping("/access_token")
+    @Operation(summary = "保存用户访问令牌")
+    @OperatorLog(AuthenticationOperatorType.CREATE_ACCESS_TOKEN)
+    public R<String> saveAccessToken(@RequestBody SysUserAccessTokenCreateRequest request) {
+        if (SecurityUtils.getLoginUserId().isEmpty()) {
+            return R.NG("获取用户信息失败,token为空");
+        }
+        String userId = SecurityUtils.getLoginUserId().get();
+        String accessToken = sysUserAccessTokenService.createAccessToken(userId, request);
+        return R.OK(accessToken);
+    }
+
+    /**
+     * 撤销用户访问令牌
+     */
+    @Operation(summary = "撤销用户访问令牌")
+    @PutMapping("/access_token/cancel/{id}")
+    @OperatorLog(AuthenticationOperatorType.CANCEL_ACCESS_TOKEN)
+    public R<String> cancelAccessToken(@PathVariable String id) {
+        boolean result = sysUserAccessTokenService.cancelAccessToken(id);
+        return result ? R.OK() : R.NG("撤销失败");
+    }
+
+    /**
+     * 恢复用户访问令牌
+     */
+    @Operation(summary = "恢复用户访问令牌")
+    @PutMapping("/access_token/restore/{id}")
+    @OperatorLog(AuthenticationOperatorType.RESTORE_ACCESS_TOKEN)
+    public R<String> restoreAccessToken(@PathVariable String id) {
+        boolean result = sysUserAccessTokenService.resumeAccessToken(id);
+        return result ? R.OK() : R.NG("恢复失败");
+    }
+
+    /**
+     * 删除用户访问令牌
+     */
+    @Operation(summary = "删除用户访问令牌")
+    @DeleteMapping("/access_token/delete/{id}")
+    @OperatorLog(AuthenticationOperatorType.DELETE_ACCESS_TOKEN)
+    public R<String> deleteAccessToken(@PathVariable String id) {
+        boolean result = sysUserAccessTokenService.removeById(id);
+        return result ? R.OK() : R.NG("删除失败");
+    }
+
 }

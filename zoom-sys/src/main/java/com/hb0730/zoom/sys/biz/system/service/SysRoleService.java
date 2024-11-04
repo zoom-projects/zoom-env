@@ -31,6 +31,7 @@ import java.util.List;
 public class SysRoleService extends SuperServiceImpl<String, SysRoleQueryRequest, SysRoleVO, SysRole,
         SysRoleCreateRequest, SysRoleUpdateRequest, SysRoleMapper, SysRoleConvert> {
     private final SysRolePermissionService sysRolePermissionService;
+    private final SysRoleOpenApiService sysRoleOpenApiService;
 
 
     /**
@@ -124,4 +125,30 @@ public class SysRoleService extends SuperServiceImpl<String, SysRoleQueryRequest
         return true;
     }
 
+    /**
+     * 获取开放接口
+     *
+     * @param id 角色id
+     * @return 权限
+     */
+    public List<String> getOpenApis(String id) {
+        return sysRoleOpenApiService.listByRoleId(id);
+    }
+
+    /**
+     * 赋权
+     *
+     * @param id         角色id
+     * @param openApiIds 权限id
+     * @return 是否成功
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public boolean grantOpenApi(String id, List<String> openApiIds) {
+        SysRole entity = getById(id);
+        if (null == entity) {
+            throw new ZoomException("角色不存在");
+        }
+        sysRoleOpenApiService.save(id, openApiIds);
+        return true;
+    }
 }
