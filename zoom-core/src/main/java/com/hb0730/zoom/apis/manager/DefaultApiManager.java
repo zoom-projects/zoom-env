@@ -3,6 +3,7 @@ package com.hb0730.zoom.apis.manager;
 import com.hb0730.zoom.base.AppUtil;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.api.Api;
+import com.hb0730.zoom.base.api.ApiDescription;
 import com.hb0730.zoom.base.api.ApiManager;
 import com.hb0730.zoom.base.api.ApiService;
 
@@ -41,6 +42,10 @@ public abstract class DefaultApiManager implements ApiManager {
                 @Override
                 public boolean isSkipAuth() {
                     return false;
+                }
+
+                public ApiDescription description() {
+                    return null;
                 }
             };
         }
