@@ -12,7 +12,7 @@ public interface LoginCaptchaCacheKeyDefine {
 
     CacheKeyDefine LOGIN_CAPTCHA = CacheKeyBuilder.create()
             .type(String.class)
-            .key("sys:login:captcha:{}")
+            .key("login:captcha:{}")
             .type(String.class)
             .desc("登录验证码 {key}")
             .struct(RedisCacheStruct.STRING)

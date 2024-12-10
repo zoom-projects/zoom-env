@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.define.operator;
 
+import com.hb0730.zoom.base.enums.OperatorRiskLevelEnums;
 import com.hb0730.zoom.operator.log.core.annotation.Module;
-import com.hb0730.zoom.operator.log.core.enums.OperatorRiskLevel;
 import com.hb0730.zoom.operator.log.core.factory.InitializingOperatorTypes;
 import com.hb0730.zoom.operator.log.core.model.OperatorType;
 
@@ -20,11 +20,11 @@ public class SysRoleOperatorType extends InitializingOperatorTypes {
     @Override
     public OperatorType[] types() {
         return new OperatorType[]{
-                new OperatorType(OperatorRiskLevel.L, ADD, "新增角色"),
-                new OperatorType(OperatorRiskLevel.M, EDIT, "修改角色"),
-                new OperatorType(OperatorRiskLevel.H, DELETE, "删除角色"),
-                new OperatorType(OperatorRiskLevel.M, GRANT, "授权"),
-                new OperatorType(OperatorRiskLevel.M, OPEN_API, "分配开放接口")
+                new OperatorType(OperatorRiskLevelEnums.L, ADD, "新增角色"),
+                new OperatorType(OperatorRiskLevelEnums.M, EDIT, "修改角色"),
+                new OperatorType(OperatorRiskLevelEnums.H, DELETE, "删除角色"),
+                new OperatorType(OperatorRiskLevelEnums.M, GRANT, "授权"),
+                new OperatorType(OperatorRiskLevelEnums.M, OPEN_API, "分配开放接口")
         };
     }
 }

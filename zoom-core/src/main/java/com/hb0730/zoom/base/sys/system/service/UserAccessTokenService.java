@@ -38,9 +38,11 @@ public class UserAccessTokenService extends ServiceImpl<UserAccessTokenMapper, S
             return false;
         }
         Date expireTime = accessToken.getExpireTime();
-        if (null == expireTime || expireTime.before(new Date())) {
+        // 是否已过期
+        if (null != expireTime && expireTime.before(new Date())) {
             return false;
         }
+        // 获取openApi
         List<String> openApiIds = baseMapper.getOpenApisByToken(token);
         if (null == openApiIds || openApiIds.isEmpty()) {
             return false;
@@ -52,5 +54,19 @@ public class UserAccessTokenService extends ServiceImpl<UserAccessTokenMapper, S
             return false;
         }
         return openApis.stream().map(SysOpenApi::getApiCode).toList().contains(apiName);
+    }
+
+    /**
+     * 根据token查询用户信息
+     *
+     * @param token token
+     * @return 用户信息
+     */
+    public String findUserIdByToken(String token) {
+        SysUserAccessToken accessToken = baseMapper.findByToken(token);
+        if (null == accessToken) {
+            return null;
+        }
+        return accessToken.getUserId();
     }
 }

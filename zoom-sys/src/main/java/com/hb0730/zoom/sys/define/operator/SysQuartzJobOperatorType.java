@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.define.operator;
 
+import com.hb0730.zoom.base.enums.OperatorRiskLevelEnums;
 import com.hb0730.zoom.operator.log.core.annotation.Module;
-import com.hb0730.zoom.operator.log.core.enums.OperatorRiskLevel;
 import com.hb0730.zoom.operator.log.core.factory.InitializingOperatorTypes;
 import com.hb0730.zoom.operator.log.core.model.OperatorType;
 
@@ -19,10 +19,10 @@ public class SysQuartzJobOperatorType extends InitializingOperatorTypes {
     @Override
     public OperatorType[] types() {
         return new OperatorType[]{
-                new OperatorType(OperatorRiskLevel.L, ADD, "添加"),
-                new OperatorType(OperatorRiskLevel.M, EDIT, "编辑"),
-                new OperatorType(OperatorRiskLevel.H, DELETE, "删除"),
-                new OperatorType(OperatorRiskLevel.M, OPERATE, "操作任务(暂停/启动/运行)"),
+                new OperatorType(OperatorRiskLevelEnums.L, ADD, "添加"),
+                new OperatorType(OperatorRiskLevelEnums.M, EDIT, "编辑"),
+                new OperatorType(OperatorRiskLevelEnums.H, DELETE, "删除"),
+                new OperatorType(OperatorRiskLevelEnums.M, OPERATE, "操作任务(暂停/启动/运行)"),
         };
     }
 }

@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.define.operator;
 
+import com.hb0730.zoom.base.enums.OperatorRiskLevelEnums;
 import com.hb0730.zoom.operator.log.core.annotation.Module;
-import com.hb0730.zoom.operator.log.core.enums.OperatorRiskLevel;
 import com.hb0730.zoom.operator.log.core.factory.InitializingOperatorTypes;
 import com.hb0730.zoom.operator.log.core.model.OperatorType;
 
@@ -20,9 +20,9 @@ public class DictOperatorType extends InitializingOperatorTypes {
     @Override
     public OperatorType[] types() {
         return new OperatorType[]{
-                new OperatorType(OperatorRiskLevel.L, ADD, "新增字典"),
-                new OperatorType(OperatorRiskLevel.M, UPDATE, "修改字典"),
-                new OperatorType(OperatorRiskLevel.H, DELETE, "删除字典")
+                new OperatorType(OperatorRiskLevelEnums.L, ADD, "新增字典"),
+                new OperatorType(OperatorRiskLevelEnums.M, UPDATE, "修改字典"),
+                new OperatorType(OperatorRiskLevelEnums.H, DELETE, "删除字典")
         };
     }
 }

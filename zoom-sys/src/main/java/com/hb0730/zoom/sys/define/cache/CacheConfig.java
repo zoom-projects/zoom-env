@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.hb0730.zoom.base.ZoomConst.DICT_ITEMS_KEY;
+
 /**
  * 缓存配置
  *
@@ -22,8 +24,8 @@ public class CacheConfig implements CustomCacheConfig {
     @Override
     public Map<String, Long> getCustomCacheConfigs() {
         Map<String, Long> customCacheConfigs = new HashMap<>();
-        customCacheConfigs.put(SysDictCacheKeyDefine.DICT_ITEMS_KEY, 8 * 60 * 60L);
-        customCacheConfigs.put(SysDictCacheKeyDefine.DICT_ITEMS_KEY + ":dictValueType", 8 * 60 * 60L);
+        customCacheConfigs.put(DICT_ITEMS_KEY, 8 * 60 * 60L);
+        customCacheConfigs.put(DICT_ITEMS_KEY + ":dictValueType", 8 * 60 * 60L);
         return customCacheConfigs;
     }
 }

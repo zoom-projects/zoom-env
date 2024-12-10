@@ -1,5 +1,6 @@
 package com.hb0730.zoom.core.remote;
 
+import com.hb0730.zoom.base.ext.services.dto.UserDTO;
 import com.hb0730.zoom.base.ext.services.dto.UserInfoDTO;
 import com.hb0730.zoom.base.ext.services.remote.SysUserRpcService;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
@@ -36,5 +37,15 @@ public class UserRemoteService implements SysUserRpcService {
     @Override
     public boolean checkOpenApiAuth(String token, String apiName) {
         return userAccessTokenService.checkOpenApiAuth(token, apiName);
+    }
+
+    @Override
+    public UserDTO findUserByToken(String token) {
+        String userId = userAccessTokenService.findUserIdByToken(token);
+        SysUser user = userService.getById(userId);
+        if (null != user) {
+            return userConvert.toDTO(user);
+        }
+        return null;
     }
 }

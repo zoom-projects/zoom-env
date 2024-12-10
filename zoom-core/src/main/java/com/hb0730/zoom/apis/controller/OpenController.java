@@ -3,17 +3,21 @@ package com.hb0730.zoom.apis.controller;
 import com.hb0730.zoom.base.Pair;
 import com.hb0730.zoom.base.PairEnum;
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.api.Api;
 import com.hb0730.zoom.base.utils.JsonUtil;
 import com.hb0730.zoom.base.utils.MapUtil;
 import jakarta.annotation.security.PermitAll;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,11 +28,11 @@ import java.util.Map;
  */
 @Controller
 @Slf4j
+@Validated
 public class OpenController extends RouterController {
 
     /**
      * 通用API入口
-     * application/x-www-form-urlencoded
      *
      * @param apiName 接口名称
      * @param token   token
@@ -36,15 +40,18 @@ public class OpenController extends RouterController {
      */
     @RequestMapping(path = "/open/api", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
     @PermitAll
-    public ResponseEntity<Map<String, Object>> execute(String apiName, String token,
+    public ResponseEntity<Map<String, Object>> execute(@NotBlank(message = "apiName不为空") String apiName,
+                                                       String token,
+                                                       @RequestParam(required = false) Map<String, Object> params,
                                                        @RequestBody(required = false) Map<String, Object> body,
-                                                       Map<String, Object> params) {
-        Map<String, Object> allParams = MapUtil.mergeMap(body, params);
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response) {
+        Map<String, Object> allParams = MapUtil.mergeMap(params, body);
         R<?> result = null;
         if (isLimitRate(apiName, token)) {
             result = R.NG(ErrorCode.C10004.getCode(), ErrorCode.C10004.getMessage());
         } else {
-            result = execute(apiName, token, allParams);
+            result = execute(apiName, token, allParams, request, response);
         }
 
         //统一响应
@@ -56,41 +63,6 @@ public class OpenController extends RouterController {
         res.put("timestamp", getTimestamp(null));
         log.info("~~~ 接口响应参数 ==> {}", JsonUtil.DEFAULT.toJson(res));
         return ResponseEntity.ok(res);
-    }
-
-    @Override
-    public R<?> execute(String apiName, String token, Map<String, Object> params) {
-        log.info("~~~ 接口请求参数 ==> {}:{}:{}", apiName, token, JsonUtil.DEFAULT.toJson(params));
-        R<?> result;
-        try {
-            // alibaba sentinel 限流
-            //ContextUtil.enter(resourceName, apiName.replace('.', '-'));
-            // 定义一个sentinel保护的资源
-            //entry = SphU.entry(resourceName);
-            //entry = SphU.entry(apiName);
-
-            //确定接口
-            Api api = apiAdapter.getApi(apiName);
-            if (api == null) {
-                result = R.NG(ErrorCode.C10005.getCode(), ErrorCode.C10005.getMessage());
-                return result;
-            }
-            // 是否需要验证Token
-            if (!api.isSkipAuth()) {
-                //验证Token是否有效
-                if (!checkToken(token, apiName)) {
-                    result = R.NG(ErrorCode.C10003.getCode(), ErrorCode.C10003.getMessage());
-                    return result;
-                }
-            }
-
-            //业务处理
-            return apiAdapter.execute(apiName, token, params);
-        } catch (Exception e) {
-            log.error("~接口请求参数 ==> {}:{}", apiName, e.getMessage(), e);
-            result = R.NG(ErrorCode.C10001.getCode(), ErrorCode.C10001.getMessage());
-            return result;
-        }
     }
 
     public enum ErrorCode implements PairEnum<String, Pair<String, String>> {
@@ -146,5 +118,4 @@ public class OpenController extends RouterController {
             return status.getMessage();
         }
     }
-
 }

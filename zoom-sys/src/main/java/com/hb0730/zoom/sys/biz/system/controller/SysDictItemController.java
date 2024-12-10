@@ -7,7 +7,6 @@ import com.hb0730.zoom.sys.biz.system.model.request.dict.item.SysDictItemCreateR
 import com.hb0730.zoom.sys.biz.system.model.request.dict.item.SysDictItemQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysDictItemVO;
 import com.hb0730.zoom.sys.biz.system.service.SysDictItemService;
-import com.hb0730.zoom.sys.define.cache.SysDictCacheKeyDefine;
 import com.hb0730.zoom.sys.define.operator.DictItemOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static com.hb0730.zoom.base.ZoomConst.DICT_ITEMS_KEY;
 
 /**
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
@@ -53,7 +54,7 @@ public class SysDictItemController {
     @PostMapping("/save")
     @Operation(summary = "保存数据字典项")
     @OperatorLog(DictItemOperatorType.ADD)
-    @CacheEvict(value = SysDictCacheKeyDefine.DICT_ITEMS_KEY, allEntries = true)
+    @CacheEvict(value = DICT_ITEMS_KEY, allEntries = true)
     @PreAuthorize("hasAuthority('sys:dict:item:add')")
     public R<String> save(@RequestBody SysDictItemCreateRequest request) {
         service.create(request);
@@ -63,7 +64,7 @@ public class SysDictItemController {
     @PutMapping("/update/{id}")
     @Operation(summary = "更新数据字典项")
     @OperatorLog(DictItemOperatorType.UPDATE)
-    @CacheEvict(value = SysDictCacheKeyDefine.DICT_ITEMS_KEY, allEntries = true)
+    @CacheEvict(value = DICT_ITEMS_KEY, allEntries = true)
     @PreAuthorize("hasAuthority('sys:dict:item:update')")
     public R<String> update(@PathVariable String id, @RequestBody SysDictItemCreateRequest request) {
         service.updateById(id, request);
@@ -74,7 +75,7 @@ public class SysDictItemController {
     @Operation(summary = "删除数据字典项")
     @OperatorLog(DictItemOperatorType.DELETE)
     @PreAuthorize("hasAuthority('sys:dict:item:delete')")
-    @CacheEvict(value = SysDictCacheKeyDefine.DICT_ITEMS_KEY, allEntries = true)
+    @CacheEvict(value = DICT_ITEMS_KEY, allEntries = true)
     public R<String> delete(String id) {
         service.removeById(id);
         return R.OK();

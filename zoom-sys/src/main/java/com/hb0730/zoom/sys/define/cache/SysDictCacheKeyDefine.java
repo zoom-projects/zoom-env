@@ -14,10 +14,9 @@ import java.util.concurrent.TimeUnit;
  * @date 2024/10/12
  */
 public interface SysDictCacheKeyDefine {
-    public static final String DICT_ITEMS_KEY = "sys:dict:items";
     CacheKeyDefine DICT_ITEMS = CacheKeyBuilder.create()
             .type(List.class)
-            .key("sys:dict:items:{}")
+            .key("dict:items:{}")
             .desc("数据字典项 {dictCode}")
             .struct(RedisCacheStruct.STRING)
             .timeout(8, TimeUnit.HOURS)

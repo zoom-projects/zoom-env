@@ -9,7 +9,6 @@ import com.hb0730.zoom.sys.biz.system.model.request.dict.SysDictCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.dict.SysDictQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysDictVO;
 import com.hb0730.zoom.sys.biz.system.service.SysDictService;
-import com.hb0730.zoom.sys.define.cache.SysDictCacheKeyDefine;
 import com.hb0730.zoom.sys.define.operator.DictItemOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static com.hb0730.zoom.base.ZoomConst.DICT_ITEMS_KEY;
 
 /**
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
@@ -118,7 +119,7 @@ public class SysDictController {
     @Operation(summary = "数据字典删除")
     @OperatorLog(DictItemOperatorType.DELETE)
     @PreAuthorize("hasAuthority('sys:dict:delete')")
-    @CacheEvict(value = SysDictCacheKeyDefine.DICT_ITEMS_KEY, allEntries = true)
+    @CacheEvict(value = DICT_ITEMS_KEY, allEntries = true)
     public R<String> del(@Parameter String id) {
         sysDictService.removeById(id);
         return R.OK();
@@ -146,7 +147,7 @@ public class SysDictController {
     @PutMapping("/refresh_cache")
     @Operation(summary = "刷新缓存")
     public R<String> refreshCache() {
-        cacheUtil.delScan(SysDictCacheKeyDefine.DICT_ITEMS_KEY);
+        cacheUtil.delScan(DICT_ITEMS_KEY);
         return R.OK();
     }
 

@@ -1,25 +1,18 @@
-package com.hb0730.zoom.sys.biz.system.service;
+package com.hb0730.zoom.base.sys.system.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.data.Option;
 import com.hb0730.zoom.base.enums.DictValueTypeEnums;
-import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysDict;
 import com.hb0730.zoom.base.sys.system.entity.SysDictItem;
+import com.hb0730.zoom.base.sys.system.mapper.DictMapper;
 import com.hb0730.zoom.base.utils.JsonUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
-import com.hb0730.zoom.sys.biz.system.convert.SysDictConvert;
-import com.hb0730.zoom.sys.biz.system.convert.SysDictItemConvert;
-import com.hb0730.zoom.sys.biz.system.mapper.SysDictMapper;
-import com.hb0730.zoom.sys.biz.system.model.request.dict.SysDictCreateRequest;
-import com.hb0730.zoom.sys.biz.system.model.request.dict.SysDictQueryRequest;
-import com.hb0730.zoom.sys.biz.system.model.vo.SysDictVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -31,30 +24,13 @@ import static com.hb0730.zoom.base.ZoomConst.DICT_ITEMS_KEY;
 
 /**
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2024/10/11
+ * @date 2024/11/5
  */
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysDictService extends SuperServiceImpl<String, SysDictQueryRequest, SysDictVO, SysDict,
-        SysDictCreateRequest, SysDictCreateRequest, SysDictMapper, SysDictConvert> {
-    @Autowired
-    private SysDictItemService sysDictItemService;
-    @Autowired
-    private SysDictItemConvert sysDictItemConvert;
-
-
-    public R<String> hasCode(String code, String id) {
-        LambdaQueryWrapper<SysDict> queryWrapper = Wrappers.lambdaQuery(SysDict.class)
-                .eq(SysDict::getDictCode, code);
-        if (StrUtil.isNotBlank(id)) {
-            queryWrapper.ne(SysDict::getId, id);
-        }
-        if (baseMapper.of(queryWrapper).present()) {
-            return R.NG("编码已存在");
-        }
-        return R.OK();
-    }
+public class DictService extends ServiceImpl<DictMapper, SysDict> {
+    private final DictItemService dictItemService;
 
     /**
      * 加载字典项
@@ -74,7 +50,7 @@ public class SysDictService extends SuperServiceImpl<String, SysDictQueryRequest
         LambdaQueryWrapper<SysDictItem> queryWrapper = Wrappers.lambdaQuery(SysDictItem.class)
                 .eq(SysDictItem::getDictId, dict.getId())
                 .orderByAsc(SysDictItem::getSort);
-        List<SysDictItem> dictItems = sysDictItemService.list(queryWrapper);
+        List<SysDictItem> dictItems = dictItemService.list(queryWrapper);
 
 
         List<Option> optionList = new ArrayList<>(dictItems.size());
