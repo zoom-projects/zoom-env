@@ -27,6 +27,8 @@ public class AuthenticationOperatorType extends InitializingOperatorTypes {
 
     public static final String DELETE_ACCESS_TOKEN = "authentication:delete-access-token";
 
+    public static final String UPDATE_USER_SETTINGS = "authentication:update-user-settings";
+
     @Override
     public OperatorType[] types() {
         return new OperatorType[]{
@@ -36,7 +38,8 @@ public class AuthenticationOperatorType extends InitializingOperatorTypes {
                 new OperatorType(OperatorRiskLevelEnums.L, CREATE_ACCESS_TOKEN, "创建访问令牌"),
                 new OperatorType(OperatorRiskLevelEnums.M, CANCEL_ACCESS_TOKEN, "注销访问令牌"),
                 new OperatorType(OperatorRiskLevelEnums.M, RESTORE_ACCESS_TOKEN, "恢复访问令牌"),
-                new OperatorType(OperatorRiskLevelEnums.H, DELETE_ACCESS_TOKEN, "删除访问令牌")
+                new OperatorType(OperatorRiskLevelEnums.H, DELETE_ACCESS_TOKEN, "删除访问令牌"),
+                new OperatorType(OperatorRiskLevelEnums.L, UPDATE_USER_SETTINGS, "更新用户设置")
 
         };
     }

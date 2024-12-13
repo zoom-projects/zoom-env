@@ -1,6 +1,6 @@
 package com.hb0730.zoom.sys.biz.message.mapper;
 
-import com.hb0730.zoom.base.sys.notifty.entity.SysMessageTemplate;
+import com.hb0730.zoom.base.sys.message.entity.SysMessageTemplate;
 import com.hb0730.zoom.mybatis.core.mapper.IMapper;
 import org.springframework.stereotype.Repository;
 

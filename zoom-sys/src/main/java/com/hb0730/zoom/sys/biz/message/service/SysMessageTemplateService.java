@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
-import com.hb0730.zoom.base.sys.notifty.entity.SysMessageTemplate;
+import com.hb0730.zoom.base.sys.message.entity.SysMessageTemplate;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.sys.biz.message.convert.SysMessageTemplateConvert;
 import com.hb0730.zoom.sys.biz.message.mapper.SysMessageTemplateMapper;

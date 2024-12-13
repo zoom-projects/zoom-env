@@ -4,8 +4,10 @@ import com.hb0730.zoom.base.ext.services.dto.UserDTO;
 import com.hb0730.zoom.base.ext.services.dto.UserInfoDTO;
 import com.hb0730.zoom.base.ext.services.remote.SysUserRpcService;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
+import com.hb0730.zoom.base.sys.system.entity.SysUserSettings;
 import com.hb0730.zoom.base.sys.system.service.UserAccessTokenService;
 import com.hb0730.zoom.base.sys.system.service.UserService;
+import com.hb0730.zoom.base.sys.system.service.UserSettingsService;
 import com.hb0730.zoom.core.convert.UserConvert;
 import com.hb0730.zoom.sofa.rpc.core.annotation.RemoteService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,8 @@ public class UserRemoteService implements SysUserRpcService {
     private UserAccessTokenService userAccessTokenService;
     @Autowired
     private UserConvert userConvert;
+    @Autowired
+    private UserSettingsService userSettingsService;
 
     @Override
     public UserInfoDTO findUsername(String username) {
@@ -31,7 +35,13 @@ public class UserRemoteService implements SysUserRpcService {
         if (null == user) {
             return null;
         }
-        return userConvert.toObject(user);
+        UserInfoDTO userInfo = userConvert.toObject(user);
+
+        SysUserSettings userSettings = userSettingsService.findByUserId(user.getId());
+        if (null != userSettings) {
+            userInfo.setMessageNotification(userSettings.getMessageNotification());
+        }
+        return userInfo;
     }
 
     @Override

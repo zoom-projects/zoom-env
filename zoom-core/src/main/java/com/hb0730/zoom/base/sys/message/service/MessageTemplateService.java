@@ -1,10 +1,10 @@
-package com.hb0730.zoom.base.sys.notifty.service;
+package com.hb0730.zoom.base.sys.message.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.hb0730.zoom.base.sys.notifty.entity.SysMessageTemplate;
-import com.hb0730.zoom.base.sys.notifty.mapper.MessageTemplateMapper;
+import com.hb0730.zoom.base.sys.message.entity.SysMessageTemplate;
+import com.hb0730.zoom.base.sys.message.mapper.MessageTemplateMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

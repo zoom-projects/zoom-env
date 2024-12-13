@@ -1,4 +1,4 @@
-package com.hb0730.zoom.base.sys.notifty.entity;
+package com.hb0730.zoom.base.sys.message.entity;
 
 import com.hb0730.zoom.base.entity.BizEntity;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.biz.message.convert;
 
 import com.hb0730.zoom.base.mapstruct.BizMapstruct;
-import com.hb0730.zoom.base.sys.notifty.entity.SysMessage;
+import com.hb0730.zoom.base.sys.message.entity.SysMessage;
 import com.hb0730.zoom.sys.biz.message.model.request.SysMessageCreateRequest;
 import com.hb0730.zoom.sys.biz.message.model.request.SysMessageUpdateRequest;
 import com.hb0730.zoom.sys.biz.message.model.vo.SysMessageVO;

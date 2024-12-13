@@ -3,15 +3,18 @@ package com.hb0730.zoom.sys.biz.base.controller;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.data.Page;
 import com.hb0730.zoom.base.ext.security.SecurityUtils;
+import com.hb0730.zoom.base.sys.system.entity.SysUserSettings;
 import com.hb0730.zoom.base.utils.AesCryptoUtil;
 import com.hb0730.zoom.base.utils.HexUtil;
 import com.hb0730.zoom.base.utils.SecureUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import com.hb0730.zoom.operator.log.core.annotation.OperatorLog;
+import com.hb0730.zoom.sys.biz.base.convert.UserSettingsConvert;
 import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
 import com.hb0730.zoom.sys.biz.base.model.request.RestPasswordRequest;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
+import com.hb0730.zoom.sys.biz.base.model.vo.UserSettingsVO;
 import com.hb0730.zoom.sys.biz.base.service.AuthUserService;
 import com.hb0730.zoom.sys.biz.system.model.request.operator.log.SysOperatorLogQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserAccessTokenCreateRequest;
@@ -20,6 +23,7 @@ import com.hb0730.zoom.sys.biz.system.model.vo.SysOperatorLogVO;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysUserAccessTokenVO;
 import com.hb0730.zoom.sys.biz.system.service.SysOperatorLogService;
 import com.hb0730.zoom.sys.biz.system.service.SysUserAccessTokenService;
+import com.hb0730.zoom.sys.biz.system.service.SysUserSettingsService;
 import com.hb0730.zoom.sys.define.operator.AuthenticationOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -55,6 +59,8 @@ public class AuthUserController {
     private final AuthUserService authUserService;
     private final SysOperatorLogService operatorLogService;
     private final SysUserAccessTokenService sysUserAccessTokenService;
+    private final SysUserSettingsService sysUserSettingsService;
+    private final UserSettingsConvert userSettingsConvert;
 
 
     /**
@@ -171,6 +177,32 @@ public class AuthUserController {
     public R<String> deleteAccessToken(@PathVariable String id) {
         boolean result = sysUserAccessTokenService.removeById(id);
         return result ? R.OK() : R.NG("删除失败");
+    }
+
+    @Operation(summary = "获取用户设置")
+    @GetMapping("/settings")
+    public R<UserSettingsVO> getUserSettings(HttpServletRequest request) {
+        String userId = SecurityUtils.getLoginUserId().orElse(null);
+        if (StrUtil.isBlank(userId)) {
+            return R.NG("获取用户信息失败,token为空");
+        }
+        SysUserSettings userSettings = sysUserSettingsService.findByUserId(userId);
+        UserSettingsVO res = userSettingsConvert.toObject(userSettings);
+        return R.OK(res);
+    }
+
+    @Operation(summary = "保存用户设置")
+    @PutMapping("/settings")
+    @OperatorLog(AuthenticationOperatorType.UPDATE_USER_SETTINGS)
+    public R<String> userSettings(HttpServletRequest request, @RequestBody UserSettingsVO userSettingsVO) {
+        String userId = SecurityUtils.getLoginUserId().orElse(null);
+        if (StrUtil.isBlank(userId)) {
+            return R.NG("获取用户信息失败,token为空");
+        }
+        SysUserSettings userSettings = userSettingsConvert.toEntity(userSettingsVO);
+        userSettings.setUserId(userId);
+        sysUserSettingsService.saveOrUpdate(userSettings);
+        return R.OK("更新成功");
     }
 
 }

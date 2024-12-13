@@ -32,10 +32,14 @@ public class SchedulerConfig implements SchedulerFactoryBeanCustomizer {
      * @return quartz专用数据源
      */
     private DataSource determineQuartzDataSource() {
-        Map<String, DataSource> ds = ((DynamicRoutingDataSource) dataSource).getDataSources();
-        if (ds.containsKey("quartz")) {
-            return ds.get("quartz");
+        try {
+            Map<String, DataSource> ds = dataSource.unwrap(DynamicRoutingDataSource.class).getDataSources();
+            if (ds.containsKey("quartz")) {
+                return ds.get("quartz");
+            }
+            return dataSource;
+        } catch (Exception ignored) {
+            return dataSource;
         }
-        return dataSource;
     }
 }

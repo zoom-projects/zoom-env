@@ -3,7 +3,7 @@ package com.hb0730.zoom.sys.biz.message.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
-import com.hb0730.zoom.base.sys.notifty.entity.SysMessage;
+import com.hb0730.zoom.base.sys.message.entity.SysMessage;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.mybatis.core.encrypt.MybatisEncryptService;
 import com.hb0730.zoom.sys.biz.message.convert.SysMessageConvert;

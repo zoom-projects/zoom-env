@@ -1,5 +1,6 @@
 package com.hb0730.zoom.sys.biz.message.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -37,6 +38,7 @@ public class SysMessageVO implements java.io.Serializable {
     /**
      * 推送时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date msgSendTime;
     /**
      * 推送状态
