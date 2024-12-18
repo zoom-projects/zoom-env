@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -128,5 +129,46 @@ public class AuthUserService {
             return;
         }
         throw new ZoomException("此三方账号已经绑定过");
+    }
+
+
+    /**
+     * 获取绑定的社交账号
+     *
+     * @param userId 用户id
+     * @return 社交账号
+     */
+    public List<String> getBindSocials(String userId) {
+        List<SysUserSocial> userSocials = userSocialMapper.of(
+                Wrappers.lambdaQuery(SysUserSocial.class)
+                        .eq(SysUserSocial::getUserId, userId)
+        ).list();
+        if (CollectionUtil.isEmpty(userSocials)) {
+            return null;
+        }
+        return userSocials.stream().map(SysUserSocial::getSource).map(String::toLowerCase).toList();
+    }
+
+    /**
+     * 社交解绑
+     *
+     * @param userId 用户id
+     * @param source 来源
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void socialUnbind(String userId, String source) {
+        List<SysUserSocial> userSocials = userSocialMapper.of(
+                Wrappers.lambdaQuery(SysUserSocial.class)
+                        .eq(SysUserSocial::getUserId, userId)
+                        .eq(SysUserSocial::getSource, source)
+        ).list();
+        if (CollectionUtil.isEmpty(userSocials)) {
+            throw new ZoomException("未绑定此三方账号");
+        }
+        userSocialMapper.of().remove(
+                Wrappers.lambdaQuery(SysUserSocial.class)
+                        .eq(SysUserSocial::getUserId, userId)
+                        .eq(SysUserSocial::getSource, source)
+        );
     }
 }

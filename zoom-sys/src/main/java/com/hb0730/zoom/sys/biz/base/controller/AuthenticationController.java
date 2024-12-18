@@ -36,6 +36,7 @@ import me.zhyd.oauth.request.AuthRequest;
 import me.zhyd.oauth.utils.AuthStateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -231,13 +232,33 @@ public class AuthenticationController {
     }
 
     /**
+     * 获取以绑定的社交账号
+     *
+     * @return 结果
+     */
+    @GetMapping("/social/bind")
+    public R<List<String>> getBindSocials() {
+        Optional<String> loginUserId = SecurityUtils.getLoginUserId();
+        if (loginUserId.isEmpty()) {
+            return R.NG("请先登录");
+        }
+        List<String> socials = authUserService.getBindSocials(loginUserId.get());
+        return R.OK(socials);
+    }
+
+    /**
      * 解绑社交账号
      *
      * @param source 类型
      * @return 结果
      */
-    @PostMapping("/social/unbind/{source}")
+    @DeleteMapping("/social/unbind/{source}")
     public R<?> socialUnbind(@PathVariable String source) {
+        Optional<String> loginUserId = SecurityUtils.getLoginUserId();
+        if (loginUserId.isEmpty()) {
+            return R.NG("请先登录");
+        }
+        authUserService.socialUnbind(loginUserId.get(), source);
         return R.OK();
     }
 
