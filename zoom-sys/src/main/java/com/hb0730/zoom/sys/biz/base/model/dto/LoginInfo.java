@@ -19,4 +19,17 @@ public class LoginInfo {
      */
     private String password;
 
+    /*------------social login---------------------*/
+    /**
+     * 社交登录code
+     */
+    private String socialCode;
+    /**
+     * 社交登录state
+     */
+    private String socialState;
+    /**
+     * 社交登录类型
+     */
+    private String socialSource;
 }

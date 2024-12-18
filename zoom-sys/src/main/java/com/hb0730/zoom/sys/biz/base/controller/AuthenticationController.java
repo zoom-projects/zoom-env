@@ -3,25 +3,40 @@ package com.hb0730.zoom.sys.biz.base.controller;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.enums.LoginGrantEnums;
 import com.hb0730.zoom.base.ext.security.SecurityUtils;
+import com.hb0730.zoom.base.meta.UserInfo;
+import com.hb0730.zoom.base.pool.StrPool;
 import com.hb0730.zoom.base.utils.AesCryptoUtil;
+import com.hb0730.zoom.base.utils.Base64Util;
 import com.hb0730.zoom.base.utils.HexUtil;
+import com.hb0730.zoom.base.utils.JsonUtil;
 import com.hb0730.zoom.base.utils.SecureUtil;
 import com.hb0730.zoom.operator.log.core.annotation.OperatorLog;
+import com.hb0730.zoom.social.core.SocialAuthRequestFactory;
 import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
 import com.hb0730.zoom.sys.biz.base.model.request.PhoneLoginRequest;
+import com.hb0730.zoom.sys.biz.base.model.request.SocialCallbackRequest;
+import com.hb0730.zoom.sys.biz.base.model.request.SocialLoginRequest;
 import com.hb0730.zoom.sys.biz.base.model.request.UsernameLoginRequest;
+import com.hb0730.zoom.sys.biz.base.service.AuthUserService;
 import com.hb0730.zoom.sys.biz.base.service.CaptchaService;
 import com.hb0730.zoom.sys.define.operator.AuthenticationOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.PermitAll;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.zhyd.oauth.model.AuthResponse;
+import me.zhyd.oauth.model.AuthUser;
+import me.zhyd.oauth.request.AuthRequest;
+import me.zhyd.oauth.utils.AuthStateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,13 +65,15 @@ public class AuthenticationController {
     private final TokenGranterBuilder tokenGranterBuilder;
     @Autowired
     private CaptchaService captchaService;
+    private final SocialAuthRequestFactory socialAuthRequestFactory;
+    private final AuthUserService authUserService;
 
     /**
      * 用户登录
      */
     @PermitAll
     @PostMapping("/login/{type}")
-    @Operation(summary = "用户登录,根据不同类型登录，password:用户名密码登录，mobile:手机号登录")
+    @Operation(summary = "用户登录,根据不同类型登录，password:用户名密码登录，mobile:手机号登录,social:社交登录,email:邮箱登录")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "登录成功,返回token", responseCode = "200"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "登录失败", responseCode = "400")
@@ -91,6 +109,12 @@ public class AuthenticationController {
                                             name = "mobile",
                                             description = "手机登录",
                                             value = "{\"phone\":\"123456\",\"captchaKey\":\"123456\",\"timestamp\":\"123456\"}"
+                                    ),
+                                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                            name = "social",
+                                            description = "社交登录",
+                                            value = "{\"socialSource\":\"github\",\"socialCode\":\"123456\"," +
+                                                    "\"socialState\":\"123456\"}"
                                     )
                             }
                     )
@@ -98,12 +122,17 @@ public class AuthenticationController {
     )
     public R<String> login(@PathVariable String type,
                            @RequestBody Map<String, String> body) {
-        if ("password".equals(type)) {
+        if (LoginGrantEnums.PASSWORD.getCode().equals(type)) {
             UsernameLoginRequest dto = UsernameLoginRequest.of(body);
             return loginByUsername(dto);
-        } else if ("mobile".equals(type)) {
+        } else if (LoginGrantEnums.MOBILE.getCode().equals(type)) {
             PhoneLoginRequest dto = PhoneLoginRequest.of(body);
             return loginByMobile(dto);
+        } else if (LoginGrantEnums.EMAIL.getCode().equals(type)) {
+            return R.NG("暂不支持邮箱登录");
+        } else if (LoginGrantEnums.SOCIAL.getCode().equals(type)) {
+            SocialLoginRequest loginRequest = SocialLoginRequest.of(body);
+            return loginBySocial(loginRequest);
         }
 
         return R.NG("登录失败，暂未实现");
@@ -141,9 +170,97 @@ public class AuthenticationController {
 
 
     /**
+     * 社交登录
+     *
+     * @param source 类型
+     * @return 结果
+     */
+    @GetMapping("/social/{source}")
+    @PermitAll
+    @Operation(summary = "社交登录,获取授权链接")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "获取授权链接", responseCode = "200"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "获取授权链接失败", responseCode = "400")
+    })
+    @Parameters({
+            @io.swagger.v3.oas.annotations.Parameter(name = "source", description = "社交登录类型", required = true),
+            @io.swagger.v3.oas.annotations.Parameter(name = "domain", description = "域名", required = true)
+    })
+    public R<?> socialLogin(@PathVariable String source, String domain) {
+        Optional<AuthRequest> authRequest = socialAuthRequestFactory.get(source);
+        if (authRequest.isEmpty()) {
+            return R.NG("不支持的登录方式");
+        }
+        Map<String, String> params = new HashMap<>(2);
+        params.put("domain", domain);
+        String state = AuthStateUtils.createState();
+        params.put("state", state);
+        String json = JsonUtil.DEFAULT.toJson(params);
+        // 生成授权链接
+        String url = authRequest.get().authorize(Base64Util.encode(json, StrPool.CHARSET_UTF_8));
+        return R.OK(url);
+    }
+
+    /**
+     * 社交回调
+     *
+     * @param source 类型
+     * @return 结果
+     */
+    @PostMapping("/social/callback/{source}")
+    @Operation(summary = "社交登录回调,绑定社交账号")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "绑定成功", responseCode = "200"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "绑定失败", responseCode = "400")
+    })
+    @Parameter(name = "source", description = "社交登录类型,github,gitee", required = true)
+    public R<?> socialCallback(@PathVariable String source, @RequestBody SocialCallbackRequest request) {
+        // 获取用户信息
+        AuthResponse<AuthUser> authUserAuthResponse = socialAuthRequestFactory.loginAuth(source, request.getCode(), request.getState());
+        AuthUser data = authUserAuthResponse.getData();
+        if (!authUserAuthResponse.ok()) {
+            return R.NG(authUserAuthResponse.getMsg());
+        }
+        // 绑定社交账号
+        Optional<UserInfo> loginUser = SecurityUtils.getLoginUser();
+        if (loginUser.isEmpty()) {
+            return R.NG("请先登录");
+        }
+        authUserService.socialRegister(data, loginUser.get());
+        return R.OK();
+    }
+
+    /**
+     * 解绑社交账号
+     *
+     * @param source 类型
+     * @return 结果
+     */
+    @PostMapping("/social/unbind/{source}")
+    public R<?> socialUnbind(@PathVariable String source) {
+        return R.OK();
+    }
+
+
+    /**
+     * 用户登出
+     */
+    @PermitAll
+    @PostMapping("/logout")
+    @Operation(summary = "用户登出")
+    @OperatorLog(AuthenticationOperatorType.LOGOUT)
+    public R<String> logout(HttpServletRequest request) {
+        // 获取登录 token
+        Optional<String> tokenOptional = SecurityUtils.obtainAuthorization(request);
+        tokenOptional.ifPresent(tokenGranterBuilder.defaultGranter()::logout);
+        return R.OK("登出成功");
+    }
+
+
+    /**
      * 用户登录
      */
-    public R<String> loginByMobile(@Validated @RequestBody PhoneLoginRequest request) {
+    private R<String> loginByMobile(@Validated @RequestBody PhoneLoginRequest request) {
         // 解密
         String iv = request.getCaptchaKey();
         String key = SecureUtil.sha256(request.getCaptchaKey() + request.getTimestamp());
@@ -160,7 +277,7 @@ public class AuthenticationController {
     /**
      * 用户登录
      */
-    public R<String> loginByUsername(UsernameLoginRequest request) {
+    private R<String> loginByUsername(UsernameLoginRequest request) {
         LoginInfo loginInfo = new LoginInfo();
         // 解密
         String iv = request.getCaptchaKey();
@@ -175,18 +292,17 @@ public class AuthenticationController {
         return tokenGranterBuilder.getGranter(LoginGrantEnums.PASSWORD).login(loginInfo);
     }
 
+
     /**
-     * 用户登出
+     * 社交登录
      */
-    @PermitAll
-    @PostMapping("/logout")
-    @Operation(summary = "用户登出")
-    @OperatorLog(AuthenticationOperatorType.LOGOUT)
-    public R<String> logout(HttpServletRequest request) {
-        // 获取登录 token
-        Optional<String> tokenOptional = SecurityUtils.obtainAuthorization(request);
-        tokenOptional.ifPresent(tokenGranterBuilder.defaultGranter()::logout);
-        return R.OK("登出成功");
+    private R<String> loginBySocial(SocialLoginRequest request) {
+        LoginInfo loginInfo = new LoginInfo();
+        loginInfo.setSocialCode(request.getCode());
+        loginInfo.setSocialState(request.getState());
+        loginInfo.setSocialSource(request.getSource());
+        return tokenGranterBuilder.getGranter(LoginGrantEnums.SOCIAL).login(loginInfo);
     }
+
 
 }
