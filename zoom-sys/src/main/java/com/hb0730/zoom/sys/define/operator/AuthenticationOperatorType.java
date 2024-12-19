@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.define.operator;
 
 import com.hb0730.zoom.base.enums.OperatorRiskLevelEnums;
-import com.hb0730.zoom.operator.log.core.annotation.Module;
+import com.hb0730.zoom.operator.log.core.annotation.OperatorModule;
 import com.hb0730.zoom.operator.log.core.factory.InitializingOperatorTypes;
 import com.hb0730.zoom.operator.log.core.model.OperatorType;
 
@@ -11,7 +11,7 @@ import com.hb0730.zoom.operator.log.core.model.OperatorType;
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
  * @date 2024/10/10
  */
-@Module("basic:authentication")
+@OperatorModule("basic:authentication")
 public class AuthenticationOperatorType extends InitializingOperatorTypes {
     public static final String LOGIN = "authentication:login";
 
@@ -29,6 +29,10 @@ public class AuthenticationOperatorType extends InitializingOperatorTypes {
 
     public static final String UPDATE_USER_SETTINGS = "authentication:update-user-settings";
 
+    public static final String SOCIAL_BIND = "authentication:social-bind";
+
+    public static final String SOCIAL_UNBIND = "authentication:social-unbind";
+
     @Override
     public OperatorType[] types() {
         return new OperatorType[]{
@@ -39,7 +43,10 @@ public class AuthenticationOperatorType extends InitializingOperatorTypes {
                 new OperatorType(OperatorRiskLevelEnums.M, CANCEL_ACCESS_TOKEN, "注销访问令牌"),
                 new OperatorType(OperatorRiskLevelEnums.M, RESTORE_ACCESS_TOKEN, "恢复访问令牌"),
                 new OperatorType(OperatorRiskLevelEnums.H, DELETE_ACCESS_TOKEN, "删除访问令牌"),
-                new OperatorType(OperatorRiskLevelEnums.L, UPDATE_USER_SETTINGS, "更新用户设置")
+                new OperatorType(OperatorRiskLevelEnums.L, UPDATE_USER_SETTINGS, "更新用户设置"),
+                new OperatorType(OperatorRiskLevelEnums.L, SOCIAL_BIND, "社交账号绑定"),
+                new OperatorType(OperatorRiskLevelEnums.M, SOCIAL_UNBIND, "社交账号解绑")
+
 
         };
     }

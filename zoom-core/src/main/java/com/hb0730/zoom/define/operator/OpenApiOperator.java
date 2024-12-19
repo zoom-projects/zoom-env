@@ -1,7 +1,7 @@
 package com.hb0730.zoom.define.operator;
 
 import com.hb0730.zoom.base.enums.OperatorRiskLevelEnums;
-import com.hb0730.zoom.operator.log.core.annotation.Module;
+import com.hb0730.zoom.operator.log.core.annotation.OperatorModule;
 import com.hb0730.zoom.operator.log.core.factory.InitializingOperatorTypes;
 import com.hb0730.zoom.operator.log.core.model.OperatorType;
 
@@ -11,7 +11,7 @@ import com.hb0730.zoom.operator.log.core.model.OperatorType;
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
  * @date 2024/12/10
  */
-@Module("open-api")
+@OperatorModule("open-api")
 public class OpenApiOperator extends InitializingOperatorTypes {
     /**
      * 模块

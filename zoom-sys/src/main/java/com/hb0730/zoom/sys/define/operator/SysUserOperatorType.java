@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.define.operator;
 
 import com.hb0730.zoom.base.enums.OperatorRiskLevelEnums;
-import com.hb0730.zoom.operator.log.core.annotation.Module;
+import com.hb0730.zoom.operator.log.core.annotation.OperatorModule;
 import com.hb0730.zoom.operator.log.core.factory.InitializingOperatorTypes;
 import com.hb0730.zoom.operator.log.core.model.OperatorType;
 
@@ -9,7 +9,7 @@ import com.hb0730.zoom.operator.log.core.model.OperatorType;
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
  * @date 2024/10/14
  */
-@Module("basic:user")
+@OperatorModule("basic:user")
 public class SysUserOperatorType extends InitializingOperatorTypes {
     public static final String ADD = "sys:user:create";
     public static final String EDIT = "sys:user:edit";

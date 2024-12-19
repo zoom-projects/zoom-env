@@ -236,6 +236,7 @@ public class AuthenticationController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "绑定失败", responseCode = "400")
     })
     @Parameter(name = "source", description = "社交登录类型,github,gitee", required = true)
+    @OperatorLog(AuthenticationOperatorType.SOCIAL_BIND)
     public R<?> socialCallback(@PathVariable String source, @RequestBody SocialCallbackRequest request) {
         // 获取用户信息
         AuthResponse<AuthUser> authUserAuthResponse = socialAuthRequestFactory.loginAuth(source, request.getCode(), request.getState());
@@ -274,6 +275,7 @@ public class AuthenticationController {
      * @return 结果
      */
     @DeleteMapping("/social/unbind/{source}")
+    @OperatorLog(AuthenticationOperatorType.SOCIAL_UNBIND)
     public R<?> socialUnbind(@PathVariable String source) {
         Optional<String> loginUserId = SecurityUtils.getLoginUserId();
         if (loginUserId.isEmpty()) {
