@@ -1,19 +1,24 @@
 package com.hb0730.zoom.sys.biz.base.controller;
 
+import com.hb0730.zoom.base.PairEnum;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.enums.LoginGrantEnums;
 import com.hb0730.zoom.base.ext.security.SecurityUtils;
 import com.hb0730.zoom.base.meta.UserInfo;
+import com.hb0730.zoom.base.pool.RegexPool;
 import com.hb0730.zoom.base.pool.StrPool;
 import com.hb0730.zoom.base.utils.AesCryptoUtil;
 import com.hb0730.zoom.base.utils.Base64Util;
 import com.hb0730.zoom.base.utils.HexUtil;
 import com.hb0730.zoom.base.utils.JsonUtil;
+import com.hb0730.zoom.base.utils.RegexUtil;
 import com.hb0730.zoom.base.utils.SecureUtil;
 import com.hb0730.zoom.operator.log.core.annotation.OperatorLog;
 import com.hb0730.zoom.social.core.SocialAuthRequestFactory;
 import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
+import com.hb0730.zoom.sys.biz.base.model.request.CodeLoginRequest;
+import com.hb0730.zoom.sys.biz.base.model.request.EmailLoginRequest;
 import com.hb0730.zoom.sys.biz.base.model.request.PhoneLoginRequest;
 import com.hb0730.zoom.sys.biz.base.model.request.SocialCallbackRequest;
 import com.hb0730.zoom.sys.biz.base.model.request.SocialLoginRequest;
@@ -107,9 +112,10 @@ public class AuthenticationController {
                                             value = "{\"username\":\"admin\",\"password\":\"123456\",\"captchaKey\":\"123456\",\"timestamp\":\"123456\"}"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                            name = "mobile",
-                                            description = "手机登录",
-                                            value = "{\"phone\":\"123456\",\"captchaKey\":\"123456\",\"timestamp\":\"123456\"}"
+                                            name = "code",
+                                            description = "验证码登陆",
+                                            value = "{\"username\":\"123456\",\"captchaKey\":\"123456\"," +
+                                                    "\"timestamp\":\"123456\"}"
                                     ),
                                     @io.swagger.v3.oas.annotations.media.ExampleObject(
                                             name = "social",
@@ -123,20 +129,35 @@ public class AuthenticationController {
     )
     public R<String> login(@PathVariable String type,
                            @RequestBody Map<String, String> body) {
-        if (LoginGrantEnums.PASSWORD.getCode().equals(type)) {
-            UsernameLoginRequest dto = UsernameLoginRequest.of(body);
-            return loginByUsername(dto);
-        } else if (LoginGrantEnums.MOBILE.getCode().equals(type)) {
-            PhoneLoginRequest dto = PhoneLoginRequest.of(body);
-            return loginByMobile(dto);
-        } else if (LoginGrantEnums.EMAIL.getCode().equals(type)) {
-            return R.NG("暂不支持邮箱登录");
-        } else if (LoginGrantEnums.SOCIAL.getCode().equals(type)) {
-            SocialLoginRequest loginRequest = SocialLoginRequest.of(body);
-            return loginBySocial(loginRequest);
+        Optional<LoginGrantEnums> grantEnums = PairEnum.of(LoginGrantEnums.class, type);
+        if (grantEnums.isEmpty()) {
+            return R.NG("暂不支持该登录方式");
         }
-
-        return R.NG("登录失败，暂未实现");
+        return switch (grantEnums.get()) {
+            case PASSWORD -> {
+                UsernameLoginRequest dto = UsernameLoginRequest.of(body);
+                yield loginByUsername(dto);
+            }
+            // 废弃 使用code登录
+            case MOBILE -> {
+                PhoneLoginRequest dto = PhoneLoginRequest.of(body);
+                yield loginByMobile(dto);
+            }
+            // 废弃 使用code登录
+            case EMAIL -> {
+                EmailLoginRequest loginRequest = EmailLoginRequest.of(body);
+                yield loginByEmail(loginRequest);
+            }
+            case CODE -> {
+                CodeLoginRequest loginRequest = CodeLoginRequest.of(body);
+                yield loginByCode(loginRequest);
+            }
+            case SOCIAL -> {
+                SocialLoginRequest loginRequest = SocialLoginRequest.of(body);
+                yield loginBySocial(loginRequest);
+            }
+            default -> R.NG("暂不支持该登录方式");
+        };
     }
 
     /**
@@ -293,6 +314,41 @@ public class AuthenticationController {
         loginInfo.setUsername(phone);
         loginInfo.setPassword(request.getCaptchaCode());
         return tokenGranterBuilder.getGranter(LoginGrantEnums.MOBILE).login(loginInfo);
+    }
+
+
+    private R<String> loginByEmail(EmailLoginRequest request) {
+        // 解密
+        String iv = request.getCaptchaKey();
+        String key = SecureUtil.sha256(request.getCaptchaKey() + request.getTimestamp());
+        byte[] _key = HexUtil.decodeHex(key);
+        byte[] _iv = iv.getBytes();
+        String email = AesCryptoUtil.decrypt(request.getCaptchaCode(), AesCryptoUtil.mode, _key, _iv);
+
+        LoginInfo loginInfo = new LoginInfo();
+        loginInfo.setUsername(email);
+        loginInfo.setPassword(request.getCaptchaCode());
+        return tokenGranterBuilder.getGranter(LoginGrantEnums.EMAIL).login(loginInfo);
+    }
+
+    private R<String> loginByCode(CodeLoginRequest request) {
+        // 解密
+        String iv = request.getCaptchaKey();
+        String key = SecureUtil.sha256(request.getCaptchaKey() + request.getTimestamp());
+        byte[] _key = HexUtil.decodeHex(key);
+        byte[] _iv = iv.getBytes();
+        String username = AesCryptoUtil.decrypt(request.getUsername(), AesCryptoUtil.mode, _key, _iv);
+        LoginInfo loginInfo = new LoginInfo();
+        loginInfo.setUsername(username);
+        loginInfo.setPassword(request.getCaptchaCode());
+        // 判断是否是邮箱/手机号
+        if (RegexUtil.isMatch(RegexPool.EMAIL, username)) {
+            return tokenGranterBuilder.getGranter(LoginGrantEnums.EMAIL).login(loginInfo);
+        } else if (RegexUtil.isMatch(RegexPool.MOBILE, username)) {
+            return tokenGranterBuilder.getGranter(LoginGrantEnums.MOBILE).login(loginInfo);
+        } else {
+            return R.NG("暂不支持该登录方式");
+        }
     }
 
     /**

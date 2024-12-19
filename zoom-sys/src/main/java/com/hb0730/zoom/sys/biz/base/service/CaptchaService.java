@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 验证码服务
@@ -35,8 +36,17 @@ public class CaptchaService {
      * @return 是否成功
      */
     public R<String> checkCaptcha(String key, String code) {
-        return R.
-                NG("验证码错误,暂时不支持验证码校验");
+        // 加密
+        CacheKeyDefine cacheKeyDefine = LoginCaptchaCacheKeyDefine.LOGIN_CAPTCHA;
+        String _key = Md5Util.md5Hex(key);
+        Optional<String> cacheString = cache.getString(cacheKeyDefine.format(_key));
+        if (cacheString.isPresent() && cacheString.get().equals(code)) {
+            return R.OK();
+        }
+        if (cacheString.isEmpty()) {
+            return R.NG("验证码已过期,请重新获取");
+        }
+        return R.NG("验证码错误");
     }
 
     /**
@@ -50,7 +60,7 @@ public class CaptchaService {
         String code = RandomUtil.randomNumbers(6);
         setCache(account, code);
         sendNotify(type, account, code);
-        return R.OK(code);
+        return R.OK();
     }
 
 
@@ -75,7 +85,7 @@ public class CaptchaService {
         // 加密
         CacheKeyDefine cacheKeyDefine = LoginCaptchaCacheKeyDefine.LOGIN_CAPTCHA;
         String _key = Md5Util.md5Hex(key);
-        cache.setJson(
+        cache.setString(
                 cacheKeyDefine.format(_key),
                 code,
                 cacheKeyDefine.getTimeout(),

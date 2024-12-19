@@ -12,25 +12,25 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 /**
- * 手机号码登录
+ * 邮箱授权
  *
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2024/10/3
+ * @date 2024/12/19
  */
-@Component(MobileTokenGranter.GRANT_TYPE)
+@Component(EmailTokenGranter.GRANT_TYPE)
 @RequiredArgsConstructor
-public class MobileTokenGranter extends AbstractTokenGranter {
-    public static final String GRANT_TYPE = "mobile";
+public class EmailTokenGranter extends AbstractTokenGranter {
+    public static final String GRANT_TYPE = "email";
     private final CaptchaService captchaService;
     private final SysUserService userService;
     private final MybatisEncryptService encryptService;
 
     @Override
     protected R<String> checkParam(LoginInfo loginInfo) {
-        String mobile = loginInfo.getUsername();
+        String email = loginInfo.getUsername();
         String code = loginInfo.getPassword();
-        if (mobile == null || code == null) {
-            return R.NG("手机号码或验证码不能为空");
+        if (email == null || code == null) {
+            return R.NG("邮箱或验证码不能为空");
         }
         return R.OK();
     }
@@ -42,7 +42,7 @@ public class MobileTokenGranter extends AbstractTokenGranter {
 
     @Override
     protected Optional<SysUser> getUser(LoginInfo loginInfo) {
-        String _username = encryptService.encrypt(loginInfo.getUsername());
-        return Optional.ofNullable(userService.findByPhone(_username));
+        String email = encryptService.encrypt(loginInfo.getUsername());
+        return Optional.ofNullable(userService.findByEmail(email));
     }
 }
