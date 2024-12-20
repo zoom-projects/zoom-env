@@ -57,6 +57,10 @@
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-social</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-oss</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.hb0730</groupId>
