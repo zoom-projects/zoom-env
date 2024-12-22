@@ -63,17 +63,15 @@ public class SysPermission extends BizEntity {
      * 是否缓存,如果缓存，请保持routerName与组件名称一致
      */
     private Boolean isKeepAlive;
-
     /**
      * 是否固定在标签视图
      */
     private Boolean isAffix;
+
     /**
      * 是否大屏
      */
     private Boolean isFullScreen;
-
-
     /**
      * iframe
      */

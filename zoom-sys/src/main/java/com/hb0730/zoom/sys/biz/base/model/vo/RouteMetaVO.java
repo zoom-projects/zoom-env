@@ -30,22 +30,24 @@ public class RouteMetaVO implements Serializable {
      * 是否隐藏
      */
     @Schema(description = "是否隐藏")
-    private Boolean hidden;
+    private Boolean isHidden;
+
     /**
-     * 是否缓存
+     * 是否缓存,如果缓存，请保持routerName与组件名称一致
      */
-    @Schema(description = "是否缓存,如果缓存，请保持route name与组件name保持一致")
-    private Boolean keepAlive;
+    @Schema(description = "是否缓存,如果缓存，请保持routerName与组件名称一致")
+    private Boolean isKeepAlive;
     /**
-     * 是否固定
+     * 是否固定在标签视图
      */
-    @Schema(description = "是否固定")
-    private Boolean affix;
+    @Schema(description = "是否固定在标签视图")
+    private Boolean isAffix;
+
     /**
-     * 是否全屏
+     * 是否大屏
      */
-    @Schema(description = "是否全屏")
-    private Boolean full;
+    @Schema(description = "是否大屏")
+    private Boolean isFullScreen;
     /**
      * iframe src
      */

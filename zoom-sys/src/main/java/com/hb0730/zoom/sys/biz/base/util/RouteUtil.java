@@ -91,13 +91,13 @@ public class RouteUtil {
         // 菜单图标
         meta.setIcon(dto.getIcon());
         // 是否隐藏
-        meta.setHidden(dto.getHidden());
+        meta.setIsHidden(dto.getIsHidden());
         // 是否缓存
-        meta.setKeepAlive(dto.getKeepAlive());
+        meta.setIsKeepAlive(dto.getIsKeepAlive());
         // 是否固定在标签视图
-        meta.setAffix(dto.getAffix());
+        meta.setIsAffix(dto.getIsAffix());
         // 是否大屏
-        meta.setFull(dto.getFullScreen());
+        meta.setIsFullScreen(dto.getIsFullScreen());
         // iframe
         meta.setFrameSrc(dto.getFrameSrc());
 

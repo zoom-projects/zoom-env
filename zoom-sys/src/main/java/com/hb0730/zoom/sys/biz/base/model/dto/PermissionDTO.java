@@ -55,19 +55,21 @@ public class PermissionDTO implements TreeUtil.Node<PermissionDTO, String> {
     /**
      * 是否隐藏
      */
-    private Boolean hidden;
+    private Boolean isHidden;
+
     /**
      * 是否缓存,如果缓存，请保持routerName与组件名称一致
      */
-    private Boolean keepAlive;
+    private Boolean isKeepAlive;
     /**
      * 是否固定在标签视图
      */
-    private Boolean affix;
+    private Boolean isAffix;
+
     /**
      * 是否大屏
      */
-    private Boolean fullScreen;
+    private Boolean isFullScreen;
 
     /**
      * iframe src
