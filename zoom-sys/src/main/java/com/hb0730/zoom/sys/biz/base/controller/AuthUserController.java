@@ -175,7 +175,7 @@ public class AuthUserController {
     @DeleteMapping("/access_token/delete/{id}")
     @OperatorLog(AuthenticationOperatorType.DELETE_ACCESS_TOKEN)
     public R<String> deleteAccessToken(@PathVariable String id) {
-        boolean result = sysUserAccessTokenService.removeById(id);
+        boolean result = sysUserAccessTokenService.deleteById(id);
         return result ? R.OK() : R.NG("删除失败");
     }
 

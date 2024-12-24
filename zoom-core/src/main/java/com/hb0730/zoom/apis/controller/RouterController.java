@@ -145,9 +145,9 @@ public class RouterController {
             Optional<UserDTO> userOptional = Optional.of(proxyService.findUserByToken(token));
             SaveOperatorLogDTO dto = new SaveOperatorLogDTO();
             // 操作人ID
-            dto.setUserId(userOptional.map(UserDTO::getUserId).orElse(null));
+            dto.setUserId(userOptional.map(UserDTO::getUserId).orElse("summery"));
             // 操作人
-            dto.setUsername(userOptional.map(UserDTO::getUsername).orElse(null));
+            dto.setUsername(userOptional.map(UserDTO::getUsername).orElse("summery"));
             // traceId
             // opentelemetry traceId
             String traceId = TraceHolder.getOtelTraceId();
