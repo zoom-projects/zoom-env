@@ -1,6 +1,8 @@
 package com.hb0730.zoom.sys.biz.base.controller;
 
+import com.hb0730.zoom.base.PairEnum;
 import com.hb0730.zoom.base.R;
+import com.hb0730.zoom.base.enums.CaptchaTypeEnums;
 import com.hb0730.zoom.sys.biz.base.service.CaptchaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 验证码服务
@@ -38,6 +41,14 @@ public class CaptchaController {
     @PermitAll
     public R<String> sendCaptcha(@PathVariable String type,
                                  @RequestBody Map<String, String> params) {
+        Optional<CaptchaTypeEnums> captchaType = PairEnum.of(CaptchaTypeEnums.class, type);
+        if (captchaType.isEmpty()) {
+            return R.NG("验证码类型错误");
+        }
+        // 解密
+
+
         return null;
     }
+
 }

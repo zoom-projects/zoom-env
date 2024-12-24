@@ -12,6 +12,7 @@ import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import com.hb0730.zoom.operator.log.core.annotation.OperatorLog;
 import com.hb0730.zoom.sys.biz.base.convert.UserSettingsConvert;
 import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
+import com.hb0730.zoom.sys.biz.base.model.request.RestEmailOrPhoneRequest;
 import com.hb0730.zoom.sys.biz.base.model.request.RestPasswordRequest;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserSettingsVO;
@@ -106,6 +107,29 @@ public class AuthUserController {
         String token = tokenOptional.get();
         // 重置密码
         return authUserService.restPassword(token, data);
+    }
+
+    /**
+     * 重置邮箱或手机号
+     */
+    @PutMapping("/reset/{key}")
+    @Operation(summary = "重置邮箱或手机号")
+    @OperatorLog(AuthenticationOperatorType.UPDATE_EMAIL_PHONE)
+    public R<String> restEmailOrPhone(@PathVariable String key,
+                                      @Validated @RequestBody RestEmailOrPhoneRequest request) {
+        // 解密
+        String iv = request.getCaptchaKey();
+        String key1 = SecureUtil.sha256(request.getCaptchaKey() + request.getTimestamp());
+        byte[] _key = HexUtil.decodeHex(key1);
+        byte[] _iv = iv.getBytes();
+        String emailOrPhone = AesCryptoUtil.decrypt(request.getKey(), AesCryptoUtil.mode, _key, _iv);
+        request.setKey(emailOrPhone);
+        request.setOperatorId(SecurityUtils.getLoginUserId().orElse(null));
+        return switch (key.toLowerCase()) {
+            case "email" -> authUserService.resetEmail(request);
+            case "phone" -> authUserService.resetPhone(request);
+            default -> R.NG("不支持的操作");
+        };
     }
 
     @Operation(summary = "查询操作日志")

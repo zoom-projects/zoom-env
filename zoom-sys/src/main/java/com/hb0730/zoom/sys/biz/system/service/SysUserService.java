@@ -12,7 +12,6 @@ import com.hb0730.zoom.base.utils.DigestUtil;
 import com.hb0730.zoom.base.utils.PasswdUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
-import com.hb0730.zoom.core.SysConst;
 import com.hb0730.zoom.sys.biz.system.convert.SysUserConvert;
 import com.hb0730.zoom.sys.biz.system.mapper.SysUserMapper;
 import com.hb0730.zoom.sys.biz.system.model.dto.RestPasswordDTO;
@@ -43,6 +42,31 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
     private final SysUserConvert userConvert;
     private final CacheUtil cache;
     private final SysUserRoleService userRoleService;
+
+
+    /**
+     * 邮箱是否存在
+     *
+     * @param email 邮箱
+     * @return 是否存在
+     */
+    public boolean existEmail(String email) {
+        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+                .eq(SysUser::getEmail, email);
+        return baseMapper.of(queryWrapper).present();
+    }
+
+    /**
+     * 手机号是否存在
+     *
+     * @param phone 手机号
+     * @return 是否存在
+     */
+    public boolean existPhone(String phone) {
+        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+                .eq(SysUser::getPhone, phone);
+        return baseMapper.of(queryWrapper).present();
+    }
 
     /**
      * 根据用户名查询
@@ -81,27 +105,6 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
     }
 
     /**
-     * 校验用户是否有效
-     *
-     * @param user 用户
-     * @return 是否有效
-     */
-    public R<?> checkUserIsEffective(SysUser user) {
-        if (user == null) {
-            return R.NG("该用户不存在，请注册");
-        }
-        // 情况2：根据用户信息查询，该用户已注销
-        if (SysConst.DEL_FLAG_1.equals(user.getDelFlag())) {
-            return R.NG("该用户已注销");
-        }
-        // 情况3：根据用户信息查询，该用户已冻结
-        if (SysConst.USER_FREEZE.equals(user.getStatus())) {
-            return R.NG("该用户已冻结");
-        }
-        return R.OK();
-    }
-
-    /**
      * 更新最后登录时间
      *
      * @param id 用户ID
@@ -113,6 +116,33 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
         baseMapper.updateById(user);
     }
 
+    /**
+     * 更新邮箱
+     *
+     * @param id    用户ID
+     * @param email 邮箱
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateEmail(String id, String email) {
+        SysUser user = new SysUser();
+        user.setId(id);
+        user.setEmail(email);
+        baseMapper.updateById(user);
+    }
+
+    /**
+     * 更新手机号
+     *
+     * @param id    用户ID
+     * @param phone 手机号
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updatePhone(String id, String phone) {
+        SysUser user = new SysUser();
+        user.setId(id);
+        user.setPhone(phone);
+        baseMapper.updateById(user);
+    }
 
     /**
      * 重置密码

@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.biz.base.service;
 
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.enums.LoginCaptchaMsgTypeEnums;
+import com.hb0730.zoom.base.enums.CaptchaTypeEnums;
 import com.hb0730.zoom.base.ext.services.dto.SaveMessageDTO;
 import com.hb0730.zoom.base.sys.message.service.MessageService;
 import com.hb0730.zoom.base.utils.Md5Util;
@@ -56,7 +56,7 @@ public class CaptchaService {
      * @param account 账号
      * @return 验证码
      */
-    public R<String> sendCode(String type, String account) {
+    public R<String> sendCode(CaptchaTypeEnums type, String account) {
         String code = RandomUtil.randomNumbers(6);
         setCache(account, code);
         sendNotify(type, account, code);
@@ -71,11 +71,11 @@ public class CaptchaService {
      * @param account 账号
      * @param code    验证码
      */
-    private void sendNotify(String type, String account, String code) {
+    private void sendNotify(CaptchaTypeEnums type, String account, String code) {
         SaveMessageDTO dto = new SaveMessageDTO();
         dto.setReceiver(account);
-        dto.setTemplateCode(LoginCaptchaMsgTypeEnums.of(type).getCode());
-        dto.setMsgType(LoginCaptchaMsgTypeEnums.of(type).getMsgType().getCode());
+        dto.setTemplateCode(type.getCode());
+        dto.setMsgType(type.getMsgType());
         Map<String, String> extra = Map.of("code", code);
         dto.setExtra(extra);
         messageService.saveMessage(dto);

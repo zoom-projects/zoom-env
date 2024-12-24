@@ -8,6 +8,7 @@ import com.hb0730.zoom.base.ext.services.dto.SaveOperatorLogDTO;
 import com.hb0730.zoom.base.ext.services.dto.UserDTO;
 import com.hb0730.zoom.base.ext.services.proxy.SysProxyService;
 import com.hb0730.zoom.base.meta.TraceHolder;
+import com.hb0730.zoom.base.meta.UserContext;
 import com.hb0730.zoom.base.utils.JsonUtil;
 import com.hb0730.zoom.base.utils.ServletUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
@@ -69,6 +70,9 @@ public class RouterController {
                     result = R.NG(OpenController.ErrorCode.C10003.getCode(), OpenController.ErrorCode.C10003.getMessage());
                     return result;
                 }
+                // 设置用户上下文
+                UserDTO user = proxyService.findUserByToken(token);
+                UserContext.setCurrentUserName(user.getUsername());
             }
 
             //业务处理
