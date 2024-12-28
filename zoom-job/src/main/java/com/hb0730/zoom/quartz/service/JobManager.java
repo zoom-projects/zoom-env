@@ -54,6 +54,7 @@ public class JobManager {
                     .ofType(targetClazz)
                     .withIdentity(JOB_NAME + quartzJob.getId())
                     .usingJobData("parameter", quartzJob.getParameter())
+                    .usingJobData("appName", quartzJob.getAppName())
                     .withDescription(quartzJob.getDescription())
                     .build();
 
