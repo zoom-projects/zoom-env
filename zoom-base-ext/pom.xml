@@ -10,23 +10,33 @@
         <relativePath/>
     </parent>
 
-    <artifactId>zoom-env</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>zoom-core</module>
-        <module>zoom-base-ext</module>
-        <module>zoom-data</module>
-        <module>zoom-sys</module>
-        <module>zoom-conf</module>
-        <module>zoom-job</module>
-        <module>zoom-data-rpc</module>
-    </modules>
+    <artifactId>zoom-base-ext</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-sofa-rpc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-data</artifactId>
+            <version>${zoom.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

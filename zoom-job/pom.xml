@@ -29,10 +29,20 @@
             <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
         </dependency>
 
+        <!-- zoom oss 下载文件/上传文件-->
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-oss</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-poi</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-base-ext</artifactId>
+            <version>${zoom.version}</version>
         </dependency>
     </dependencies>
 
