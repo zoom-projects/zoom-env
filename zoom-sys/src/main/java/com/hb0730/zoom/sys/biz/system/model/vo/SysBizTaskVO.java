@@ -70,6 +70,11 @@ public class SysBizTaskVO implements Domain {
      */
     @Schema(description = "服务器文件名称")
     private String fileName;
+    /**
+     * 下载地址
+     */
+    @Schema(description = "下载地址")
+    private String fileUrl;
 
     /**
      * 处理状态

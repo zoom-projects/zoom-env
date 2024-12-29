@@ -14,6 +14,8 @@ import com.hb0730.zoom.base.ext.services.remote.SysDictRpcService;
 import com.hb0730.zoom.base.ext.services.remote.SysNotifyRpcService;
 import com.hb0730.zoom.base.ext.services.remote.SysOperatorLogRpcService;
 import com.hb0730.zoom.base.ext.services.remote.SysUserRpcService;
+import com.hb0730.zoom.base.utils.StrUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,7 @@ import java.util.Map;
  * @date 2024/10/17
  */
 @Service
+@Slf4j
 public class SysProxyService implements SysUserRpcService, SysNotifyRpcService, SysOperatorLogRpcService,
         SysDictRpcService, SysBizTaskRpcService {
 
@@ -108,5 +111,28 @@ public class SysProxyService implements SysUserRpcService, SysNotifyRpcService, 
     @Override
     public void updateTastImmediately(TaskInfo taskInfo) {
         sysBizTaskRpcService.updateTastImmediately(taskInfo);
+    }
+
+
+    /**
+     * 检查用户消息通知
+     *
+     * @param userInfoDTO 用户信息
+     * @return 是否消息通知
+     */
+    public boolean checkUserMessageNotification(UserInfoDTO userInfoDTO) {
+        if (null == userInfoDTO) {
+            log.warn("用户信息为空");
+            return false;
+        }
+        if (null == userInfoDTO.getMessageNotification() || !userInfoDTO.getMessageNotification()) {
+            log.warn("用户未设置消息通知");
+            return false;
+        }
+        if (StrUtil.isBlank(userInfoDTO.getEmail()) && StrUtil.isBlank(userInfoDTO.getPhone())) {
+            log.warn("用户未设置邮箱或者手机号码");
+            return false;
+        }
+        return true;
     }
 }

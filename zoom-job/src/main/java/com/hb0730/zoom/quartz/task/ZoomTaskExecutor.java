@@ -8,10 +8,12 @@ import com.hb0730.zoom.base.ext.services.dto.task.TaskInfo;
 import com.hb0730.zoom.base.ext.services.proxy.SysProxyService;
 import com.hb0730.zoom.base.utils.DateUtil;
 import com.hb0730.zoom.base.utils.JsonUtil;
+import com.hb0730.zoom.quartz.event.CompletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -46,6 +48,10 @@ public class ZoomTaskExecutor implements ITask {
      * 处理中任务池
      */
     private final Map<String, Boolean> INPROCESSTASKS = new ConcurrentHashMap<>();
+
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Override
     public String getTaskType() {
@@ -100,6 +106,8 @@ public class ZoomTaskExecutor implements ITask {
             }
             // 更新任务状态
             sysProxyService.updateTastImmediately(task);
+            // 发布任务完成事件
+            applicationContext.publishEvent(new CompletedEvent(task, this));
 
             // 释放任务锁
             INPROCESSTASKS.remove(task.getTaskNum());
