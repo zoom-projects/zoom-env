@@ -37,6 +37,11 @@
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-operator-log</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-poi</artifactId>
+            <optional>true</optional>
+        </dependency>
 
         <dependency>
             <groupId>com.hb0730</groupId>

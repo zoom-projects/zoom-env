@@ -1,5 +1,6 @@
 package com.hb0730.zoom.base.ext.services.remote;
 
+import com.hb0730.zoom.base.data.Option;
 import com.hb0730.zoom.sofa.rpc.core.annotation.RpcAppName;
 
 import java.util.List;
@@ -20,4 +21,12 @@ public interface SysDictRpcService {
      * @return 字典项
      */
     List<Object> getDictItems(String dictCode);
+
+    /**
+     * 获取字典项
+     *
+     * @param dictCode 字典编码
+     * @return 字典项
+     */
+    List<Option> loadItems(String dictCode);
 }

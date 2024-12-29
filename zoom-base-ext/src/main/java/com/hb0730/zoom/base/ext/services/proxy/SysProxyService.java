@@ -1,6 +1,7 @@
 package com.hb0730.zoom.base.ext.services.proxy;
 
 import com.hb0730.zoom.base.R;
+import com.hb0730.zoom.base.data.Option;
 import com.hb0730.zoom.base.enums.TaskCategoryEnums;
 import com.hb0730.zoom.base.ext.services.dto.SaveMessageDTO;
 import com.hb0730.zoom.base.ext.services.dto.SaveOperatorLogDTO;
@@ -77,6 +78,11 @@ public class SysProxyService implements SysUserRpcService, SysNotifyRpcService, 
     @Override
     public List<Object> getDictItems(String dictCode) {
         return dictRpcService.getDictItems(dictCode);
+    }
+
+    @Override
+    public List<Option> loadItems(String dictCode) {
+        return dictRpcService.loadItems(dictCode);
     }
 
     @Override
