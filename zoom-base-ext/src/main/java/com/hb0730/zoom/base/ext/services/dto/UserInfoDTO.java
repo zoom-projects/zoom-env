@@ -44,5 +44,6 @@ public class UserInfoDTO implements Serializable {
     /**
      * 是否开启消息通知
      */
+    @Deprecated
     private Boolean messageNotification;
 }

@@ -2,6 +2,7 @@ package com.hb0730.zoom.quartz.listener;
 
 import com.hb0730.zoom.base.PairEnum;
 import com.hb0730.zoom.base.enums.MessageTypeEnums;
+import com.hb0730.zoom.base.enums.SubscribeMsgCodeEnums;
 import com.hb0730.zoom.base.enums.TaskNotifyEnums;
 import com.hb0730.zoom.base.enums.TaskTypeEnums;
 import com.hb0730.zoom.base.ext.services.dto.SaveMessageDTO;
@@ -45,26 +46,27 @@ public class CompletedListener implements ApplicationListener<CompletedEvent> {
             return;
         }
         UserInfoDTO username = sysProxyService.findUsername(createdBy);
-        if (!sysProxyService.checkUserMessageNotification(username)) {
-            log.warn("用户未开启消息通知");
-            return;
-        }
-        String email = username.getEmail();
-        if (StrUtil.isBlank(email)) {
-            log.warn("用户未设置邮箱");
+        if (username == null) {
             return;
         }
         SaveMessageDTO message = new SaveMessageDTO();
-        message.setMsgType(MessageTypeEnums.EMAIL);
-        message.setTemplateCode(TaskNotifyEnums.COMPLETED.getCode());
-        message.setReceiver(username.getEmail());
         Optional<TaskTypeEnums> typeEnums = PairEnum.of(TaskTypeEnums.class, taskInfo.getType());
         if (typeEnums.isPresent()) {
             Map<String, String> map = Map.of("code", String.format("%s(%s)", typeEnums.get().getMessage(), taskInfo.getTaskNum()));
             message.setExtra(map);
         } else
             message.setExtra(Map.of("code", taskInfo.getTaskNum()));
-        sysProxyService.saveMessage(message);
+
+        sysProxyService.saveMessageAllNotice(
+                createdBy,
+                SubscribeMsgCodeEnums.BASIC_TASK_MSG.getCode(),
+                Map.of(
+                        MessageTypeEnums.EMAIL, TaskNotifyEnums.COMPLETED.getCode(),
+                        MessageTypeEnums.SMS, TaskNotifyEnums.COMPLETED.getCode(),
+                        MessageTypeEnums.SITE, TaskNotifyEnums.COMPLETED.getCode()
+                ),
+                message
+        );
 
     }
 }

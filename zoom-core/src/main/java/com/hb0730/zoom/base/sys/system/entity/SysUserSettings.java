@@ -24,5 +24,6 @@ public class SysUserSettings extends BaseEntity {
     /**
      * 是否开启消息通知
      */
+    @Deprecated
     private Boolean messageNotification;
 }

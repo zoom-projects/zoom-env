@@ -21,6 +21,6 @@ public class SysSendMsgHandle implements ISendMsgHandle {
 
     @Override
     public MessageTypeEnums getType() {
-        return MessageTypeEnums.SYS;
+        return MessageTypeEnums.SITE;
     }
 }

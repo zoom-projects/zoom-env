@@ -2,6 +2,7 @@ package com.hb0730.zoom.base.ext.services.proxy;
 
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.data.Option;
+import com.hb0730.zoom.base.enums.MessageTypeEnums;
 import com.hb0730.zoom.base.enums.TaskCategoryEnums;
 import com.hb0730.zoom.base.ext.services.dto.SaveMessageDTO;
 import com.hb0730.zoom.base.ext.services.dto.SaveOperatorLogDTO;
@@ -113,26 +114,48 @@ public class SysProxyService implements SysUserRpcService, SysNotifyRpcService, 
         sysBizTaskRpcService.updateTastImmediately(taskInfo);
     }
 
+    @Override
+    public boolean subscribedMsg(String username, String code, MessageTypeEnums msgType) {
+        return userRpcService.subscribedMsg(username, code, msgType);
+    }
 
-    /**
-     * 检查用户消息通知
-     *
-     * @param userInfoDTO 用户信息
-     * @return 是否消息通知
-     */
-    public boolean checkUserMessageNotification(UserInfoDTO userInfoDTO) {
-        if (null == userInfoDTO) {
-            log.warn("用户信息为空");
-            return false;
+    @Override
+    public R<?> saveMessageAllNotice(String username,
+                                     String subscribeCode,
+                                     Map<MessageTypeEnums, String> msgTemplateCode,
+                                     SaveMessageDTO dto) {
+        UserInfoDTO userInfo = findUsername(username);
+        if (userInfo == null) {
+            return R.NG("用户不存在");
         }
-        if (null == userInfoDTO.getMessageNotification() || !userInfoDTO.getMessageNotification()) {
-            log.warn("用户未设置消息通知");
-            return false;
+        boolean subscribedMsg = subscribedMsg(username, subscribeCode, MessageTypeEnums.EMAIL);
+        if (subscribedMsg && StrUtil.isNotBlank(userInfo.getEmail())) {
+            log.info("任务完成，发送 Email 消息通知");
+            dto.setReceiver(userInfo.getEmail());
+            dto.setMsgType(MessageTypeEnums.EMAIL.getCode());
+            String code = msgTemplateCode.get(MessageTypeEnums.EMAIL);
+            dto.setTemplateCode(code);
+            return saveMessage(dto);
         }
-        if (StrUtil.isBlank(userInfoDTO.getEmail()) && StrUtil.isBlank(userInfoDTO.getPhone())) {
-            log.warn("用户未设置邮箱或者手机号码");
-            return false;
+        subscribedMsg = subscribedMsg(username, subscribeCode, MessageTypeEnums.SMS);
+        if (subscribedMsg && StrUtil.isNotBlank(userInfo.getPhone())) {
+            log.info("任务完成，发送 SMS 消息通知");
+            dto.setReceiver(userInfo.getPhone());
+            dto.setMsgType(MessageTypeEnums.SMS.getCode());
+            String code = msgTemplateCode.get(MessageTypeEnums.SMS);
+            dto.setTemplateCode(code);
+            return saveMessage(dto);
         }
-        return true;
+
+        subscribedMsg = subscribedMsg(username, subscribeCode, MessageTypeEnums.SITE);
+        if (subscribedMsg) {
+            log.info("任务完成，发送站内消息通知");
+            dto.setReceiver(userInfo.getUsername());
+            dto.setMsgType(MessageTypeEnums.SITE.getCode());
+            String code = msgTemplateCode.get(MessageTypeEnums.SITE);
+            dto.setTemplateCode(code);
+            return saveMessage(dto);
+        }
+        return R.OK();
     }
 }
