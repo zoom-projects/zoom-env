@@ -2,26 +2,25 @@ package com.hb0730.zoom.base.sys.message.handle.impl;
 
 import com.hb0730.zoom.base.enums.MessageTypeEnums;
 import com.hb0730.zoom.base.sys.message.handle.ISendMsgHandle;
-import com.hb0730.zoom.mail.core.MailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
- * 邮件发送
+ * 站内消息
  *
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2024/12/12
+ * @date 2024/12/30
  */
 @Component
 @Slf4j
-public class EmailSendMsgHandle implements ISendMsgHandle {
+public class SysSendMsgHandle implements ISendMsgHandle {
     @Override
     public void sendMsg(String receiver, String title, String content) {
-        MailUtil.sendText(receiver, title, content);
+
     }
 
     @Override
     public MessageTypeEnums getType() {
-        return MessageTypeEnums.EMAIL;
+        return MessageTypeEnums.SYS;
     }
 }

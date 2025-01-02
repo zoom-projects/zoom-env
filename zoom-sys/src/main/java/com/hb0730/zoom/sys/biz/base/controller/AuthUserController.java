@@ -14,9 +14,12 @@ import com.hb0730.zoom.sys.biz.base.convert.UserSettingsConvert;
 import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
 import com.hb0730.zoom.sys.biz.base.model.request.RestEmailOrPhoneRequest;
 import com.hb0730.zoom.sys.biz.base.model.request.RestPasswordRequest;
+import com.hb0730.zoom.sys.biz.base.model.request.UserSubscribeMsgUpdateRequest;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserSettingsVO;
+import com.hb0730.zoom.sys.biz.base.model.vo.UserSubscribeMsgVO;
 import com.hb0730.zoom.sys.biz.base.service.AuthUserService;
+import com.hb0730.zoom.sys.biz.base.service.AuthUserSubscribeMsgService;
 import com.hb0730.zoom.sys.biz.system.model.request.operator.log.SysOperatorLogQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserAccessTokenCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserAccessTokenQueryRequest;
@@ -41,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -61,6 +65,7 @@ public class AuthUserController {
     private final SysOperatorLogService operatorLogService;
     private final SysUserAccessTokenService sysUserAccessTokenService;
     private final SysUserSettingsService sysUserSettingsService;
+    private final AuthUserSubscribeMsgService authUserSubscribeMsgService;
     private final UserSettingsConvert userSettingsConvert;
 
 
@@ -229,4 +234,28 @@ public class AuthUserController {
         return R.OK("更新成功");
     }
 
+
+    @Operation(summary = "获取用户订阅消息")
+    @GetMapping("/subscribe_msg")
+    public R<List<UserSubscribeMsgVO>> getUserSubscribeMsg(HttpServletRequest request) {
+        String userId = SecurityUtils.getLoginUserId().orElse(null);
+        if (StrUtil.isBlank(userId)) {
+            return R.NG("获取用户信息失败,token为空");
+        }
+        List<UserSubscribeMsgVO> userSubscribeMsg = authUserSubscribeMsgService.getUserSubscribeMsg(userId);
+        return R.OK(userSubscribeMsg);
+    }
+
+    @Operation(summary = "保存用户订阅消息")
+    @PutMapping("/subscribe_msg")
+    @OperatorLog(AuthenticationOperatorType.UPDATE_USER_SUBSCRIBE_MSG)
+    public R<String> saveUserSubscribeMsg(HttpServletRequest request,
+                                          @Validated @RequestBody UserSubscribeMsgUpdateRequest userSubscribeMsgUpdateRequest) {
+        String userId = SecurityUtils.getLoginUserId().orElse(null);
+        if (StrUtil.isBlank(userId)) {
+            return R.NG("获取用户信息失败,token为空");
+        }
+        authUserSubscribeMsgService.saveUserSubscribeMsg(userId, userSubscribeMsgUpdateRequest);
+        return R.OK("更新成功");
+    }
 }

@@ -37,6 +37,7 @@ import java.util.Map;
 public class MessageService extends ServiceImpl<MessageMapper, SysMessage> {
     private final MessageTemplateService messageTemplateService;
     private final MybatisEncryptService mybatisEncryptService;
+    private final SendMsgHandleFactory sendMsgHandleFactory;
 
 
     /**
@@ -75,7 +76,7 @@ public class MessageService extends ServiceImpl<MessageMapper, SysMessage> {
                     continue;
                 }
 
-                ISendMsgHandle sendMsgHandle = SendMsgHandleFactory.get(msgType);
+                ISendMsgHandle sendMsgHandle = sendMsgHandleFactory.get(msgType);
                 if (null == sendMsgHandle) {
                     log.error("发送消息失败,消息类型不存在: {}", message.getMsgType());
                     continue;

@@ -35,6 +35,8 @@ public class AuthenticationOperatorType extends InitializingOperatorTypes {
 
     public static final String SOCIAL_UNBIND = "authentication:social-unbind";
 
+    public static final String UPDATE_USER_SUBSCRIBE_MSG = "authentication:update-user-subscribe-msg";
+
     @Override
     public OperatorType[] types() {
         return new OperatorType[]{
@@ -48,7 +50,8 @@ public class AuthenticationOperatorType extends InitializingOperatorTypes {
                 new OperatorType(OperatorRiskLevelEnums.H, DELETE_ACCESS_TOKEN, "删除访问令牌"),
                 new OperatorType(OperatorRiskLevelEnums.L, UPDATE_USER_SETTINGS, "更新用户设置"),
                 new OperatorType(OperatorRiskLevelEnums.L, SOCIAL_BIND, "社交账号绑定"),
-                new OperatorType(OperatorRiskLevelEnums.M, SOCIAL_UNBIND, "社交账号解绑")
+                new OperatorType(OperatorRiskLevelEnums.M, SOCIAL_UNBIND, "社交账号解绑"),
+                new OperatorType(OperatorRiskLevelEnums.H, UPDATE_USER_SUBSCRIBE_MSG, "更新用户订阅消息")
 
 
         };
