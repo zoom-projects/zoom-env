@@ -135,7 +135,7 @@ public class SysProxyService implements SysUserRpcService, SysNotifyRpcService, 
             dto.setMsgType(MessageTypeEnums.EMAIL.getCode());
             String code = msgTemplateCode.get(MessageTypeEnums.EMAIL);
             dto.setTemplateCode(code);
-            return saveMessage(dto);
+            saveMessage(dto);
         }
         subscribedMsg = subscribedMsg(username, subscribeCode, MessageTypeEnums.SMS);
         if (subscribedMsg && StrUtil.isNotBlank(userInfo.getPhone())) {
@@ -144,7 +144,7 @@ public class SysProxyService implements SysUserRpcService, SysNotifyRpcService, 
             dto.setMsgType(MessageTypeEnums.SMS.getCode());
             String code = msgTemplateCode.get(MessageTypeEnums.SMS);
             dto.setTemplateCode(code);
-            return saveMessage(dto);
+            saveMessage(dto);
         }
 
         subscribedMsg = subscribedMsg(username, subscribeCode, MessageTypeEnums.SITE);
@@ -154,7 +154,7 @@ public class SysProxyService implements SysUserRpcService, SysNotifyRpcService, 
             dto.setMsgType(MessageTypeEnums.SITE.getCode());
             String code = msgTemplateCode.get(MessageTypeEnums.SITE);
             dto.setTemplateCode(code);
-            return saveMessage(dto);
+            saveMessage(dto);
         }
         return R.OK();
     }
