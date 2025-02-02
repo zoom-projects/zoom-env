@@ -18,7 +18,9 @@ public interface ISendMsgHandle {
      * @param title    标题
      * @param content  内容
      */
-    void sendMsg(String receiver, String title, String content);
+    default void sendMsg(String receiver, String title, String content) {
+        throw new UnsupportedOperationException("不支持的操作");
+    }
 
     /**
      * 发送信息
@@ -26,7 +28,7 @@ public interface ISendMsgHandle {
      * @param message 消息
      */
     default void sendMsg(SendMessageDTO message) {
-        return;
+        throw new UnsupportedOperationException("不支持的操作");
     }
 
     /**

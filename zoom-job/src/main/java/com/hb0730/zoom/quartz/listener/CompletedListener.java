@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -51,11 +52,16 @@ public class CompletedListener implements ApplicationListener<CompletedEvent> {
         }
         SaveMessageDTO message = new SaveMessageDTO();
         Optional<TaskTypeEnums> typeEnums = PairEnum.of(TaskTypeEnums.class, taskInfo.getType());
+        Map<String, String> extra = new HashMap<>();
         if (typeEnums.isPresent()) {
-            Map<String, String> map = Map.of("code", String.format("%s(%s)", typeEnums.get().getMessage(), taskInfo.getTaskNum()));
-            message.setExtra(map);
-        } else
-            message.setExtra(Map.of("code", taskInfo.getTaskNum()));
+            extra.put("name", typeEnums.get().getMessage());
+        } else {
+            extra.put("name", "未知");
+        }
+        extra.put("code", taskInfo.getTaskNum());
+        extra.put("complete_time", taskInfo.getDisTimeEnd());
+        message.setExtra(extra);
+
 
         sysProxyService.saveMessageAllNotice(
                 createdBy,

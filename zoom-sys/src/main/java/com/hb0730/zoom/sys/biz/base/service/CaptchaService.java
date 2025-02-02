@@ -76,7 +76,9 @@ public class CaptchaService {
         dto.setReceiver(account);
         dto.setTemplateCode(type.getCode());
         dto.setMsgType(type.getMsgType());
-        Map<String, String> extra = Map.of("code", code);
+        Map<String, String> extra = Map.of(
+                "code", code,
+                "expiration_time", "10");
         dto.setExtra(extra);
         messageService.saveMessage(dto);
     }

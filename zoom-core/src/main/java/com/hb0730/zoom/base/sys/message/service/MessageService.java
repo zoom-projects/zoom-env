@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hb0730.zoom.base.R;
+import com.hb0730.zoom.base.enums.MessageContentTypeEnums;
 import com.hb0730.zoom.base.enums.MessageSendStatusEnums;
 import com.hb0730.zoom.base.enums.MessageTypeEnums;
 import com.hb0730.zoom.base.ext.services.dto.SaveMessageDTO;
+import com.hb0730.zoom.base.ext.services.dto.SendMessageDTO;
 import com.hb0730.zoom.base.sys.message.entity.SysMessage;
 import com.hb0730.zoom.base.sys.message.entity.SysMessageTemplate;
 import com.hb0730.zoom.base.sys.message.handle.ISendMsgHandle;
@@ -86,10 +88,25 @@ public class MessageService extends ServiceImpl<MessageMapper, SysMessage> {
                 message.setMsgReceiver(receiver);
                 String content = mybatisEncryptService.decrypt(message.getMsgContent());
                 message.setMsgContent(content);
+                String contentHtml = mybatisEncryptService.decrypt(message.getMsgContentHtml());
+                message.setMsgContentHtml(contentHtml);
                 String param = mybatisEncryptService.decrypt(message.getMsgParam());
                 message.setMsgParam(param);
 
-                sendMsgHandle.sendMsg(message.getMsgReceiver(), message.getMsgTitle(), message.getMsgContent());
+                SendMessageDTO sendMessageDTO = new SendMessageDTO();
+                // 消息接收人
+                sendMessageDTO.setReceiver(message.getMsgReceiver());
+                // 消息标题
+                sendMessageDTO.setTitle(message.getMsgTitle());
+
+                String _content = getContent(message);
+                // 消息内容
+                sendMessageDTO.setContent(_content);
+                // 内容类型
+                sendMessageDTO.setContentType(msgType.getContentType());
+
+                sendMsgHandle.sendMsg(sendMessageDTO);
+//                sendMsgHandle.sendMsg(message.getMsgReceiver(), message.getMsgTitle(), message.getMsgContent());
                 // 更新消息状态
                 message.setMsgSendStatus(MessageSendStatusEnums.SUCCESS.getCode());
                 message.setMsgSendTime(new Date());
@@ -135,6 +152,7 @@ public class MessageService extends ServiceImpl<MessageMapper, SysMessage> {
             extra = MapUtil.newHashMap();
         }
         message.setMsgContent(StringSubstitutor.replace(messageTemplate.getTemplateContentText(), extra));
+        message.setMsgContentHtml(StringSubstitutor.replace(messageTemplate.getTemplateContentHtml(), extra));
         // 消息标题或短信签名
         message.setMsgTitle(dto.getTitle());
         if (StrUtil.isBlank(message.getMsgTitle())) {
@@ -148,5 +166,20 @@ public class MessageService extends ServiceImpl<MessageMapper, SysMessage> {
         // 保存消息
         save(message);
         return R.OK("保存消息成功");
+    }
+
+    private String getContent(SysMessage message) {
+        String msgType = message.getMsgType();
+        MessageTypeEnums messageTypeEnums = MessageTypeEnums.of(msgType);
+        if (null == messageTypeEnums) {
+            return null;
+        }
+        MessageContentTypeEnums contentType = messageTypeEnums.getContentType();
+        return switch (contentType) {
+            case TEXT -> message.getMsgContent();
+            case HTML -> message.getMsgContentHtml();
+            default -> null;
+        };
+
     }
 }

@@ -41,6 +41,11 @@ public class SysMessage extends BizEntity {
      */
     @FieldEncrypt(decrypt = false)
     private String msgContent;
+    /**
+     * 消息内容
+     */
+    @FieldEncrypt(decrypt = false)
+    private String msgContentHtml;
 
     /**
      * 推送时间

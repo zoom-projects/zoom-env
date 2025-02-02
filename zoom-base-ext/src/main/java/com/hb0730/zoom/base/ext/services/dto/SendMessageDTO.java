@@ -1,5 +1,6 @@
 package com.hb0730.zoom.base.ext.services.dto;
 
+import com.hb0730.zoom.base.enums.MessageContentTypeEnums;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -25,14 +26,7 @@ public class SendMessageDTO implements Serializable {
      */
     private String content;
     /**
-     * 内容类型
+     * 消息类型
      */
-    private ContentType contentType = ContentType.TEXT;
-
-    /**
-     * 内容类型
-     */
-    public enum ContentType {
-        TEXT, HTML
-    }
+    private MessageContentTypeEnums contentType = MessageContentTypeEnums.TEXT;
 }

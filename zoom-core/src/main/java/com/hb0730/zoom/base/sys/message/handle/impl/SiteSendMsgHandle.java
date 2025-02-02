@@ -1,8 +1,10 @@
 package com.hb0730.zoom.base.sys.message.handle.impl;
 
+import com.hb0730.zoom.base.enums.MessageContentTypeEnums;
 import com.hb0730.zoom.base.enums.MessageTypeEnums;
 import com.hb0730.zoom.base.enums.NoticeClassifyEnums;
 import com.hb0730.zoom.base.enums.NoticeMessageStatusEnums;
+import com.hb0730.zoom.base.ext.services.dto.SendMessageDTO;
 import com.hb0730.zoom.base.sys.message.entity.SysNoticeMessage;
 import com.hb0730.zoom.base.sys.message.handle.ISendMsgHandle;
 import com.hb0730.zoom.base.sys.message.service.NoticeMessageService;
@@ -11,6 +13,8 @@ import com.hb0730.zoom.base.sys.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * 站内消息
@@ -42,6 +46,16 @@ public class SiteSendMsgHandle implements ISendMsgHandle {
         sysNoticeMessage.setStatus(NoticeMessageStatusEnums.UN_READ.getCode());
         noticeMessageService.save(sysNoticeMessage);
         log.info("站内消息发送成功 {} : {} -> {}", title, content, receiver);
+    }
+
+    @Override
+    public void sendMsg(SendMessageDTO message) {
+        MessageContentTypeEnums contentType = message.getContentType();
+        if (Objects.requireNonNull(contentType) == MessageContentTypeEnums.TEXT) {
+            sendMsg(message.getReceiver(), message.getTitle(), message.getContent());
+        } else {
+            log.error("不支持的类型,{}", contentType);
+        }
     }
 
     @Override
