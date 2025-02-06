@@ -58,6 +58,15 @@ public class SuperServiceImpl<Id extends Serializable,
     }
 
     @Override
+    public V createReturn(CreateReq createReq) {
+        E entity = mapstruct.createReqToEntity(createReq);
+        if (save(entity)) {
+            return mapstruct.toVo(entity);
+        }
+        return null;
+    }
+
+    @Override
     public boolean updateById(Id id, UpdateReq updateReq) {
         E entity = getById(id);
         if (entity == null) {
@@ -67,6 +76,16 @@ public class SuperServiceImpl<Id extends Serializable,
         return updateById(entity);
     }
 
+    @Override
+    public V updateReturnById(Id id, UpdateReq updateReq) {
+        E entity = getById(id);
+        if (entity == null) {
+            return null;
+        }
+        entity = mapstruct.updateEntity(updateReq, entity);
+        updateById(entity);
+        return mapstruct.toVo(entity);
+    }
 
     /**
      * 获取mapstruct

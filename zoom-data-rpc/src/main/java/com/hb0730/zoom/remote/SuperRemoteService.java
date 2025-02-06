@@ -38,8 +38,18 @@ public class SuperRemoteService<Q extends PageRequest,
     }
 
     @Override
+    public V createReturn(CreateReq createReq) {
+        return service.createReturn(createReq);
+    }
+
+    @Override
     public boolean updateById(String id, UpdateReq updateReq) {
         return service.updateById(id, updateReq);
+    }
+
+    @Override
+    public V updateReturnById(String id, UpdateReq updateReq) {
+        return service.updateReturnById(id, updateReq);
     }
 
     @Override
