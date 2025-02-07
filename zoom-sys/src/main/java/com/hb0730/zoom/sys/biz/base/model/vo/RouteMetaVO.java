@@ -64,4 +64,10 @@ public class RouteMetaVO implements Serializable {
     @Schema(description = "是否外链")
     @JsonProperty("isLink")
     private Boolean external;
+
+    /**
+     * 是否需要登陆
+     */
+    @Schema(description = "是否需要登陆")
+    private Boolean requireLogin = true;
 }

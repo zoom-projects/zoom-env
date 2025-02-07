@@ -77,6 +77,11 @@ public class PermissionDTO implements TreeUtil.Node<PermissionDTO, String> {
     private String frameSrc;
 
     /**
+     * 是否需要登陆
+     */
+    private Boolean isRequireLogin = true;
+
+    /**
      * 菜单类型 0 目录 1 菜单 2 按钮
      */
     private Integer menuType;
