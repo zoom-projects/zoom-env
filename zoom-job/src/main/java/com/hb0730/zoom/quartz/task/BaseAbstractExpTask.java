@@ -154,7 +154,7 @@ public abstract class BaseAbstractExpTask<T> implements ITask {
         // 上传文件
         String _filename = task.getLotNo() + ".zip";
         String objectKey = OssUtil.normalize(task.getFilePath() + "/" + _filename);
-        String fileUrl = ossStorage.uploadFile(objectKey, zipFile);
+        String fileUrl = ossStorage.uploadFile(OssUtil.getObjectKey(objectKey), zipFile);
 
         task.setFileName(_filename);
         task.setFileUrl(fileUrl);
