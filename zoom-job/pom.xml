@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.hb0730</groupId>
-        <artifactId>zoom-pom</artifactId>
+        <artifactId>zoom-env</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath/>
     </parent>
 
     <artifactId>zoom-job</artifactId>
@@ -42,7 +41,7 @@
         <dependency>
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-base-ext</artifactId>
-            <version>${zoom.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 
