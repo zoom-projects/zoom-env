@@ -89,6 +89,11 @@ public class SysPermissionVO implements Serializable {
      */
     @Schema(description = "是否大屏")
     private Boolean isFullScreen;
+    /**
+     * 是否需要登陆
+     */
+    @Schema(description = "是否需要登陆")
+    private Boolean isRequireLogin = true;
 
     /**
      * iframe

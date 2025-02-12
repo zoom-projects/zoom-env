@@ -73,6 +73,10 @@ public class SysPermission extends BizEntity {
      */
     private Boolean isFullScreen;
     /**
+     * 是否需要登陆
+     */
+    private Boolean isRequireLogin = true;
+    /**
      * iframe
      */
     private String frameSrc;

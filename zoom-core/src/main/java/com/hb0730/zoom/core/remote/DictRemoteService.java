@@ -28,4 +28,9 @@ public class DictRemoteService implements SysDictRpcService {
         }
         return items.stream().map(Option::getValue).toList();
     }
+
+    @Override
+    public List<Option> loadItems(String dictCode) {
+        return dictService.loadItems(dictCode);
+    }
 }

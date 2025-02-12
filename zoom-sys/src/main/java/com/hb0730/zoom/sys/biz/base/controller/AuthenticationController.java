@@ -2,7 +2,10 @@ package com.hb0730.zoom.sys.biz.base.controller;
 
 import com.hb0730.zoom.base.PairEnum;
 import com.hb0730.zoom.base.R;
+import com.hb0730.zoom.base.enums.CaptchaSceneEnums;
+import com.hb0730.zoom.base.enums.CaptchaTypeEnums;
 import com.hb0730.zoom.base.enums.LoginGrantEnums;
+import com.hb0730.zoom.base.enums.MessageTypeEnums;
 import com.hb0730.zoom.base.ext.security.SecurityUtils;
 import com.hb0730.zoom.base.meta.UserInfo;
 import com.hb0730.zoom.base.pool.RegexPool;
@@ -49,7 +52,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,22 +165,33 @@ public class AuthenticationController {
     /**
      * 获取验证码
      *
-     * @param type 类型
-     * @param body 参数
+     * @param scene   类型 login,register,captcha
+     * @param msgType 消息类型 email, sms
+     * @param body    参数
      * @return 验证码
      */
-    @PostMapping("/captcha/{type}")
+    @PostMapping("/captcha/{scene}/{msgType}")
     @Operation(summary = "获取验证码")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "获取验证码", responseCode = "200"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "获取验证码失败", responseCode = "400")
     })
+    @Parameters({
+            @Parameter(name = "scene", description = "场景", required = true),
+            @Parameter(name = "msgType", description = "消息类型", required = true)
+    })
     @PermitAll
-    public R<?> getCaptchaCode(@PathVariable String type, @RequestBody Map<String, String> body) {
-        List<String> types = Arrays.asList(LoginGrantEnums.MOBILE.getCode(), LoginGrantEnums.EMAIL.getCode());
-        if (!types.contains(type)) {
+    public R<?> getCaptchaCode(@PathVariable String scene,
+                               @PathVariable String msgType, @RequestBody Map<String, String> body) {
+        CaptchaSceneEnums sceneEnums = CaptchaSceneEnums.get(scene);
+        if (sceneEnums == null) {
             return R.NG("暂不支持该类型方式获取验证码");
         }
+        MessageTypeEnums _msgType = MessageTypeEnums.of(msgType);
+        if (_msgType == null) {
+            return R.NG("暂不支持该类型方式获取验证码");
+        }
+        CaptchaTypeEnums captchaType = sceneEnums.getType(_msgType);
         // 解密
         String iv = body.get("captchaKey");
         String timestamp = body.get("timestamp");
@@ -187,7 +200,7 @@ public class AuthenticationController {
         byte[] _iv = iv.getBytes();
         String account = AesCryptoUtil.decrypt(body.get("value"), AesCryptoUtil.mode, _key, _iv);
         // 获取验证码
-        return captchaService.sendCode(type, account);
+        return captchaService.sendCode(captchaType, account);
     }
 
 

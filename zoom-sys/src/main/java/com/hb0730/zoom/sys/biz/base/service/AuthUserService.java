@@ -7,6 +7,7 @@ import com.hb0730.zoom.base.exception.ZoomException;
 import com.hb0730.zoom.base.meta.UserInfo;
 import com.hb0730.zoom.base.sys.system.entity.SysUserSocial;
 import com.hb0730.zoom.base.utils.CollectionUtil;
+import com.hb0730.zoom.sys.biz.base.model.request.RestEmailOrPhoneRequest;
 import com.hb0730.zoom.sys.biz.base.model.request.RestPasswordRequest;
 import com.hb0730.zoom.sys.biz.base.util.TokenUtil;
 import com.hb0730.zoom.sys.biz.system.mapper.SysUserSocialMapper;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +35,8 @@ import java.util.List;
 public class AuthUserService {
     private final SysUserService userService;
     private final SysUserSocialMapper userSocialMapper;
+    @Autowired(required = false)
+    private CaptchaService captchaService;
 
     /**
      * 重置密码
@@ -170,5 +174,45 @@ public class AuthUserService {
                         .eq(SysUserSocial::getUserId, userId)
                         .eq(SysUserSocial::getSource, source)
         );
+    }
+
+    /**
+     * 重置邮箱
+     *
+     * @param request 请求
+     * @return 是否成功
+     */
+    public R<String> resetEmail(RestEmailOrPhoneRequest request) {
+        R<String> res = captchaService.checkCaptcha(request.getKey(), request.getCaptchaCode());
+        if (!res.isSuccess()) {
+            return res;
+        }
+        //判断邮箱是否存在
+        if (userService.existEmail(request.getKey())) {
+            return R.NG("邮箱已经存在");
+        }
+        // 更新邮箱
+        userService.updateEmail(request.getOperatorId(), request.getKey());
+        return R.OK();
+    }
+
+    /**
+     * 重置手机号
+     *
+     * @param request 请求
+     * @return 是否成功
+     */
+    public R<String> resetPhone(RestEmailOrPhoneRequest request) {
+        R<String> res = captchaService.checkCaptcha(request.getKey(), request.getCaptchaCode());
+        if (!res.isSuccess()) {
+            return res;
+        }
+        //判断手机号是否存在
+        if (userService.existPhone(request.getKey())) {
+            return R.NG("手机号已经存在");
+        }
+        // 更新手机号
+        userService.updatePhone(request.getOperatorId(), request.getKey());
+        return R.OK();
     }
 }

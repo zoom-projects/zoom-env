@@ -43,12 +43,28 @@ public interface IRemoteService<Q extends PageRequest, V extends Domain, CreateR
     boolean create(CreateReq createReq);
 
     /**
+     * save
+     *
+     * @param createReq .
+     * @return .
+     */
+    V createReturn(CreateReq createReq);
+
+    /**
      * update
      *
      * @param updateReq .
      * @return .
      */
     boolean updateById(String id, UpdateReq updateReq);
+
+    /**
+     * update
+     *
+     * @param updateReq .
+     * @return .
+     */
+    V updateReturnById(String id, UpdateReq updateReq);
 
     /**
      * get by id

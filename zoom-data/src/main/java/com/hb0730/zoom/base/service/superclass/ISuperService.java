@@ -24,8 +24,8 @@ public interface ISuperService<
         UpdateReq extends Serializable>
         extends
         IQueryService<Id, Q, V, E>,
-        ISaveService<CreateReq>,
-        IUpdateService<Id, UpdateReq> {
+        ISaveService<CreateReq, V>,
+        IUpdateService<Id, UpdateReq, V> {
 
     /**
      * delete by id

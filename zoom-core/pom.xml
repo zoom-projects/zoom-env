@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.hb0730</groupId>
-        <artifactId>zoom-pom</artifactId>
+        <artifactId>zoom-env</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath/>
     </parent>
 
     <artifactId>zoom-core</artifactId>
@@ -37,11 +36,16 @@
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-operator-log</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-poi</artifactId>
+            <optional>true</optional>
+        </dependency>
 
         <dependency>
             <groupId>com.hb0730</groupId>
-            <artifactId>zoom-data</artifactId>
-            <version>${zoom.version}</version>
+            <artifactId>zoom-base-ext</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 </project>

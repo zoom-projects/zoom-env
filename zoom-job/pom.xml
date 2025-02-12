@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.hb0730</groupId>
-        <artifactId>zoom-pom</artifactId>
+        <artifactId>zoom-env</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath/>
     </parent>
 
     <artifactId>zoom-job</artifactId>
@@ -29,10 +28,20 @@
             <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
         </dependency>
 
+        <!-- zoom oss 下载文件/上传文件-->
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-oss</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hb0730</groupId>
+            <artifactId>zoom-poi</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-base-ext</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 

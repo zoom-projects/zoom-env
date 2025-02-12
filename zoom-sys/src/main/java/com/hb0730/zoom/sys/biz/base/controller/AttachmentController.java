@@ -66,7 +66,7 @@ public class AttachmentController {
         if (username.isEmpty()) {
             return R.NG("请登录");
         }
-        String _path = path;
+        String _path;
         if (StrUtil.isBlank(path)) {
             _path = username.get();
         } else {
@@ -104,7 +104,7 @@ public class AttachmentController {
         if (contentType != null) {
             params.put("Content-Type", contentType);
         }
-        String objectKey = OssUtil.renameObjectKey(filename, loginUsername.get());
+        String objectKey = OssUtil.getObjectKey(OssUtil.renameObjectKey(filename, loginUsername.get()));
         OssStorage.PresignedUrl presignedUrl = ossStorage.getPresignedUrl(objectKey, params);
         if (presignedUrl == null) {
             return R.NG("获取预签名地址失败");
@@ -138,7 +138,7 @@ public class AttachmentController {
      * @return 附件信息
      */
     private SysAttachment uploadFile(MultipartFile file, String path, OssStorage storage) throws IOException {
-        String objectKey = OssUtil.renameObjectKey(file.getOriginalFilename(), path);
+        String objectKey = OssUtil.getObjectKey(OssUtil.renameObjectKey(file.getOriginalFilename(), path));
         long size = file.getSize();
         String contentType = file.getContentType();
         String accessUrl = storage.upload(objectKey, size, contentType, file.getInputStream());

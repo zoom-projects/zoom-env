@@ -100,6 +100,8 @@ public class RouteUtil {
         meta.setIsFullScreen(dto.getIsFullScreen());
         // iframe
         meta.setFrameSrc(dto.getFrameSrc());
+        // 是否需要登陆
+        meta.setRequireLogin(dto.getIsRequireLogin());
 
         return meta;
     }

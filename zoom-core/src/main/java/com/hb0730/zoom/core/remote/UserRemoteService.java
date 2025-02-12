@@ -1,5 +1,6 @@
 package com.hb0730.zoom.core.remote;
 
+import com.hb0730.zoom.base.enums.MessageTypeEnums;
 import com.hb0730.zoom.base.ext.services.dto.UserDTO;
 import com.hb0730.zoom.base.ext.services.dto.UserInfoDTO;
 import com.hb0730.zoom.base.ext.services.remote.SysUserRpcService;
@@ -8,6 +9,7 @@ import com.hb0730.zoom.base.sys.system.entity.SysUserSettings;
 import com.hb0730.zoom.base.sys.system.service.UserAccessTokenService;
 import com.hb0730.zoom.base.sys.system.service.UserService;
 import com.hb0730.zoom.base.sys.system.service.UserSettingsService;
+import com.hb0730.zoom.base.sys.system.service.UserSubscribeMsgService;
 import com.hb0730.zoom.core.convert.UserConvert;
 import com.hb0730.zoom.sofa.rpc.core.annotation.RemoteService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,8 @@ public class UserRemoteService implements SysUserRpcService {
     private UserConvert userConvert;
     @Autowired
     private UserSettingsService userSettingsService;
+    @Autowired
+    private UserSubscribeMsgService userSubscribeMsgService;
 
     @Override
     public UserInfoDTO findUsername(String username) {
@@ -57,5 +61,14 @@ public class UserRemoteService implements SysUserRpcService {
             return userConvert.toDTO(user);
         }
         return null;
+    }
+
+    @Override
+    public boolean subscribedMsg(String username, String code, MessageTypeEnums msgType) {
+        SysUser user = userService.findByUsername(username);
+        if (null == user) {
+            return false;
+        }
+        return userSubscribeMsgService.checkSubscribe(user.getId(), code, msgType);
     }
 }

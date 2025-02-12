@@ -1,5 +1,6 @@
 package com.hb0730.zoom.sys.biz.base.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,6 +31,7 @@ public class RouteMetaVO implements Serializable {
      * 是否隐藏
      */
     @Schema(description = "是否隐藏")
+    @JsonProperty("isHide")
     private Boolean isHidden;
 
     /**
@@ -41,12 +43,14 @@ public class RouteMetaVO implements Serializable {
      * 是否固定在标签视图
      */
     @Schema(description = "是否固定在标签视图")
+    @JsonProperty("isAffix")
     private Boolean isAffix;
 
     /**
      * 是否大屏
      */
     @Schema(description = "是否大屏")
+    @JsonProperty("isFull")
     private Boolean isFullScreen;
     /**
      * iframe src
@@ -58,5 +62,12 @@ public class RouteMetaVO implements Serializable {
      * 是否外链
      */
     @Schema(description = "是否外链")
+    @JsonProperty("isLink")
     private Boolean external;
+
+    /**
+     * 是否需要登陆
+     */
+    @Schema(description = "是否需要登陆")
+    private Boolean requireLogin = true;
 }

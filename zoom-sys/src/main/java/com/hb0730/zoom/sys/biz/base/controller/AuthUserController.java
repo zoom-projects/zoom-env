@@ -12,10 +12,14 @@ import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import com.hb0730.zoom.operator.log.core.annotation.OperatorLog;
 import com.hb0730.zoom.sys.biz.base.convert.UserSettingsConvert;
 import com.hb0730.zoom.sys.biz.base.granter.TokenGranterBuilder;
+import com.hb0730.zoom.sys.biz.base.model.request.RestEmailOrPhoneRequest;
 import com.hb0730.zoom.sys.biz.base.model.request.RestPasswordRequest;
+import com.hb0730.zoom.sys.biz.base.model.request.UserSubscribeMsgUpdateRequest;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserInfoVO;
 import com.hb0730.zoom.sys.biz.base.model.vo.UserSettingsVO;
+import com.hb0730.zoom.sys.biz.base.model.vo.UserSubscribeMsgVO;
 import com.hb0730.zoom.sys.biz.base.service.AuthUserService;
+import com.hb0730.zoom.sys.biz.base.service.AuthUserSubscribeMsgService;
 import com.hb0730.zoom.sys.biz.system.model.request.operator.log.SysOperatorLogQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserAccessTokenCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserAccessTokenQueryRequest;
@@ -40,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -60,6 +65,7 @@ public class AuthUserController {
     private final SysOperatorLogService operatorLogService;
     private final SysUserAccessTokenService sysUserAccessTokenService;
     private final SysUserSettingsService sysUserSettingsService;
+    private final AuthUserSubscribeMsgService authUserSubscribeMsgService;
     private final UserSettingsConvert userSettingsConvert;
 
 
@@ -106,6 +112,29 @@ public class AuthUserController {
         String token = tokenOptional.get();
         // 重置密码
         return authUserService.restPassword(token, data);
+    }
+
+    /**
+     * 重置邮箱或手机号
+     */
+    @PutMapping("/reset/{key}")
+    @Operation(summary = "重置邮箱或手机号")
+    @OperatorLog(AuthenticationOperatorType.UPDATE_EMAIL_PHONE)
+    public R<String> restEmailOrPhone(@PathVariable String key,
+                                      @Validated @RequestBody RestEmailOrPhoneRequest request) {
+        // 解密
+        String iv = request.getCaptchaKey();
+        String key1 = SecureUtil.sha256(request.getCaptchaKey() + request.getTimestamp());
+        byte[] _key = HexUtil.decodeHex(key1);
+        byte[] _iv = iv.getBytes();
+        String emailOrPhone = AesCryptoUtil.decrypt(request.getKey(), AesCryptoUtil.mode, _key, _iv);
+        request.setKey(emailOrPhone);
+        request.setOperatorId(SecurityUtils.getLoginUserId().orElse(null));
+        return switch (key.toLowerCase()) {
+            case "email" -> authUserService.resetEmail(request);
+            case "phone" -> authUserService.resetPhone(request);
+            default -> R.NG("不支持的操作");
+        };
     }
 
     @Operation(summary = "查询操作日志")
@@ -205,4 +234,28 @@ public class AuthUserController {
         return R.OK("更新成功");
     }
 
+
+    @Operation(summary = "获取用户订阅消息")
+    @GetMapping("/subscribe_msg")
+    public R<List<UserSubscribeMsgVO>> getUserSubscribeMsg(HttpServletRequest request) {
+        String userId = SecurityUtils.getLoginUserId().orElse(null);
+        if (StrUtil.isBlank(userId)) {
+            return R.NG("获取用户信息失败,token为空");
+        }
+        List<UserSubscribeMsgVO> userSubscribeMsg = authUserSubscribeMsgService.getUserSubscribeMsg(userId);
+        return R.OK(userSubscribeMsg);
+    }
+
+    @Operation(summary = "保存用户订阅消息")
+    @PutMapping("/subscribe_msg")
+    @OperatorLog(AuthenticationOperatorType.UPDATE_USER_SUBSCRIBE_MSG)
+    public R<String> saveUserSubscribeMsg(HttpServletRequest request,
+                                          @Validated @RequestBody UserSubscribeMsgUpdateRequest userSubscribeMsgUpdateRequest) {
+        String userId = SecurityUtils.getLoginUserId().orElse(null);
+        if (StrUtil.isBlank(userId)) {
+            return R.NG("获取用户信息失败,token为空");
+        }
+        authUserSubscribeMsgService.saveUserSubscribeMsg(userId, userSubscribeMsgUpdateRequest);
+        return R.OK("更新成功");
+    }
 }
