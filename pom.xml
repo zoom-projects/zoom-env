@@ -10,15 +10,16 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>zoom-parent</module>
-
+        <!--        <module>zoom-parent</module>-->
         <module>zoom-base-ext</module>
+
         <module>zoom-conf</module>
         <module>zoom-core</module>
         <module>zoom-data</module>
         <module>zoom-data-rpc</module>
         <module>zoom-job</module>
         <module>zoom-sys</module>
+        <module>zoom-parent</module>
     </modules>
 
     <properties>
