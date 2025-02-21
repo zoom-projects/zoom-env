@@ -8,6 +8,7 @@ import com.hb0730.zoom.sys.biz.system.model.request.message.SysNoticeMessageQuer
 import com.hb0730.zoom.sys.biz.system.model.vo.SysNoticeMessageVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +28,7 @@ import java.util.Optional;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "用户消息")
 public class AuthUserNoticeController {
     private final AuthUserNoticeService authUserNoticeService;
 
