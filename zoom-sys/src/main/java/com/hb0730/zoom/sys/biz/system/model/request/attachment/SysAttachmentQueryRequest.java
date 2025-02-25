@@ -1,5 +1,6 @@
 package com.hb0730.zoom.sys.biz.system.model.request.attachment;
 
+import com.hb0730.zoom.mybatis.query.annotation.Equals;
 import com.hb0730.zoom.mybatis.query.annotation.Like;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,6 +17,7 @@ import lombok.EqualsAndHashCode;
 public class SysAttachmentQueryRequest extends PageRequest {
 
     @Schema(description = "创建人", hidden = true)
+    @Equals
     private String createdBy;
 
     @Schema(description = "文件名")

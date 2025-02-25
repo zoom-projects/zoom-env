@@ -8,6 +8,7 @@ import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
 import com.hb0730.zoom.base.sys.system.entity.SysUserRole;
 import com.hb0730.zoom.base.utils.CollectionUtil;
+import com.hb0730.zoom.base.utils.DesensitizeUtil;
 import com.hb0730.zoom.base.utils.DigestUtil;
 import com.hb0730.zoom.base.utils.PasswdUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
@@ -414,5 +415,57 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
                         .ge(SysUserRole::getEndTime, new Date()));
         return userRoleService.list(queryWrapper);
 
+    }
+
+
+    /**
+     * 根据邮箱创建用户
+     *
+     * @param email 邮箱
+     * @return 用户
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public R<SysUser> createByEmail(String email, String password) {
+        // 1. 校验邮箱是否存在
+        if (existEmail(email)) {
+            return R.NG("邮箱已存在");
+        }
+        //2. 检查密码
+        if (!PasswdUtil.checkPwd(password)) {
+            return R.NG("密码不满足强密码要求");
+        }
+        SysUser user = new SysUser();
+        // 3. 用户名
+        String username = email.substring(0, email.indexOf("@"));
+        user.setUsername(username);
+        // 4. 密码
+        String salt = PasswdUtil.generateSalt();
+        String encryptPassword = PasswdUtil.encrypt(password, salt);
+        user.setPassword(encryptPassword);
+        user.setSalt(salt);
+        // 5. 邮箱
+        String mailHex = DigestUtil.sha256Hex(email);
+        user.setHashEmail(mailHex);
+        user.setEmail(email);
+        // 6. nickname
+        String nickname = DesensitizeUtil.email(email);
+        user.setNickname(nickname);
+        // 7. 性别
+        user.setGender(0);
+        // 8.是否系统用户
+        user.setIsSystem(false);
+        // 9. 状态
+        user.setStatus(true);
+        // 10. 创建用户
+        save(user);
+        // 分配角色
+        List<SysUserRoleUpdateRequest> userRoles = new ArrayList<>();
+        SysUserRoleUpdateRequest userRole = new SysUserRoleUpdateRequest();
+        userRole.setRoleId("1894392845919936513");
+        userRole.setEndTime(null);
+        userRoles.add(userRole);
+        saveRoles(user.getId(), userRoles);
+
+        return R.OK(user);
     }
 }

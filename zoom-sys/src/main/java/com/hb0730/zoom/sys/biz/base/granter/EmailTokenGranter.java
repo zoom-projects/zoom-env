@@ -4,6 +4,8 @@ import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
 import com.hb0730.zoom.mybatis.core.encrypt.MybatisEncryptService;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
+import com.hb0730.zoom.sys.biz.base.register.RegistryType;
+import com.hb0730.zoom.sys.biz.base.register.UserRegistryFactory;
 import com.hb0730.zoom.sys.biz.base.service.CaptchaService;
 import com.hb0730.zoom.sys.biz.system.service.SysUserService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class EmailTokenGranter extends AbstractTokenGranter {
     private final CaptchaService captchaService;
     private final SysUserService userService;
     private final MybatisEncryptService encryptService;
+    private final UserRegistryFactory userRegistryFactory;
 
     @Override
     protected R<String> checkParam(LoginInfo loginInfo) {
@@ -43,6 +46,12 @@ public class EmailTokenGranter extends AbstractTokenGranter {
     @Override
     protected Optional<SysUser> getUser(LoginInfo loginInfo) {
         String email = encryptService.encrypt(loginInfo.getUsername());
-        return Optional.ofNullable(userService.findByEmail(email));
+//        return Optional.ofNullable(userService.findByEmail(email));
+        SysUser user = userService.findByEmail(email);
+        if (null == user) {
+            // 开始注册
+            user = userRegistryFactory.getRegistry(RegistryType.EMAIL).register(loginInfo.getUsername());
+        }
+        return Optional.ofNullable(user);
     }
 }

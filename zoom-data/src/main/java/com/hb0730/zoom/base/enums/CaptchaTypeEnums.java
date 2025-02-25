@@ -15,6 +15,9 @@ public enum CaptchaTypeEnums implements PairEnum<String, Pair<String, String>> {
     LOGIN_SMS(MessageTypeEnums.SMS, new Pair<>("SMS_1000", "登录短信验证码")),
     LOGIN_EMAIL(MessageTypeEnums.EMAIL, new Pair<>("EMAIL_1000", "登录邮箱验证码")),
 
+    REGISTRY_LOGIN_EMAIL(MessageTypeEnums.EMAIL, new Pair<>("EMAIL_1002", "注册登录邮箱验证码")),
+    REGISTRY_LOGIN_SMS(MessageTypeEnums.SMS, new Pair<>("SMS_1002", "注册登录短信验证码")),
+
     CAPTCHA_SMS(MessageTypeEnums.SMS, new Pair<>("SMS_1001", "短信验证码")),
     CAPTCHA_EMAIL(MessageTypeEnums.EMAIL, new Pair<>("EMAIL_1001", "邮箱验证码")),
     ;

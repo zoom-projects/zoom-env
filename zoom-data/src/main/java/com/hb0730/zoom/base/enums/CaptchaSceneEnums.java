@@ -14,7 +14,7 @@ import java.util.List;
  */
 public enum CaptchaSceneEnums implements PairEnum<String, Pair<String, String>> {
     LOGIN(new Pair<>("login", "登录"), Arrays.asList(CaptchaTypeEnums.LOGIN_SMS, CaptchaTypeEnums.LOGIN_EMAIL)),
-    REGISTER(new Pair<>("register", "注册"), null),
+    REGISTER(new Pair<>("register", "注册"), Arrays.asList(CaptchaTypeEnums.REGISTRY_LOGIN_EMAIL)),
     GET(new Pair<>("get", "获取"), Arrays.asList(CaptchaTypeEnums.CAPTCHA_SMS, CaptchaTypeEnums.CAPTCHA_EMAIL)),
     ;
     private final Pair<String, String> scene;
