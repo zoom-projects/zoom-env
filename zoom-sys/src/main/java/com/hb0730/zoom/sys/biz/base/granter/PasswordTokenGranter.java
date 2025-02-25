@@ -8,7 +8,7 @@ import com.hb0730.zoom.base.utils.PasswdUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.base.utils.ValidatorUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
-import com.hb0730.zoom.config.AuthenticationConfig;
+import com.hb0730.zoom.configuration.config.AuthenticationConfig;
 import com.hb0730.zoom.mybatis.core.encrypt.MybatisEncryptService;
 import com.hb0730.zoom.security.core.service.UserService;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;

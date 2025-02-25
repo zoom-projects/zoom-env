@@ -1,4 +1,4 @@
-package com.hb0730.zoom.config;
+package com.hb0730.zoom.configuration.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

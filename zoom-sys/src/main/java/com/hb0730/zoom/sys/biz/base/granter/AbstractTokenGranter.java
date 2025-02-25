@@ -12,7 +12,7 @@ import com.hb0730.zoom.base.utils.CollectionUtil;
 import com.hb0730.zoom.base.utils.JsonUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.cache.core.CacheUtil;
-import com.hb0730.zoom.config.AuthenticationConfig;
+import com.hb0730.zoom.configuration.config.AuthenticationConfig;
 import com.hb0730.zoom.operator.log.core.util.OperatorLogs;
 import com.hb0730.zoom.sys.biz.base.convert.UserInfoConvert;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
