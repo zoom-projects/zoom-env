@@ -46,11 +46,13 @@ public class EmailTokenGranter extends AbstractTokenGranter {
     @Override
     protected Optional<SysUser> getUser(LoginInfo loginInfo) {
         String email = encryptService.encrypt(loginInfo.getUsername());
-//        return Optional.ofNullable(userService.findByEmail(email));
         SysUser user = userService.findByEmail(email);
         if (null == user) {
             // 开始注册
             user = userRegistryFactory.getRegistry(RegistryType.EMAIL).register(loginInfo.getUsername());
+            if (null != user) {
+                user = userService.findByEmail(email);
+            }
         }
         return Optional.ofNullable(user);
     }
