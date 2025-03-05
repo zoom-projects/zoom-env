@@ -352,6 +352,12 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
+            <!--springboot-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${springboot.version}</version>
+            </plugin>
         </plugins>
         <resources>
             <resource>
