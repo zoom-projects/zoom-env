@@ -25,6 +25,11 @@ public class SendMessageDTO implements Serializable {
      * 内容
      */
     private String content;
+
+    /**
+     * 消息参数
+     */
+    private String msgParams;
     /**
      * 消息类型
      */

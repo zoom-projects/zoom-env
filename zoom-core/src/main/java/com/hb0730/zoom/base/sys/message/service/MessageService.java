@@ -104,6 +104,9 @@ public class MessageService extends ServiceImpl<MessageMapper, SysMessage> {
                 sendMessageDTO.setContent(_content);
                 // 内容类型
                 sendMessageDTO.setContentType(msgType.getContentType());
+                // 参数
+                sendMessageDTO.setMsgParams(message.getMsgParam());
+
 
                 sendMsgHandle.sendMsg(sendMessageDTO);
 //                sendMsgHandle.sendMsg(message.getMsgReceiver(), message.getMsgTitle(), message.getMsgContent());
