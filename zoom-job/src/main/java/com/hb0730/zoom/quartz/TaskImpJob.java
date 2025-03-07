@@ -7,7 +7,6 @@ import com.hb0730.zoom.quartz.task.ZoomTaskExecutor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 @DisallowConcurrentExecution // 不允许并发执行
 @Setter
-public class TaskImpJob implements Job {
+public class TaskImpJob extends AbstractJob {
     @Autowired
     ZoomTaskExecutor taskExecutor;
 
     @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
+    protected void doExecute(JobExecutionContext context) throws JobExecutionException {
         Object appName = context.getJobDetail().getJobDataMap().get("appName");
         log.info("异步导入定时任务开始 ! 时间 :{}", DateUtil.now());
         taskExecutor.doTask(TaskCategoryEnums.IMPORT, Convert.toStr(appName));
