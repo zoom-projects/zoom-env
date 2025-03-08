@@ -42,6 +42,7 @@
         <jsoup.version>1.18.3</jsoup.version>
         <nacos-client.version>2.4.3</nacos-client.version>
         <poi.version>5.3.0</poi.version>
+        <acme4j.version>3.5.1</acme4j.version>
 
         <slf4j.version>2.0.16</slf4j.version>
     </properties>
@@ -251,6 +252,12 @@
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-scratchpad</artifactId>
                 <version>${poi.version}</version>
+            </dependency>
+            <!--acme4j-->
+            <dependency>
+                <groupId>org.shredzone.acme4j</groupId>
+                <artifactId>acme4j-client</artifactId>
+                <version>${acme4j.version}</version>
             </dependency>
 
 
