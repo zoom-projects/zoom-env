@@ -3,6 +3,7 @@ package com.hb0730.zoom.sys.biz.base.controller;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.data.Page;
 import com.hb0730.zoom.base.ext.security.SecurityUtils;
+import com.hb0730.zoom.base.meta.UserInfo;
 import com.hb0730.zoom.base.sys.system.entity.SysUserSettings;
 import com.hb0730.zoom.base.utils.AesCryptoUtil;
 import com.hb0730.zoom.base.utils.HexUtil;
@@ -30,6 +31,7 @@ import com.hb0730.zoom.sys.biz.system.service.SysUserAccessTokenService;
 import com.hb0730.zoom.sys.biz.system.service.SysUserSettingsService;
 import com.hb0730.zoom.sys.define.operator.AuthenticationOperatorType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +69,7 @@ public class AuthUserController {
     private final SysUserSettingsService sysUserSettingsService;
     private final AuthUserSubscribeMsgService authUserSubscribeMsgService;
     private final UserSettingsConvert userSettingsConvert;
+    private static final List<String> USER_INFO = List.of("email", "phone");
 
 
     /**
@@ -82,6 +85,31 @@ public class AuthUserController {
         }
         String token = tokenOptional.get();
         return tokenGranterBuilder.defaultGranter().currentUser(token);
+    }
+
+    /**
+     * 获取用户相关信息，比如 邮件，手机等
+     *
+     * @param name .
+     * @return .
+     */
+    @Operation(summary = "获取用户相关信息,比如 邮件，手机等")
+    @GetMapping("/info")
+    @Parameter(name = "name", description = "获取用户信息的字段 email,phone", required = true)
+    public R<String> getUserInfo(String name) {
+        Optional<UserInfo> loginUsername = SecurityUtils.getLoginUser();
+        if (loginUsername.isEmpty()) {
+            return R.NG("获取用户信息失败,token为空");
+        }
+        if (!USER_INFO.contains(name)) {
+            return R.NG("不支持的操作");
+        }
+        UserInfo userInfo = loginUsername.get();
+        return switch (name) {
+            case "email" -> R.OK(userInfo.getEmail());
+            case "phone" -> R.OK(userInfo.getPhone());
+            default -> R.NG("不支持的操作");
+        };
     }
 
     /**

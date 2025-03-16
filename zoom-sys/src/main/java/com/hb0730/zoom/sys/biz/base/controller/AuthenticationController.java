@@ -242,6 +242,7 @@ public class AuthenticationController {
      * @param source 类型
      * @return 结果
      */
+    @PermitAll
     @PostMapping("/social/callback/{source}")
     @Operation(summary = "社交登录回调,绑定社交账号")
     @ApiResponses(value = {
