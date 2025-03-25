@@ -4,6 +4,7 @@ import com.hb0730.zoom.base.entity.BaseEntity;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @param <Id>        id
@@ -34,4 +35,12 @@ public interface ISuperService<
      * @return .
      */
     boolean deleteById(Id id);
+
+    /**
+     * batch delete by id
+     *
+     * @param ids .
+     * @return .
+     */
+    boolean deleteByIds(List<Id> ids);
 }

@@ -5,9 +5,13 @@ import com.hb0730.zoom.base.data.Page;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import com.hb0730.zoom.sofa.rpc.core.RpcApi;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
+ * remote service interface definition
+ *
+ * @param <Id>        id
  * @param <Q>         query
  * @param <V>         view
  * @param <CreateReq> create request
@@ -15,7 +19,7 @@ import java.util.List;
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
  * @date 2024/10/21
  */
-public interface IRemoteService<Q extends PageRequest, V extends Domain, CreateReq extends Domain,
+public interface IRemoteService<Id extends Serializable, Q extends PageRequest, V extends Domain, CreateReq extends Domain,
         UpdateReq extends Domain> extends RpcApi {
 
     /**
@@ -56,7 +60,7 @@ public interface IRemoteService<Q extends PageRequest, V extends Domain, CreateR
      * @param updateReq .
      * @return .
      */
-    boolean updateById(String id, UpdateReq updateReq);
+    boolean updateById(Id id, UpdateReq updateReq);
 
     /**
      * update
@@ -64,7 +68,7 @@ public interface IRemoteService<Q extends PageRequest, V extends Domain, CreateR
      * @param updateReq .
      * @return .
      */
-    V updateReturnById(String id, UpdateReq updateReq);
+    V updateReturnById(Id id, UpdateReq updateReq);
 
     /**
      * get by id
@@ -72,7 +76,7 @@ public interface IRemoteService<Q extends PageRequest, V extends Domain, CreateR
      * @param id id
      * @return .
      */
-    V get(String id);
+    V get(Id id);
 
     /**
      * delete by id
@@ -80,5 +84,13 @@ public interface IRemoteService<Q extends PageRequest, V extends Domain, CreateR
      * @param id id
      * @return boolean
      */
-    boolean deleteById(String id);
+    boolean deleteById(Id id);
+
+    /**
+     * batch delete
+     *
+     * @param ids ids
+     * @return boolean
+     */
+    boolean deleteByIds(List<Id> ids);
 }

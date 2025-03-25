@@ -100,5 +100,10 @@ public class SuperServiceImpl<Id extends Serializable,
     public boolean deleteById(Id id) {
         return removeById(id);
     }
+
+    @Override
+    public boolean deleteByIds(List<Id> ids) {
+        return removeByIds(ids);
+    }
 }
 
