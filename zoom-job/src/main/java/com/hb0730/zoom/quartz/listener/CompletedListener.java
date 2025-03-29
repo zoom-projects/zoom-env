@@ -26,7 +26,7 @@ import java.util.Optional;
  * @date 2024/12/29
  */
 @Component
-@Async
+@Async("actuatorTaskExecutor")
 @Slf4j
 public class CompletedListener implements ApplicationListener<CompletedEvent> {
     @Autowired
