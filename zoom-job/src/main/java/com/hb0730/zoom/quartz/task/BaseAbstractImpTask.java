@@ -137,7 +137,7 @@ public abstract class BaseAbstractImpTask<T> implements ITask {
     protected List<T> getData(TaskInfo task) throws Exception {
         String objectKey = OssUtil.normalize(task.getFilePath() + "/" + task.getFileName());
         // 下载文件
-        InputStream inputStream = ossStorage.getFile(objectKey);
+        InputStream inputStream = ossStorage.getInputStream(objectKey);
         if (inputStream == null) {
             throw new ZoomException("文件不存在");
         }
