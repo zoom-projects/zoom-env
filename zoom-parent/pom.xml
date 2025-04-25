@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <zoom-infra.version>1.0.0-SNAPSHOT</zoom-infra.version>
         <zoom-env.version>1.0.0-SNAPSHOT</zoom-env.version>
-        <springboot.version>3.4.2</springboot.version>
+        <springboot.version>3.4.5</springboot.version>
         <sofa-boot.version>4.4.1</sofa-boot.version>
         <opentelemetry.version>1.40.0</opentelemetry.version>
         <opentelemetry-instrumentation.version>2.15.0</opentelemetry-instrumentation.version>
