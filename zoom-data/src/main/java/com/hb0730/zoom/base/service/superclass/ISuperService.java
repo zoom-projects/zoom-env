@@ -19,6 +19,7 @@ import java.util.List;
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
  * @date 2024/10/11
  */
+@Deprecated
 public interface ISuperService<
         Id extends Serializable,
         Q extends PageRequest,
@@ -27,7 +28,7 @@ public interface ISuperService<
         CreateReq extends Serializable,
         UpdateReq extends Serializable>
         extends
-        IService<Id, Q, V, E, CreateReq, UpdateReq> {
+        IService<Id, Q, CreateReq, UpdateReq, V, E> {
 
     /**
      * delete by id

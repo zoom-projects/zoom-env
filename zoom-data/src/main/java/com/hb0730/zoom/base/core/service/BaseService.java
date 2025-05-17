@@ -2,40 +2,39 @@ package com.hb0730.zoom.base.core.service;
 
 import com.hb0730.zoom.base.core.repository.IRepository;
 import com.hb0730.zoom.base.data.Page;
-import com.hb0730.zoom.base.entity.BaseEntity;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * 基础服务类
  *
- * @param <Id> 主键类型
+ * @param <Id>         主键类型
+ * @param <Q>          查询类型
+ * @param <V>          视图类型
+ * @param <E>          实体类型
+ * @param <CreateReq>  创建请求类型
+ * @param <UpdateReq>  更新请求类型
+ * @param <Repository> 仓储类型
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
  * @date 2025/5/12
+ * @since 1.0.0
  */
-public class BaseService<
-        Id extends Serializable,
+public class BaseService<Id extends Serializable,
         Q extends PageRequest,
         V extends Serializable,
-        E extends BaseEntity,
+        E extends Serializable,
         CreateReq extends Serializable,
         UpdateReq extends Serializable,
-        Repository extends IRepository<Id, Q, V, E, CreateReq,
-                UpdateReq>> implements IService<Id, Q, V, E, CreateReq, UpdateReq> {
+        Repository extends IRepository<Id, Q, CreateReq, UpdateReq, V, E>> implements IService<Id, Q, CreateReq, UpdateReq, V, E> {
+
     @Autowired
-    @Lazy
     protected Repository repository;
 
 
-    /**
-     * 获取 repository
-     *
-     * @return .
-     */
     public Repository getRepository() {
         return repository;
     }
@@ -46,7 +45,7 @@ public class BaseService<
     }
 
     @Override
-    public boolean deleteByIds(List<Id> ids) {
+    public boolean deleteByIds(Collection<Id> ids) {
         return repository.deleteByIds(ids);
     }
 
@@ -66,6 +65,11 @@ public class BaseService<
     }
 
     @Override
+    public E getById(Id id) {
+        return repository.getById(id);
+    }
+
+    @Override
     public boolean create(CreateReq createReq) {
         return repository.create(createReq);
     }
@@ -76,12 +80,27 @@ public class BaseService<
     }
 
     @Override
+    public boolean save(E entity) {
+        return repository.save(entity);
+    }
+
+    @Override
     public boolean updateById(Id id, UpdateReq updateReq) {
         return repository.updateById(id, updateReq);
     }
 
     @Override
+    public boolean updateById(E entity) {
+        return repository.updateById(entity);
+    }
+
+    @Override
     public V updateReturnById(Id id, UpdateReq updateReq) {
         return repository.updateReturnById(id, updateReq);
+    }
+
+    @Override
+    public V updateReturnById(E entity) {
+        return repository.updateReturnById(entity);
     }
 }

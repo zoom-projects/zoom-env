@@ -12,12 +12,14 @@ import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
  * @date 2024/10/11
  */
+@Deprecated
 public class SuperServiceImpl<Id extends Serializable,
         Q extends PageRequest,
         V extends Serializable,
@@ -30,6 +32,31 @@ public class SuperServiceImpl<Id extends Serializable,
     @Autowired
     protected C mapstruct;
 
+
+    /**
+     * 获取mapstruct
+     *
+     * @return mapstruct
+     */
+    public C getMapstruct() {
+        return mapstruct;
+    }
+
+    @Override
+    public boolean deleteById(Id id) {
+        return removeById(id);
+    }
+
+    @Override
+    public boolean deleteByIds(List<Id> ids) {
+        return removeByIds(ids);
+    }
+
+    @Override
+    public boolean deleteByIds(Collection<Id> ids) {
+        return removeByIds(ids);
+    }
+
     @Override
     public Page<V> page(Q query) {
         IPage<E> page = QueryHelper.toPage(query);
@@ -40,7 +67,7 @@ public class SuperServiceImpl<Id extends Serializable,
 
     @Override
     public List<V> list(Q query) {
-        List<E> list = list(getQueryWrapper(query));
+        List<E> list = getBaseMapper().selectList(getQueryWrapper(query));
         return mapstruct.toVoList(list);
     }
 
@@ -50,11 +77,23 @@ public class SuperServiceImpl<Id extends Serializable,
         return mapstruct.toVo(entity);
     }
 
+    @Override
+    public E getById(Serializable id) {
+        if (id == null) {
+            return null;
+        }
+        return super.getById(id);
+    }
 
     @Override
     public boolean create(CreateReq createReq) {
         E entity = mapstruct.createReqToEntity(createReq);
         return save(entity);
+    }
+
+    @Override
+    public boolean save(E entity) {
+        return super.save(entity);
     }
 
     @Override
@@ -77,6 +116,11 @@ public class SuperServiceImpl<Id extends Serializable,
     }
 
     @Override
+    public boolean updateById(E entity) {
+        return updateById(entity);
+    }
+
+    @Override
     public V updateReturnById(Id id, UpdateReq updateReq) {
         E entity = getById(id);
         if (entity == null) {
@@ -87,23 +131,14 @@ public class SuperServiceImpl<Id extends Serializable,
         return mapstruct.toVo(entity);
     }
 
-    /**
-     * 获取mapstruct
-     *
-     * @return mapstruct
-     */
-    public C getMapstruct() {
-        return mapstruct;
+    @Override
+    public V updateReturnById(E entity) {
+        if (updateById(entity)) {
+            return mapstruct.toVo(entity);
+        }
+        return null;
     }
 
-    @Override
-    public boolean deleteById(Id id) {
-        return removeById(id);
-    }
 
-    @Override
-    public boolean deleteByIds(List<Id> ids) {
-        return removeByIds(ids);
-    }
 }
 

@@ -17,7 +17,7 @@ import java.util.List;
 public class SuperRemoteService<Id extends Serializable, Q extends PageRequest,
         V extends Domain, CreateReq extends Domain, UpdateReq extends Domain,
         E extends BaseEntity,
-        Service extends IService<Id, Q, V, E, CreateReq, UpdateReq>> implements IRemoteService<Id, Q, V,
+        Service extends IService<Id, Q, CreateReq, UpdateReq, V, E>> implements IRemoteService<Id, Q, V,
         CreateReq
         , UpdateReq> {
 

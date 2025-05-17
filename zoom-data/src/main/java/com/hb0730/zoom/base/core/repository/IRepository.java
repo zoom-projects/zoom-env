@@ -1,48 +1,31 @@
 package com.hb0730.zoom.base.core.repository;
 
-import com.hb0730.zoom.base.entity.BaseEntity;
+import com.hb0730.zoom.base.core.IDeleteService;
+import com.hb0730.zoom.base.core.IQueryService;
+import com.hb0730.zoom.base.core.ISaveService;
+import com.hb0730.zoom.base.core.IUpdateService;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
- * 查询、保存、更新 Repository
+ * Repository interface.
  *
- * @param <Id>        主键类型
- * @param <Q>         查询条件
- * @param <V>         返回值类型
- * @param <E>         实体类型
- * @param <CreateReq> 创建请求参数
- * @param <UpdateReq> 更新请求参数
+ * @param <Id>        id type
+ * @param <Q>         query type
+ * @param <CreateReq> create request type
+ * @param <UpdateReq> update request type
+ * @param <V>         view type
+ * @param <E>         entity type
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2025/5/12
+ * @date 2025/5/17
+ * @since 1.0.0
  */
-public interface IRepository<
-        Id extends Serializable,
+public interface IRepository<Id extends Serializable,
         Q extends PageRequest,
-        V extends Serializable,
-        E extends BaseEntity,
         CreateReq extends Serializable,
-        UpdateReq extends Serializable>
-        extends
-        IQueryRepository<Id, Q, V, E>,
-        ISaveRepository<CreateReq, V>,
-        IUpdateRepository<Id, UpdateReq, V> {
-
-    /**
-     * delete by id
-     *
-     * @param id .
-     * @return .
-     */
-    boolean deleteById(Id id);
-
-    /**
-     * batch delete by id
-     *
-     * @param ids .
-     * @return .
-     */
-    boolean deleteByIds(List<Id> ids);
+        UpdateReq extends Serializable,
+        V extends Serializable,
+        E extends Serializable> extends IQueryService<Id, Q, V, E>, ISaveService<CreateReq, V, E>, IUpdateService<Id,
+        UpdateReq, V, E>, IDeleteService<Id> {
 }

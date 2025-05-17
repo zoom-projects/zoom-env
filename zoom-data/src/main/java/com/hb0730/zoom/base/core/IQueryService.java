@@ -1,4 +1,4 @@
-package com.hb0730.zoom.base.core.service;
+package com.hb0730.zoom.base.core;
 
 import com.hb0730.zoom.base.data.Page;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
@@ -7,22 +7,27 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * Query service interface.
+ *
+ * @param <Id> id type
+ * @param <Q>  query type
+ * @param <V>  view type
+ * @param <E>  entity type
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2024/10/11
+ * @date 2025/5/17
+ * @since 1.0.0
  */
-public interface IQueryService<
-        Id extends Serializable,
+public interface IQueryService<Id extends Serializable,
         Q extends PageRequest,
-        V extends Serializable> {
+        V extends Serializable,
+        E extends Serializable> {
     /**
      * 分页查询
      *
      * @param query 查询条件
      * @return 分页数据
      */
-    default Page<V> page(Q query) {
-        return Page.empty();
-    }
+    Page<V> page(Q query);
 
     /**
      * 查询
@@ -30,9 +35,7 @@ public interface IQueryService<
      * @param query 查询条件
      * @return 数据
      */
-    default List<V> list(Q query) {
-        return null;
-    }
+    List<V> list(Q query);
 
     /**
      * 查询
@@ -40,7 +43,13 @@ public interface IQueryService<
      * @param id id
      * @return 数据
      */
-    default V get(Id id) {
-        return null;
-    }
+    V get(Id id);
+
+    /**
+     * 查询
+     *
+     * @param id id
+     * @return 数据
+     */
+    E getById(Id id);
 }
