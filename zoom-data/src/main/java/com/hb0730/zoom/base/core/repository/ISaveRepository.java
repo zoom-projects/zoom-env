@@ -1,13 +1,16 @@
-package com.hb0730.zoom.base.service.superclass;
+package com.hb0730.zoom.base.core.repository;
 
 import java.io.Serializable;
 
 /**
+ * 保存 Repository
+ *
+ * @param <Req> 请求参数
+ * @param <V>   返回值
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2024/10/11
+ * @date 2025/5/12
  */
-public interface ISaveService<Req extends Serializable, V extends Serializable> {
-
+public interface ISaveRepository<Req extends Serializable, V extends Serializable> {
     /**
      * 保存
      *

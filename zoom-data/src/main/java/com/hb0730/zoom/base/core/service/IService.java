@@ -1,9 +1,6 @@
-package com.hb0730.zoom.base.service.superclass;
+package com.hb0730.zoom.base.core.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.hb0730.zoom.base.core.service.IService;
 import com.hb0730.zoom.base.entity.BaseEntity;
-import com.hb0730.zoom.mybatis.query.QueryHelper;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 
 import java.io.Serializable;
@@ -19,7 +16,7 @@ import java.util.List;
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
  * @date 2024/10/11
  */
-public interface ISuperService<
+public interface IService<
         Id extends Serializable,
         Q extends PageRequest,
         V extends Serializable,
@@ -27,7 +24,9 @@ public interface ISuperService<
         CreateReq extends Serializable,
         UpdateReq extends Serializable>
         extends
-        IService<Id, Q, V, E, CreateReq, UpdateReq> {
+        IQueryService<Id, Q, V>,
+        ISaveService<CreateReq, V>,
+        IUpdateService<Id, UpdateReq, V> {
 
     /**
      * delete by id
@@ -44,14 +43,4 @@ public interface ISuperService<
      * @return .
      */
     boolean deleteByIds(List<Id> ids);
-
-    /**
-     * 查询
-     *
-     * @param query 查询条件
-     * @return 数据
-     */
-    default Wrapper<E> getQueryWrapper(Q query) {
-        return QueryHelper.ofBean(query);
-    }
 }

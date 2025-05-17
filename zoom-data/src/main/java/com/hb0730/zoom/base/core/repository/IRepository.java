@@ -1,25 +1,24 @@
-package com.hb0730.zoom.base.service.superclass;
+package com.hb0730.zoom.base.core.repository;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.hb0730.zoom.base.core.service.IService;
 import com.hb0730.zoom.base.entity.BaseEntity;
-import com.hb0730.zoom.mybatis.query.QueryHelper;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * @param <Id>        id
- * @param <Q>         query
- * @param <V>         view
- * @param <E>         entity
- * @param <CreateReq> create request
- * @param <UpdateReq> update request
+ * 查询、保存、更新 Repository
+ *
+ * @param <Id>        主键类型
+ * @param <Q>         查询条件
+ * @param <V>         返回值类型
+ * @param <E>         实体类型
+ * @param <CreateReq> 创建请求参数
+ * @param <UpdateReq> 更新请求参数
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
- * @date 2024/10/11
+ * @date 2025/5/12
  */
-public interface ISuperService<
+public interface IRepository<
         Id extends Serializable,
         Q extends PageRequest,
         V extends Serializable,
@@ -27,7 +26,9 @@ public interface ISuperService<
         CreateReq extends Serializable,
         UpdateReq extends Serializable>
         extends
-        IService<Id, Q, V, E, CreateReq, UpdateReq> {
+        IQueryRepository<Id, Q, V, E>,
+        ISaveRepository<CreateReq, V>,
+        IUpdateRepository<Id, UpdateReq, V> {
 
     /**
      * delete by id
@@ -44,14 +45,4 @@ public interface ISuperService<
      * @return .
      */
     boolean deleteByIds(List<Id> ids);
-
-    /**
-     * 查询
-     *
-     * @param query 查询条件
-     * @return 数据
-     */
-    default Wrapper<E> getQueryWrapper(Q query) {
-        return QueryHelper.ofBean(query);
-    }
 }

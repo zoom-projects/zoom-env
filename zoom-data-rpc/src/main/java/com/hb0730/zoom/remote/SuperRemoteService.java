@@ -1,9 +1,9 @@
 package com.hb0730.zoom.remote;
 
+import com.hb0730.zoom.base.core.service.IService;
 import com.hb0730.zoom.base.data.Domain;
 import com.hb0730.zoom.base.data.Page;
 import com.hb0730.zoom.base.entity.BaseEntity;
-import com.hb0730.zoom.base.service.superclass.ISuperService;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +17,8 @@ import java.util.List;
 public class SuperRemoteService<Id extends Serializable, Q extends PageRequest,
         V extends Domain, CreateReq extends Domain, UpdateReq extends Domain,
         E extends BaseEntity,
-        Service extends ISuperService<Id, Q, V, E, CreateReq, UpdateReq>> implements IRemoteService<Id, Q, V, CreateReq
+        Service extends IService<Id, Q, V, E, CreateReq, UpdateReq>> implements IRemoteService<Id, Q, V,
+        CreateReq
         , UpdateReq> {
 
     @Autowired
