@@ -72,6 +72,14 @@ public class SuperServiceImpl<Id extends Serializable,
     }
 
     @Override
+    public List<E> listByIds(Collection<? extends Serializable> idList) {
+        if (idList == null || idList.isEmpty()) {
+            return null;
+        }
+        return getBaseMapper().selectByIds(idList);
+    }
+
+    @Override
     public V get(Id id) {
         E entity = getById(id);
         return mapstruct.toVo(entity);
@@ -139,6 +147,20 @@ public class SuperServiceImpl<Id extends Serializable,
         return null;
     }
 
+    @Override
+    public boolean updateBatchById(Collection<E> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return false;
+        }
+        return super.updateBatchById(entityList);
+    }
 
+    @Override
+    public boolean saveBatch(Collection<E> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return false;
+        }
+        return super.saveBatch(entityList);
+    }
 }
 

@@ -60,6 +60,11 @@ public class BaseService<Id extends Serializable,
     }
 
     @Override
+    public List<E> listByIds(Collection<? extends Serializable> ids) {
+        return repository.listByIds(ids);
+    }
+
+    @Override
     public V get(Id id) {
         return repository.get(id);
     }
@@ -85,6 +90,11 @@ public class BaseService<Id extends Serializable,
     }
 
     @Override
+    public boolean saveBatch(Collection<E> entities) {
+        return repository.saveBatch(entities);
+    }
+
+    @Override
     public boolean updateById(Id id, UpdateReq updateReq) {
         return repository.updateById(id, updateReq);
     }
@@ -102,5 +112,10 @@ public class BaseService<Id extends Serializable,
     @Override
     public V updateReturnById(E entity) {
         return repository.updateReturnById(entity);
+    }
+
+    @Override
+    public boolean updateBatchById(Collection<E> entities) {
+        return repository.updateBatchById(entities);
     }
 }

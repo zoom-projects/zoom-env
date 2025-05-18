@@ -4,6 +4,7 @@ import com.hb0730.zoom.base.data.Page;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -36,6 +37,14 @@ public interface IQueryService<Id extends Serializable,
      * @return 数据
      */
     List<V> list(Q query);
+
+    /**
+     * 查询
+     *
+     * @param ids id集合
+     * @return 数据
+     */
+    List<E> listByIds(Collection<? extends Serializable> ids);
 
     /**
      * 查询

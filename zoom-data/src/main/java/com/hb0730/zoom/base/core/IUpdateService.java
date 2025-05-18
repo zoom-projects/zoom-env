@@ -1,6 +1,7 @@
 package com.hb0730.zoom.base.core;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * @param <Id>        id type
@@ -45,4 +46,12 @@ public interface IUpdateService<Id extends Serializable, UpdateReq extends Seria
      * @return updated entity
      */
     V updateReturnById(E entity);
+
+    /**
+     * update batch by id
+     *
+     * @param entities entities to update
+     * @return true if success, false otherwise
+     */
+    boolean updateBatchById(Collection<E> entities);
 }

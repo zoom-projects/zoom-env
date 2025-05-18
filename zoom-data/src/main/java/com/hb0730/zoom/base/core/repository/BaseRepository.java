@@ -10,6 +10,7 @@ import com.hb0730.zoom.base.mapstruct.BizMapstruct;
 import com.hb0730.zoom.mybatis.query.QueryHelper;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -63,6 +64,15 @@ public class BaseRepository<Id extends Serializable,
     }
 
     @Override
+    public List<E> listByIds(Collection<? extends Serializable> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return null;
+        }
+        return getBaseMapper().selectByIds(ids);
+    }
+
+
+    @Override
     public V get(Id id) {
         E entity = getBaseMapper().selectById(id);
         return mapstruct.toVo(entity);
@@ -72,6 +82,7 @@ public class BaseRepository<Id extends Serializable,
     public E getById(Serializable id) {
         return getBaseMapper().selectById(id);
     }
+
 
     @Override
     public boolean create(CreateReq createReq) {
@@ -96,6 +107,15 @@ public class BaseRepository<Id extends Serializable,
             return false;
         }
         return getBaseMapper().insert(entity) > 0;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean saveBatch(Collection<E> entities) {
+        if (entities == null || entities.isEmpty()) {
+            return false;
+        }
+        return saveBatch(entities, DEFAULT_BATCH_SIZE);
     }
 
     @Override
@@ -134,6 +154,16 @@ public class BaseRepository<Id extends Serializable,
         }
         updateById(entity);
         return mapstruct.toVo(entity);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateBatchById(Collection<E> entities) {
+
+        if (entities == null || entities.isEmpty()) {
+            return false;
+        }
+        return updateBatchById(entities, DEFAULT_BATCH_SIZE);
     }
 
     /**
