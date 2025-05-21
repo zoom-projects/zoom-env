@@ -27,5 +27,5 @@ public interface IRepository<Id extends Serializable,
         UpdateReq extends Serializable,
         V extends Serializable,
         E extends Serializable> extends IQueryService<Id, Q, V, E>, ISaveService<CreateReq, V, E>, IUpdateService<Id,
-        UpdateReq, V, E>, IDeleteService<Id> {
+        UpdateReq, V, E>, IDeleteService<Id>, IBasicRepository<Id, E> {
 }

@@ -1,7 +1,6 @@
 package com.hb0730.zoom.sys.biz.system.repository;
 
-import com.baomidou.mybatisplus.extension.repository.CrudRepository;
-import com.baomidou.mybatisplus.extension.repository.IRepository;
+import com.hb0730.zoom.base.core.repository.BasicRepository;
 import com.hb0730.zoom.base.sys.system.entity.SysRolePermission;
 import com.hb0730.zoom.sys.biz.system.repository.mapper.SysRolePermissionMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,7 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
-public class SysRolePermissionRepository extends CrudRepository<SysRolePermissionMapper, SysRolePermission> {
+public class SysRolePermissionRepository extends BasicRepository<String, SysRolePermission, SysRolePermissionMapper> {
 
     /**
      * 根据角色ID删除
@@ -50,15 +49,5 @@ public class SysRolePermissionRepository extends CrudRepository<SysRolePermissio
         return baseMapper.of(
                 query -> query.in(SysRolePermission::getRoleId, roleIds)
         ).listOptional();
-    }
-
-    /**
-     * 批量保存
-     *
-     * @param rolePermissions 角色权限列表
-     * @return 是否成功
-     */
-    public boolean saveBatch(List<SysRolePermission> rolePermissions) {
-        return saveBatch(rolePermissions, IRepository.DEFAULT_BATCH_SIZE);
     }
 }

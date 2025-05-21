@@ -1,5 +1,6 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
+import com.hb0730.zoom.base.core.service.BasicService;
 import com.hb0730.zoom.base.sys.system.entity.SysUserRole;
 import com.hb0730.zoom.sys.biz.system.repository.SysUserRoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-public class SysUserRoleService {
-    private final SysUserRoleRepository repository;
+public class SysUserRoleService extends BasicService<String, SysUserRole, SysUserRoleRepository> {
 
     /**
      * 根据用户ID删除

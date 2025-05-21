@@ -1,5 +1,6 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
+import com.hb0730.zoom.base.core.service.BasicService;
 import com.hb0730.zoom.base.sys.system.entity.SysUserAccessToken;
 import com.hb0730.zoom.base.sys.system.entity.SysUserAccessTokenOpenApi;
 import com.hb0730.zoom.base.utils.CollectionUtil;
@@ -18,8 +19,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysUserAccessTokenOpenApiService {
-    private final SysUserAccessTokenOpenApiRepository repository;
+public class SysUserAccessTokenOpenApiService extends BasicService<String, SysUserAccessTokenOpenApi, SysUserAccessTokenOpenApiRepository> {
 
     /**
      * 通过访问令牌ID获取开放接口ID

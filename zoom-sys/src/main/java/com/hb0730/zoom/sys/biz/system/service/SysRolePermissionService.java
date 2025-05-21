@@ -1,5 +1,6 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
+import com.hb0730.zoom.base.core.service.BasicService;
 import com.hb0730.zoom.base.sys.system.entity.SysRolePermission;
 import com.hb0730.zoom.sys.biz.system.repository.SysRolePermissionRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +16,7 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-public class SysRolePermissionService {
-
-    private final SysRolePermissionRepository repository;
+public class SysRolePermissionService extends BasicService<String, SysRolePermission, SysRolePermissionRepository> {
 
     /**
      * 删除角色权限
@@ -58,16 +57,5 @@ public class SysRolePermissionService {
                         .map(SysRolePermission::getPermissionId)
                         .toList()).orElse(List.of());
 
-    }
-
-
-    /**
-     * 批量保存角色权限
-     *
-     * @param rolePermissions 角色权限
-     * @return 是否成功
-     */
-    public boolean saveBatch(List<SysRolePermission> rolePermissions) {
-        return repository.saveBatch(rolePermissions);
     }
 }

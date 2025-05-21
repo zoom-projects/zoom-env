@@ -3,17 +3,14 @@ package com.hb0730.zoom.base.core.repository;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.repository.CrudRepository;
 import com.hb0730.zoom.base.data.Page;
 import com.hb0730.zoom.base.entity.BaseEntity;
 import com.hb0730.zoom.base.mapstruct.BizMapstruct;
 import com.hb0730.zoom.mybatis.query.QueryHelper;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -31,23 +28,11 @@ public class BaseRepository<Id extends Serializable,
         UpdateReq extends Serializable,
         M extends BaseMapper<E>,
         C extends BizMapstruct<V, E, CreateReq, UpdateReq>
-        > extends CrudRepository<M, E> implements IRepository<Id, Q, CreateReq, UpdateReq, V, E> {
+        > extends BasicRepository<Id, E, M> implements IRepository<Id, Q, CreateReq, UpdateReq, V, E> {
 
     @Autowired
     protected C mapstruct;
 
-    @Override
-    public boolean deleteById(Id id) {
-        return getBaseMapper().deleteById(id) > 0;
-    }
-
-    @Override
-    public boolean deleteByIds(Collection<Id> ids) {
-        if (ids == null || ids.isEmpty()) {
-            return false;
-        }
-        return getBaseMapper().deleteByIds(ids) > 0;
-    }
 
     @Override
     public Page<V> page(Q query) {
@@ -68,31 +53,12 @@ public class BaseRepository<Id extends Serializable,
         return getBaseMapper().selectList(getQueryWrapper(query));
     }
 
-    @Override
-    public List<E> listEntity() {
-        return getBaseMapper().selectList(null);
-    }
-
-    @Override
-    public List<E> listByIds(Collection<? extends Serializable> ids) {
-        if (ids == null || ids.isEmpty()) {
-            return null;
-        }
-        return getBaseMapper().selectByIds(ids);
-    }
-
 
     @Override
     public V get(Id id) {
         E entity = getBaseMapper().selectById(id);
         return mapstruct.toVo(entity);
     }
-
-    @Override
-    public E getById(Serializable id) {
-        return getBaseMapper().selectById(id);
-    }
-
 
     @Override
     public boolean create(CreateReq createReq) {
@@ -112,23 +78,6 @@ public class BaseRepository<Id extends Serializable,
     }
 
     @Override
-    public boolean save(E entity) {
-        if (entity == null) {
-            return false;
-        }
-        return getBaseMapper().insert(entity) > 0;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean saveBatch(Collection<E> entities) {
-        if (entities == null || entities.isEmpty()) {
-            return false;
-        }
-        return saveBatch(entities, DEFAULT_BATCH_SIZE);
-    }
-
-    @Override
     public boolean updateById(Id id, UpdateReq updateReq) {
         E entity = getById(id);
         if (entity == null) {
@@ -136,14 +85,6 @@ public class BaseRepository<Id extends Serializable,
         }
         entity = mapstruct.updateEntity(updateReq, entity);
         return updateById(entity);
-    }
-
-    @Override
-    public boolean updateById(E entity) {
-        if (entity == null) {
-            return false;
-        }
-        return getBaseMapper().updateById(entity) > 0;
     }
 
     @Override
@@ -164,16 +105,6 @@ public class BaseRepository<Id extends Serializable,
         }
         updateById(entity);
         return mapstruct.toVo(entity);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean updateBatchById(Collection<E> entities) {
-
-        if (entities == null || entities.isEmpty()) {
-            return false;
-        }
-        return updateBatchById(entities, DEFAULT_BATCH_SIZE);
     }
 
     /**

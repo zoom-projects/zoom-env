@@ -6,7 +6,6 @@ import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,7 +28,9 @@ public class BaseService<Id extends Serializable,
         E extends Serializable,
         CreateReq extends Serializable,
         UpdateReq extends Serializable,
-        Repository extends IRepository<Id, Q, CreateReq, UpdateReq, V, E>> implements IService<Id, Q, CreateReq, UpdateReq, V, E> {
+        Repository extends IRepository<Id, Q, CreateReq, UpdateReq, V, E>> extends BasicService<Id, E, Repository> implements IService<Id, Q,
+        CreateReq,
+        UpdateReq, V, E> {
 
     @Autowired
     protected Repository repository;
@@ -39,15 +40,6 @@ public class BaseService<Id extends Serializable,
         return repository;
     }
 
-    @Override
-    public boolean deleteById(Id id) {
-        return repository.deleteById(id);
-    }
-
-    @Override
-    public boolean deleteByIds(Collection<Id> ids) {
-        return repository.deleteByIds(ids);
-    }
 
     @Override
     public Page<V> page(Q query) {
@@ -65,24 +57,10 @@ public class BaseService<Id extends Serializable,
     }
 
     @Override
-    public List<E> listEntity() {
-        return repository.listEntity();
-    }
-
-    @Override
-    public List<E> listByIds(Collection<? extends Serializable> ids) {
-        return repository.listByIds(ids);
-    }
-
-    @Override
     public V get(Id id) {
         return repository.get(id);
     }
 
-    @Override
-    public E getById(Id id) {
-        return repository.getById(id);
-    }
 
     @Override
     public boolean create(CreateReq createReq) {
@@ -95,23 +73,8 @@ public class BaseService<Id extends Serializable,
     }
 
     @Override
-    public boolean save(E entity) {
-        return repository.save(entity);
-    }
-
-    @Override
-    public boolean saveBatch(Collection<E> entities) {
-        return repository.saveBatch(entities);
-    }
-
-    @Override
     public boolean updateById(Id id, UpdateReq updateReq) {
         return repository.updateById(id, updateReq);
-    }
-
-    @Override
-    public boolean updateById(E entity) {
-        return repository.updateById(entity);
     }
 
     @Override
@@ -124,8 +87,4 @@ public class BaseService<Id extends Serializable,
         return repository.updateReturnById(entity);
     }
 
-    @Override
-    public boolean updateBatchById(Collection<E> entities) {
-        return repository.updateBatchById(entities);
-    }
 }

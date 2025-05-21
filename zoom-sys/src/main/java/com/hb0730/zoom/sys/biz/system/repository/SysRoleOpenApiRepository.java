@@ -1,6 +1,6 @@
 package com.hb0730.zoom.sys.biz.system.repository;
 
-import com.baomidou.mybatisplus.extension.repository.CrudRepository;
+import com.hb0730.zoom.base.core.repository.BasicRepository;
 import com.hb0730.zoom.base.sys.system.entity.SysRoleOpenApi;
 import com.hb0730.zoom.sys.biz.system.repository.mapper.SysRoleOpenApiMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class SysRoleOpenApiRepository extends CrudRepository<SysRoleOpenApiMapper, SysRoleOpenApi> {
+public class SysRoleOpenApiRepository extends BasicRepository<String, SysRoleOpenApi, SysRoleOpenApiMapper> {
 
     /**
      * 根据角色ID查询
@@ -28,17 +28,6 @@ public class SysRoleOpenApiRepository extends CrudRepository<SysRoleOpenApiMappe
     }
 
     /**
-     * 批量保存
-     *
-     * @param list 列表
-     * @return 是否成功
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public boolean saveBatch(List<SysRoleOpenApi> list) {
-        return saveBatch(list, DEFAULT_BATCH_SIZE);
-    }
-
-    /**
      * 根据角色ID删除
      *
      * @param roleId 角色ID
@@ -48,5 +37,5 @@ public class SysRoleOpenApiRepository extends CrudRepository<SysRoleOpenApiMappe
     public boolean removeByRoleId(String roleId) {
         return lambdaUpdate().eq(SysRoleOpenApi::getRoleId, roleId).remove();
     }
-    
+
 }

@@ -1,4 +1,4 @@
-package com.hb0730.zoom.sys.biz.message.mapper;
+package com.hb0730.zoom.sys.biz.message.repository.mapper;
 
 import com.hb0730.zoom.base.sys.message.entity.SysMessage;
 import com.hb0730.zoom.mybatis.core.mapper.IMapper;

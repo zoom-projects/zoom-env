@@ -1,22 +1,19 @@
 package com.hb0730.zoom.sys.biz.quartz.service;
 
 import com.hb0730.zoom.base.R;
+import com.hb0730.zoom.base.core.service.BaseService;
 import com.hb0730.zoom.base.exception.ZoomException;
 import com.hb0730.zoom.base.ext.services.dto.QuartzJobDTO;
-import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
-import com.hb0730.zoom.sys.biz.quartz.convert.SysQuartzJobConvert;
 import com.hb0730.zoom.sys.biz.quartz.entity.SysQuartzJob;
-import com.hb0730.zoom.sys.biz.quartz.mapper.SysQuartzJobMapper;
 import com.hb0730.zoom.sys.biz.quartz.model.request.SysQuartzCreateRequest;
 import com.hb0730.zoom.sys.biz.quartz.model.request.SysQuartzJobQueryRequest;
 import com.hb0730.zoom.sys.biz.quartz.model.vo.SysQuartzJobVO;
+import com.hb0730.zoom.sys.biz.quartz.repository.SysQuartzJobRepository;
 import com.hb0730.zoom.sys.conf.MyJobControlProxyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.Serializable;
 
 /**
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
@@ -24,8 +21,8 @@ import java.io.Serializable;
  */
 @Service
 @Slf4j
-public class SysQuartzJobService extends SuperServiceImpl<String, SysQuartzJobQueryRequest, SysQuartzJobVO,
-        SysQuartzJob, SysQuartzCreateRequest, SysQuartzCreateRequest, SysQuartzJobMapper, SysQuartzJobConvert> {
+public class SysQuartzJobService extends BaseService<String, SysQuartzJobQueryRequest, SysQuartzJobVO,
+        SysQuartzJob, SysQuartzCreateRequest, SysQuartzCreateRequest, SysQuartzJobRepository> {
     @Autowired
     private MyJobControlProxyService jobControlProxyService;
 
@@ -36,21 +33,22 @@ public class SysQuartzJobService extends SuperServiceImpl<String, SysQuartzJobQu
      * @return 是否存在
      */
     public boolean findByJobClassName(String jobClassName) {
-        return baseMapper.of(query -> query.eq(SysQuartzJob::getJobClassName, jobClassName))
-                .present();
+//        return baseMapper.of(query -> query.eq(SysQuartzJob::getJobClassName, jobClassName))
+//                .present();
+        return repository.JobClassNameExists(jobClassName);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean create(SysQuartzCreateRequest request) {
-        SysQuartzJob entity = getMapstruct().createReqToEntity(request);
+        SysQuartzJob entity = repository.getMapstruct().createReqToEntity(request);
         save(entity);
-        QuartzJobDTO dto = getMapstruct().toDto(request);
+        QuartzJobDTO dto = repository.getMapstruct().toDto(request);
         dto.setId(entity.getId());
         R<?> res = jobControlProxyService.add(dto);
         if (!res.isSuccess()) {
             //物理删除
-            baseMapper.deleteById(entity.getId());
+            repository.deleteById(entity.getId());
             throw new ZoomException("创建任务失败 " + res.getMessage());
         }
         return true;
@@ -61,7 +59,7 @@ public class SysQuartzJobService extends SuperServiceImpl<String, SysQuartzJobQu
     public boolean updateById(String id, SysQuartzCreateRequest request) {
         super.updateById(id, request);
         //更新任务
-        QuartzJobDTO dto = getMapstruct().toDto(request);
+        QuartzJobDTO dto = repository.getMapstruct().toDto(request);
         dto.setId(id);
         R<?> res = jobControlProxyService.edit(dto);
         if (!res.isSuccess()) {
@@ -72,8 +70,8 @@ public class SysQuartzJobService extends SuperServiceImpl<String, SysQuartzJobQu
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean removeById(Serializable id) {
-        super.removeById(id);
+    public boolean deleteById(String id) {
+        super.deleteById(id);
         //删除任务
         QuartzJobDTO dto = new QuartzJobDTO();
         dto.setId((String) id);
@@ -98,7 +96,7 @@ public class SysQuartzJobService extends SuperServiceImpl<String, SysQuartzJobQu
         }
         entity.setStatus(false);
         updateById(entity);
-        QuartzJobDTO dto = mapstruct.toDto(entity);
+        QuartzJobDTO dto = repository.getMapstruct().toDto(entity);
         R<?> res = jobControlProxyService.pauseJob(dto);
         if (!res.isSuccess()) {
             throw new ZoomException("暂停任务失败 " + res.getMessage());
@@ -120,7 +118,7 @@ public class SysQuartzJobService extends SuperServiceImpl<String, SysQuartzJobQu
         }
         entity.setStatus(true);
         updateById(entity);
-        QuartzJobDTO dto = mapstruct.toDto(entity);
+        QuartzJobDTO dto = repository.getMapstruct().toDto(entity);
         R<?> res = jobControlProxyService.resumeJob(dto);
         if (!res.isSuccess()) {
             throw new ZoomException("恢复任务失败 " + res.getMessage());
@@ -139,7 +137,7 @@ public class SysQuartzJobService extends SuperServiceImpl<String, SysQuartzJobQu
         if (entity == null) {
             return R.NG("任务不存在");
         }
-        QuartzJobDTO dto = mapstruct.toDto(entity);
+        QuartzJobDTO dto = repository.getMapstruct().toDto(entity);
         R<?> res = jobControlProxyService.run(dto);
         if (!res.isSuccess()) {
             throw new ZoomException("执行任务失败 " + res.getMessage());

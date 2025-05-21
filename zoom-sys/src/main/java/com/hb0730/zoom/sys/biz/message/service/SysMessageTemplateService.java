@@ -1,17 +1,13 @@
 package com.hb0730.zoom.sys.biz.message.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
+import com.hb0730.zoom.base.core.service.BaseService;
 import com.hb0730.zoom.base.sys.message.entity.SysMessageTemplate;
-import com.hb0730.zoom.base.utils.StrUtil;
-import com.hb0730.zoom.sys.biz.message.convert.SysMessageTemplateConvert;
-import com.hb0730.zoom.sys.biz.message.mapper.SysMessageTemplateMapper;
 import com.hb0730.zoom.sys.biz.message.model.request.SysMessageTemplateCreateRequest;
 import com.hb0730.zoom.sys.biz.message.model.request.SysMessageTemplateQueryRequest;
 import com.hb0730.zoom.sys.biz.message.model.request.SysMessageTemplateUpdateRequest;
 import com.hb0730.zoom.sys.biz.message.model.vo.SysMessageTemplateVO;
+import com.hb0730.zoom.sys.biz.message.repository.SysMessageTemplateRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +17,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class SysMessageTemplateService extends SuperServiceImpl<String, SysMessageTemplateQueryRequest,
+public class SysMessageTemplateService extends BaseService<String, SysMessageTemplateQueryRequest,
         SysMessageTemplateVO, SysMessageTemplate, SysMessageTemplateCreateRequest, SysMessageTemplateUpdateRequest,
-        SysMessageTemplateMapper, SysMessageTemplateConvert> {
+        SysMessageTemplateRepository> {
 
     /**
      * 校验模板CODE是否存在
@@ -32,12 +28,13 @@ public class SysMessageTemplateService extends SuperServiceImpl<String, SysMessa
      * @return 是否存在
      */
     public R<String> hasCode(String code, String id) {
-        LambdaQueryWrapper<SysMessageTemplate> queryWrapper = Wrappers.lambdaQuery(SysMessageTemplate.class)
-                .eq(SysMessageTemplate::getTemplateCode, code);
-        if (StrUtil.isNotBlank(id)) {
-            queryWrapper.ne(SysMessageTemplate::getId, id);
-        }
-        boolean present = baseMapper.of(queryWrapper).present();
+//        LambdaQueryWrapper<SysMessageTemplate> queryWrapper = Wrappers.lambdaQuery(SysMessageTemplate.class)
+//                .eq(SysMessageTemplate::getTemplateCode, code);
+//        if (StrUtil.isNotBlank(id)) {
+//            queryWrapper.ne(SysMessageTemplate::getId, id);
+//        }
+//        boolean present = baseMapper.of(queryWrapper).present();
+        boolean present = repository.codeExists(code, id);
         if (present) {
             return R.NG("模板CODE已存在");
         } else {

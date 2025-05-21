@@ -84,7 +84,7 @@ public class SysMessageTemplateController {
     @OperatorLog(SysMessageTemplateOperatorType.DELETE)
     @PreAuthorize("hasAuthority('sys:message:template:delete')")
     public R<String> delete(String id) {
-        service.removeById(id);
+        service.deleteById(id);
         return R.OK();
     }
 

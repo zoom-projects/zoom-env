@@ -1,5 +1,6 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
+import com.hb0730.zoom.base.core.service.BasicService;
 import com.hb0730.zoom.base.sys.system.entity.SysRoleOpenApi;
 import com.hb0730.zoom.base.utils.CollectionUtil;
 import com.hb0730.zoom.sys.biz.system.repository.SysRoleOpenApiRepository;
@@ -17,8 +18,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysRoleOpenApiService {
-    private final SysRoleOpenApiRepository repository;
+public class SysRoleOpenApiService extends BasicService<String, SysRoleOpenApi, SysRoleOpenApiRepository> {
 
     /**
      * 根据角色id获取开放接口id

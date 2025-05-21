@@ -85,7 +85,7 @@ public class SysMessageController {
     @Operation(summary = "删除消息")
     @OperatorLog(SysMessageTemplateOperatorType.DELETE)
     public R<String> delete(String id) {
-        service.removeById(id);
+        service.deleteById(id);
         return R.OK();
     }
 

@@ -1,5 +1,6 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
+import com.hb0730.zoom.base.core.service.BasicService;
 import com.hb0730.zoom.base.sys.system.entity.SysUserSubscribeMsg;
 import com.hb0730.zoom.sys.biz.base.model.request.UserSubscribeMsgUpdateRequest;
 import com.hb0730.zoom.sys.biz.system.repository.SysUserSubscribeMsgRepository;
@@ -16,7 +17,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysUserSubscribeMsgService {
+public class SysUserSubscribeMsgService extends BasicService<String, SysUserSubscribeMsg, SysUserSubscribeMsgRepository> {
     private final SysUserSubscribeMsgRepository repository;
 
     /**

@@ -71,7 +71,7 @@ public class SysQuartzJobController {
     @Operation(summary = "删除计划任务")
     @OperatorLog(SysQuartzJobOperatorType.DELETE)
     public R<String> delete(String id) {
-        quartzJobService.removeById(id);
+        quartzJobService.deleteById(id);
         return R.OK();
     }
 

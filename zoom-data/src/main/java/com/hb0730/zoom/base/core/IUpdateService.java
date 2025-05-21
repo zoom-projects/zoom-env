@@ -1,7 +1,6 @@
 package com.hb0730.zoom.base.core;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 /**
  * @param <Id>        id type
@@ -12,7 +11,8 @@ import java.util.Collection;
  * @date 2025/5/17
  * @since 1.0.0
  */
-public interface IUpdateService<Id extends Serializable, UpdateReq extends Serializable, V extends Serializable, E extends Serializable> {
+public interface IUpdateService<Id extends Serializable, UpdateReq extends Serializable, V extends Serializable,
+        E extends Serializable> extends IBasicUpdateService<E> {
     /**
      * update
      *
@@ -21,14 +21,6 @@ public interface IUpdateService<Id extends Serializable, UpdateReq extends Seria
      * @return true if success, false otherwise
      */
     boolean updateById(Id id, UpdateReq req);
-
-    /**
-     * update entity
-     *
-     * @param entity entity to update
-     * @return true if success, false otherwise
-     */
-    boolean updateById(E entity);
 
     /**
      * update and return
@@ -46,12 +38,4 @@ public interface IUpdateService<Id extends Serializable, UpdateReq extends Seria
      * @return updated entity
      */
     V updateReturnById(E entity);
-
-    /**
-     * update batch by id
-     *
-     * @param entities entities to update
-     * @return true if success, false otherwise
-     */
-    boolean updateBatchById(Collection<E> entities);
 }

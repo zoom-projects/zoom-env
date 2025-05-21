@@ -1,5 +1,6 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
+import com.hb0730.zoom.base.core.service.BasicService;
 import com.hb0730.zoom.base.sys.system.entity.SysUserSettings;
 import com.hb0730.zoom.sys.biz.system.repository.SysUserSettingsRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysUserSettingsService {
-    private final SysUserSettingsRepository repository;
+public class SysUserSettingsService extends BasicService<String, SysUserSettings, SysUserSettingsRepository> {
 
     /**
      * 通过用户ID获取用户设置

@@ -1,17 +1,14 @@
 package com.hb0730.zoom.sys.biz.message.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.hb0730.zoom.base.R;
-import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
+import com.hb0730.zoom.base.core.service.BaseService;
 import com.hb0730.zoom.base.sys.message.entity.SysMessage;
-import com.hb0730.zoom.base.utils.StrUtil;
 import com.hb0730.zoom.mybatis.core.encrypt.MybatisEncryptService;
-import com.hb0730.zoom.sys.biz.message.convert.SysMessageConvert;
-import com.hb0730.zoom.sys.biz.message.mapper.SysMessageMapper;
 import com.hb0730.zoom.sys.biz.message.model.request.SysMessageCreateRequest;
 import com.hb0730.zoom.sys.biz.message.model.request.SysMessageQueryRequest;
 import com.hb0730.zoom.sys.biz.message.model.request.SysMessageUpdateRequest;
 import com.hb0730.zoom.sys.biz.message.model.vo.SysMessageVO;
+import com.hb0730.zoom.sys.biz.message.repository.SysMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,8 +20,8 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysMessageService extends SuperServiceImpl<String, SysMessageQueryRequest, SysMessageVO, SysMessage,
-        SysMessageCreateRequest, SysMessageUpdateRequest, SysMessageMapper, SysMessageConvert> {
+public class SysMessageService extends BaseService<String, SysMessageQueryRequest, SysMessageVO, SysMessage,
+        SysMessageCreateRequest, SysMessageUpdateRequest, SysMessageRepository> {
     private final MybatisEncryptService mybatisEncryptService;
 
 
@@ -38,12 +35,12 @@ public class SysMessageService extends SuperServiceImpl<String, SysMessageQueryR
         return R.OK(mybatisEncryptService.decrypt(content));
     }
 
-    @Override
-    public Wrapper<SysMessage> getQueryWrapper(SysMessageQueryRequest query) {
-        String msgReceiver = query.getMsgReceiver();
-        if (StrUtil.isNotBlank(msgReceiver)) {
-            query.setMsgReceiver(mybatisEncryptService.encrypt(msgReceiver));
-        }
-        return super.getQueryWrapper(query);
-    }
+//    @Override
+//    public Wrapper<SysMessage> getQueryWrapper(SysMessageQueryRequest query) {
+//        String msgReceiver = query.getMsgReceiver();
+//        if (StrUtil.isNotBlank(msgReceiver)) {
+//            query.setMsgReceiver(mybatisEncryptService.encrypt(msgReceiver));
+//        }
+//        return super.getQueryWrapper(query);
+//    }
 }

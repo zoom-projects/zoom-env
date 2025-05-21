@@ -1,7 +1,6 @@
 package com.hb0730.zoom.base.core;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 /**
  * Delete service interface.
@@ -11,20 +10,6 @@ import java.util.Collection;
  * @date 2025/5/17
  * @since 1.0.0
  */
-public interface IDeleteService<Id extends Serializable> {
-    /**
-     * delete by id
-     *
-     * @param id .
-     * @return .
-     */
-    boolean deleteById(Id id);
+public interface IDeleteService<Id extends Serializable> extends IBasicDeleteService<Id> {
 
-    /**
-     * batch delete by id
-     *
-     * @param ids .
-     * @return .
-     */
-    boolean deleteByIds(Collection<Id> ids);
 }

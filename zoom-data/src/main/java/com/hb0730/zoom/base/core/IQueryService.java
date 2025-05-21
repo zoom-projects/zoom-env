@@ -4,7 +4,6 @@ import com.hb0730.zoom.base.data.Page;
 import com.hb0730.zoom.mybatis.query.doamin.PageRequest;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -21,7 +20,7 @@ import java.util.List;
 public interface IQueryService<Id extends Serializable,
         Q extends PageRequest,
         V extends Serializable,
-        E extends Serializable> {
+        E extends Serializable> extends IBasicQueryService<Id, E> {
     /**
      * 分页查询
      *
@@ -49,31 +48,8 @@ public interface IQueryService<Id extends Serializable,
     /**
      * 查询
      *
-     * @return 数据
-     */
-    List<E> listEntity();
-
-    /**
-     * 查询
-     *
-     * @param ids id集合
-     * @return 数据
-     */
-    List<E> listByIds(Collection<? extends Serializable> ids);
-
-    /**
-     * 查询
-     *
      * @param id id
      * @return 数据
      */
     V get(Id id);
-
-    /**
-     * 查询
-     *
-     * @param id id
-     * @return 数据
-     */
-    E getById(Id id);
 }

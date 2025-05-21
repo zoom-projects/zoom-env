@@ -2,7 +2,7 @@ package com.hb0730.zoom.sys.biz.system.repository;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.repository.CrudRepository;
+import com.hb0730.zoom.base.core.repository.BasicRepository;
 import com.hb0730.zoom.base.sys.system.entity.SysUserSettings;
 import com.hb0730.zoom.sys.biz.system.repository.mapper.SysUserSettingsMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class SysUserSettingsRepository extends CrudRepository<SysUserSettingsMapper, SysUserSettings> {
+public class SysUserSettingsRepository extends BasicRepository<String, SysUserSettings, SysUserSettingsMapper> {
 
     /**
      * 根据用户ID查询用户设置

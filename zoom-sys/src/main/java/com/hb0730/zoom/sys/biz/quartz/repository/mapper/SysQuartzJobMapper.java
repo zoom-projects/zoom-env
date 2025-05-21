@@ -1,4 +1,4 @@
-package com.hb0730.zoom.sys.biz.quartz.mapper;
+package com.hb0730.zoom.sys.biz.quartz.repository.mapper;
 
 import com.hb0730.zoom.mybatis.core.mapper.IMapper;
 import com.hb0730.zoom.sys.biz.quartz.entity.SysQuartzJob;

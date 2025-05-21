@@ -1,7 +1,6 @@
 package com.hb0730.zoom.base.core;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 /**
  * Save service interface.
@@ -13,7 +12,7 @@ import java.util.Collection;
  * @date 2025/5/17
  * @since 1.0.0
  */
-public interface ISaveService<CreateReq extends Serializable, V extends Serializable, E extends Serializable> {
+public interface ISaveService<CreateReq extends Serializable, V extends Serializable, E extends Serializable> extends IBasicSaveService<E> {
 
     /**
      * Save
@@ -30,20 +29,4 @@ public interface ISaveService<CreateReq extends Serializable, V extends Serializ
      * @return saved entity
      */
     V createReturn(CreateReq req);
-
-    /**
-     * Save entity
-     *
-     * @param entity entity to save
-     * @return true if success, false otherwise
-     */
-    boolean save(E entity);
-
-    /**
-     * batch save
-     *
-     * @param entities entities to save
-     * @return true if success, false otherwise
-     */
-    boolean saveBatch(Collection<E> entities);
 }

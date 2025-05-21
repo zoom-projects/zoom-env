@@ -1,7 +1,6 @@
 package com.hb0730.zoom.sys.biz.system.repository;
 
-import com.baomidou.mybatisplus.extension.repository.CrudRepository;
-import com.baomidou.mybatisplus.extension.repository.IRepository;
+import com.hb0730.zoom.base.core.repository.BasicRepository;
 import com.hb0730.zoom.base.sys.system.entity.SysUserAccessTokenOpenApi;
 import com.hb0730.zoom.sys.biz.system.repository.mapper.SysUserAccessTokenOpenApiMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class SysUserAccessTokenOpenApiRepository extends CrudRepository<SysUserAccessTokenOpenApiMapper, SysUserAccessTokenOpenApi> {
+public class SysUserAccessTokenOpenApiRepository extends BasicRepository<String, SysUserAccessTokenOpenApi, SysUserAccessTokenOpenApiMapper> {
 
     /**
      * 根据accessToken查询
@@ -25,17 +24,6 @@ public class SysUserAccessTokenOpenApiRepository extends CrudRepository<SysUserA
      */
     public List<SysUserAccessTokenOpenApi> listByAccessTokenId(String accessTokenId) {
         return lambdaQuery().eq(SysUserAccessTokenOpenApi::getAccessTokenId, accessTokenId).list();
-    }
-
-
-    /**
-     * 批量保存
-     *
-     * @param list 列表
-     * @return 是否成功
-     */
-    public boolean saveBatch(List<SysUserAccessTokenOpenApi> list) {
-        return saveBatch(list, IRepository.DEFAULT_BATCH_SIZE);
     }
 
     /**

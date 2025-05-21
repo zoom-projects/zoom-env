@@ -1,7 +1,7 @@
 package com.hb0730.zoom.sys.biz.system.repository;
 
-import com.baomidou.mybatisplus.extension.repository.CrudRepository;
 import com.baomidou.mybatisplus.extension.repository.IRepository;
+import com.hb0730.zoom.base.core.repository.BasicRepository;
 import com.hb0730.zoom.base.sys.system.entity.SysUserSubscribeMsg;
 import com.hb0730.zoom.base.utils.CollectionUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
@@ -17,7 +17,8 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class SysUserSubscribeMsgRepository extends CrudRepository<SysUserSubscribeMsgMapper, SysUserSubscribeMsg> {
+public class SysUserSubscribeMsgRepository extends BasicRepository<String,
+        SysUserSubscribeMsg, SysUserSubscribeMsgMapper> {
 
     /**
      * 通过用户ID获取用户订阅消息
