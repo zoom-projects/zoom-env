@@ -18,7 +18,7 @@
         <zoom-infra.version>1.0.0-SNAPSHOT</zoom-infra.version>
         <springboot.version>3.4.5</springboot.version>
         <spring-integration.version>6.1.9</spring-integration.version>
-        <mysql.version>8.4.0</mysql.version>
+        <mysql.version>9.3.0</mysql.version>
         <lombok.version>1.18.36</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <angus-mail.version>2.0.3</angus-mail.version>
