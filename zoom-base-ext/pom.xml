@@ -39,7 +39,6 @@
         <dependency>
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-data</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 

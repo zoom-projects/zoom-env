@@ -5,9 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
 
-    <groupId>com.hb0730</groupId>
+    <parent>
+        <groupId>com.hb0730</groupId>
+        <artifactId>zoom-parent</artifactId>
+        <version>${version}</version>
+        <relativePath>./zoom-parent</relativePath>
+    </parent>
+
     <artifactId>zoom-env</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -27,256 +32,18 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <zoom-infra.version>1.0.0-SNAPSHOT</zoom-infra.version>
-        <springboot.version>3.4.5</springboot.version>
-        <sofa-boot.version>4.4.1</sofa-boot.version>
-        <opentelemetry.version>1.40.0</opentelemetry.version>
-        <opentelemetry-instrumentation.version>2.15.0</opentelemetry-instrumentation.version>
-        <opentelemetry-alpha.version>2.15.0-alpha</opentelemetry-alpha.version>
-        <spring-integration.version>6.1.9</spring-integration.version>
-        <mysql.version>8.4.0</mysql.version>
-        <mybatis-plus.version>3.5.11</mybatis-plus.version>
-        <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
-        <springdoc.version>2.8.4</springdoc.version>
-        <lombok.version>1.18.36</lombok.version>
-        <mapstruct.version>1.6.3</mapstruct.version>
-        <hutool.version>5.8.37</hutool.version>
-        <guava.version>33.4.8-jre</guava.version>
-        <aws-s3.version>2.31.29</aws-s3.version>
-        <alibaba-ttl.version>2.14.5</alibaba-ttl.version>
-        <commons-text.version>1.13.1</commons-text.version>
-        <commons-compress.version>1.27.1</commons-compress.version>
-        <commons-io.version>2.18.0</commons-io.version>
-        <angus-mail.version>2.0.3</angus-mail.version>
-        <justauth.version>1.16.7</justauth.version>
-        <jsoup.version>1.18.3</jsoup.version>
-        <nacos-client.version>2.5.1</nacos-client.version>
-        <poi.version>5.4.1</poi.version>
-
-        <slf4j.version>2.0.16</slf4j.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
     </dependencies>
-
-
-    <dependencyManagement>
-        <dependencies>
-            <!--opentelemetry 日志收集,链路追踪等-->
-            <dependency>
-                <groupId>io.opentelemetry.instrumentation</groupId>
-                <artifactId>opentelemetry-instrumentation-bom</artifactId>
-                <version>${opentelemetry-instrumentation.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${springboot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!--sofa boot 用来解决sofa rpc https://github.com/sofastack/sofa-rpc/issues/1031-->
-            <dependency>
-                <groupId>com.alipay.sofa</groupId>
-                <artifactId>sofaboot-dependencies</artifactId>
-                <version>${sofa-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!--hutool-->
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-bom</artifactId>
-                <version>${hutool.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!--zoom-->
-            <dependency>
-                <groupId>com.hb0730</groupId>
-                <artifactId>zoom-infra-bom</artifactId>
-                <version>${zoom-infra.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.integration</groupId>
-                <artifactId>spring-integration-redis</artifactId>
-                <version>${spring-integration.version}</version>
-            </dependency>
-            <!--mysql-->
-            <dependency>
-                <groupId>com.mysql</groupId>
-                <artifactId>mysql-connector-j</artifactId>
-                <version>${mysql.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <!--mybatis-plus-->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-jsqlparser</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-core</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-annotation</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-extension</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <!--dynamic-datasource-->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
-                <version>${dynamic-datasource.version}</version>
-            </dependency>
-            <!--springdoc-openapi-->
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>${springdoc.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-starter-common</artifactId>
-                <version>${springdoc.version}</version>
-            </dependency>
-            <!--opentelemetry-->
-            <dependency>
-                <groupId>io.opentelemetry.instrumentation</groupId>
-                <artifactId>opentelemetry-logback-mdc-1.0</artifactId>
-                <version>${opentelemetry-alpha.version}</version>
-            </dependency>
-
-            <!--mapstruct-->
-            <dependency>
-                <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct</artifactId>
-                <version>${mapstruct.version}</version>
-            </dependency>
-            <!--guava-->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <!-- transmittable -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>transmittable-thread-local</artifactId>
-                <version>${alibaba-ttl.version}</version>
-            </dependency>
-
-            <!--aws s3-->
-            <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>s3</artifactId>
-                <version>${aws-s3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>sts</artifactId>
-                <version>${aws-s3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>apache-client</artifactId>
-                <version>${aws-s3.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-text</artifactId>
-                <version>${commons-text.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons-io.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.eclipse.angus</groupId>
-                <artifactId>jakarta.mail</artifactId>
-                <version>${angus-mail.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>me.zhyd.oauth</groupId>
-                <artifactId>JustAuth</artifactId>
-                <version>${justauth.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jsoup</groupId>
-                <artifactId>jsoup</artifactId>
-                <version>${jsoup.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.alibaba.nacos</groupId>
-                <artifactId>nacos-api</artifactId>
-                <version>${nacos-client.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.nacos</groupId>
-                <artifactId>nacos-client</artifactId>
-                <version>${nacos-client.version}</version>
-            </dependency>
-
-            <!--apache excel-->
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml-full</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-scratchpad</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 
     <build>
@@ -336,6 +103,35 @@
                 <configuration>
                     <skipTests>true</skipTests>
                 </configuration>
+            </plugin>
+            <!-- 统一版本号插件 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>oss</flattenMode>
+                    <pomElements>
+                        <parent>expand</parent>
+                        <properties>keep</properties>
+                    </pomElements>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten-clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>

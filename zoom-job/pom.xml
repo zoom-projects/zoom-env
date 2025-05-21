@@ -41,7 +41,6 @@
         <dependency>
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-base-ext</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 

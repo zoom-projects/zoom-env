@@ -16,6 +16,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * 通用服务实现类，提供了基本的 CRUD 操作和分页查询功能。
+ * 请使用{@link com.hb0730.zoom.base.core.service.BaseService}
+ *
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
  * @date 2024/10/11
  */

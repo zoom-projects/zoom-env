@@ -27,12 +27,10 @@
         <dependency>
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-data</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.hb0730</groupId>
             <artifactId>zoom-conf</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 </project>
