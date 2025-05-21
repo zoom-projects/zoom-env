@@ -22,7 +22,7 @@
         <lombok.version>1.18.36</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <angus-mail.version>2.0.3</angus-mail.version>
-        <nacos-client.version>2.5.1</nacos-client.version>
+        <nacos-client.version>3.0.0</nacos-client.version>
         <acme4j.version>3.5.1</acme4j.version>
         <apache-httpclient.version>4.5.14</apache-httpclient.version>
         <apache-sshd.version>2.14.0</apache-sshd.version>
