@@ -1,0 +1,64 @@
+package com.hb0730.zoom.sys.biz.system.repository;
+
+import com.baomidou.mybatisplus.extension.repository.CrudRepository;
+import com.baomidou.mybatisplus.extension.repository.IRepository;
+import com.hb0730.zoom.base.sys.system.entity.SysRolePermission;
+import com.hb0730.zoom.sys.biz.system.repository.mapper.SysRolePermissionMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
+ * @date 2025/5/21
+ */
+@Service
+@Slf4j
+public class SysRolePermissionRepository extends CrudRepository<SysRolePermissionMapper, SysRolePermission> {
+
+    /**
+     * 根据角色ID删除
+     *
+     * @param roleId 角色ID
+     * @return 是否成功
+     */
+    public boolean removeByRoleId(String roleId) {
+        return lambdaUpdate().eq(SysRolePermission::getRoleId, roleId).remove();
+    }
+
+    /**
+     * 根据角色ID查询
+     *
+     * @param roleId 角色ID
+     * @return 列表
+     */
+    public Optional<List<SysRolePermission>> listByRoleId(String roleId) {
+        return baseMapper.of(
+                query -> query.eq(SysRolePermission::getRoleId, roleId)
+        ).listOptional();
+    }
+
+    /**
+     * 根据角色ID查询
+     *
+     * @param roleIds 角色ID
+     * @return 列表
+     */
+    public Optional<List<SysRolePermission>> listByRoleIds(List<String> roleIds) {
+        return baseMapper.of(
+                query -> query.in(SysRolePermission::getRoleId, roleIds)
+        ).listOptional();
+    }
+
+    /**
+     * 批量保存
+     *
+     * @param rolePermissions 角色权限列表
+     * @return 是否成功
+     */
+    public boolean saveBatch(List<SysRolePermission> rolePermissions) {
+        return saveBatch(rolePermissions, IRepository.DEFAULT_BATCH_SIZE);
+    }
+}

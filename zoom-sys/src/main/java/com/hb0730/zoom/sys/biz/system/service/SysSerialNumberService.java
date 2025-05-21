@@ -2,7 +2,7 @@ package com.hb0730.zoom.sys.biz.system.service;
 
 import com.hb0730.zoom.base.exception.ZoomException;
 import com.hb0730.zoom.base.utils.StrUtil;
-import com.hb0730.zoom.sys.biz.system.mapper.SysSerialNumberMapper;
+import com.hb0730.zoom.sys.biz.system.repository.SysSerialNumberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class SysSerialNumberService {
-    private final SysSerialNumberMapper serialNumberMapper;
+    private final SysSerialNumberRepository repository;
 
 
     /**
@@ -35,7 +35,7 @@ public class SysSerialNumberService {
         Map<String, String> map = new HashMap<>();
         map.put("p_CATEGORY", category);
         map.put("p_PREFIX", prefix);
-        serialNumberMapper.getSerialnumber(map);
+        map = repository.getSerialNumber(map);
 
         String serialnumber = map.get("p_OUT_SN");
         if (StrUtil.isBlank(serialnumber) || "0".equals(serialnumber)) {

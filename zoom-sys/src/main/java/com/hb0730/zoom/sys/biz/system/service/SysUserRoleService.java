@@ -1,17 +1,20 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysUserRole;
-import com.hb0730.zoom.sys.biz.system.mapper.SysUserRoleMapper;
+import com.hb0730.zoom.sys.biz.system.repository.SysUserRoleRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
  * @date 2024/10/15
  */
 @Service
-public class SysUserRoleService extends ServiceImpl<SysUserRoleMapper, SysUserRole> {
-
+@RequiredArgsConstructor
+public class SysUserRoleService {
+    private final SysUserRoleRepository repository;
 
     /**
      * 根据用户ID删除
@@ -20,6 +23,26 @@ public class SysUserRoleService extends ServiceImpl<SysUserRoleMapper, SysUserRo
      * @return 是否成功
      */
     public boolean deleteByUserId(String userId) {
-        return baseMapper.deleteByUserId(userId) > 0;
+        return repository.deleteByUserId(userId);
+    }
+
+    /**
+     * 批量保存
+     *
+     * @param list 用户角色列表
+     * @return 是否成功
+     */
+    public boolean saveBatch(List<SysUserRole> list) {
+        return repository.saveBatch(list);
+    }
+
+    /**
+     * 通过用户ID查询有效的角色
+     *
+     * @param userId 用户ID
+     * @return 有效的角色列表
+     */
+    public List<SysUserRole> findEffectiveRolesByUserId(String userId) {
+        return repository.findEffectiveRolesByUserId(userId);
     }
 }

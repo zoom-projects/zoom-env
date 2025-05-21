@@ -1,6 +1,6 @@
-package com.hb0730.zoom.sys.biz.system.mapper;
+package com.hb0730.zoom.sys.biz.system.repository.mapper;
 
-import com.hb0730.zoom.base.sys.system.entity.SysDict;
+import com.hb0730.zoom.base.sys.system.entity.SysOperatorLog;
 import com.hb0730.zoom.mybatis.core.mapper.IMapper;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  * @date 2024/10/11
  */
 @Repository
-public interface SysDictMapper extends IMapper<SysDict> {
+public interface SysOperatorLogMapper extends IMapper<SysOperatorLog> {
 }

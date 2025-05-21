@@ -1,17 +1,13 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
+import com.hb0730.zoom.base.core.service.BaseService;
 import com.hb0730.zoom.base.sys.message.entity.SysMessageSubscribe;
-import com.hb0730.zoom.base.utils.StrUtil;
-import com.hb0730.zoom.sys.biz.system.convert.SysMessageSubscribeConvert;
-import com.hb0730.zoom.sys.biz.system.mapper.SysMessageSubscribeMapper;
 import com.hb0730.zoom.sys.biz.system.model.request.message.SysMessageSubscribeCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.message.SysMessageSubscribeQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.message.SysMessageSubscribeUpdateRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysMessageSubscribeGroupVO;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysMessageSubscribeVO;
+import com.hb0730.zoom.sys.biz.system.repository.SysMessageSubscribeRepository;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -23,9 +19,9 @@ import java.util.stream.Collectors;
  */
 @org.springframework.stereotype.Service
 @Slf4j
-public class SysMessageSubscribeService extends SuperServiceImpl<String, SysMessageSubscribeQueryRequest,
+public class SysMessageSubscribeService extends BaseService<String, SysMessageSubscribeQueryRequest,
         SysMessageSubscribeVO, SysMessageSubscribe, SysMessageSubscribeCreateRequest,
-        SysMessageSubscribeUpdateRequest, SysMessageSubscribeMapper, SysMessageSubscribeConvert> {
+        SysMessageSubscribeUpdateRequest, SysMessageSubscribeRepository> {
 
     /**
      * 是否存在编码
@@ -35,12 +31,7 @@ public class SysMessageSubscribeService extends SuperServiceImpl<String, SysMess
      * @return 是否存在
      */
     public boolean hasCode(String code, String id) {
-        LambdaQueryWrapper<SysMessageSubscribe> eq = Wrappers.lambdaQuery(SysMessageSubscribe.class)
-                .eq(SysMessageSubscribe::getCode, code);
-        if (StrUtil.isNotBlank(id)) {
-            eq.ne(SysMessageSubscribe::getId, id);
-        }
-        return this.exists(eq);
+        return repository.isCodeExists(code, id);
     }
 
 
@@ -56,7 +47,7 @@ public class SysMessageSubscribeService extends SuperServiceImpl<String, SysMess
                 .entrySet().stream().map(entry -> {
                     SysMessageSubscribeGroupVO groupVO = new SysMessageSubscribeGroupVO();
                     groupVO.setModule(entry.getKey());
-                    groupVO.setChildren(mapstruct.toGroup(entry.getValue()));
+                    groupVO.setChildren(repository.getMapstruct().toGroup(entry.getValue()));
                     return groupVO;
                 }).collect(Collectors.toList());
     }
@@ -64,8 +55,7 @@ public class SysMessageSubscribeService extends SuperServiceImpl<String, SysMess
     @Override
     public boolean create(SysMessageSubscribeCreateRequest request) {
         String code = request.getCode();
-        if (this.exists(Wrappers.lambdaQuery(SysMessageSubscribe.class)
-                .eq(SysMessageSubscribe::getCode, code))) {
+        if (repository.isCodeExists(code, null)) {
             log.error("消息订阅编码已存在:{}", code);
             throw new RuntimeException("消息订阅编码已存在:" + code);
         }
@@ -73,14 +63,12 @@ public class SysMessageSubscribeService extends SuperServiceImpl<String, SysMess
     }
 
     @Override
-    public boolean updateById(String s, SysMessageSubscribeUpdateRequest request) {
+    public boolean updateById(String id, SysMessageSubscribeUpdateRequest request) {
         String code = request.getCode();
-        if (this.exists(Wrappers.lambdaQuery(SysMessageSubscribe.class)
-                .eq(SysMessageSubscribe::getCode, code)
-                .ne(SysMessageSubscribe::getId, s))) {
+        if (repository.isCodeExists(code, id)) {
             log.error("消息订阅编码已存在:{}", code);
             throw new RuntimeException("消息订阅编码已存在:" + code);
         }
-        return super.updateById(s, request);
+        return super.updateById(id, request);
     }
 }

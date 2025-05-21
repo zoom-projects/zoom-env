@@ -1,10 +1,8 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.R;
+import com.hb0730.zoom.base.core.service.BaseService;
 import com.hb0730.zoom.base.exception.ZoomException;
-import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;
 import com.hb0730.zoom.base.sys.system.entity.SysUserRole;
 import com.hb0730.zoom.base.utils.CollectionUtil;
@@ -12,9 +10,6 @@ import com.hb0730.zoom.base.utils.DesensitizeUtil;
 import com.hb0730.zoom.base.utils.DigestUtil;
 import com.hb0730.zoom.base.utils.PasswdUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
-import com.hb0730.zoom.cache.core.CacheUtil;
-import com.hb0730.zoom.sys.biz.system.convert.SysUserConvert;
-import com.hb0730.zoom.sys.biz.system.mapper.SysUserMapper;
 import com.hb0730.zoom.sys.biz.system.model.dto.RestPasswordDTO;
 import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserQueryRequest;
@@ -22,6 +17,7 @@ import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserRoleUpdateReques
 import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserUpdateRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysUserRoleVO;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysUserVO;
+import com.hb0730.zoom.sys.biz.system.repository.SysUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,10 +34,8 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest, SysUserVO, SysUser,
-        SysUserCreateRequest, SysUserUpdateRequest, SysUserMapper, SysUserConvert> {
-    private final SysUserConvert userConvert;
-    private final CacheUtil cache;
+public class SysUserService extends BaseService<String, SysUserQueryRequest, SysUserVO, SysUser,
+        SysUserCreateRequest, SysUserUpdateRequest, SysUserRepository> {
     private final SysUserRoleService userRoleService;
 
 
@@ -52,9 +46,10 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
      * @return 是否存在
      */
     public boolean existEmail(String email) {
-        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
-                .eq(SysUser::getEmail, email);
-        return baseMapper.of(queryWrapper).present();
+//        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+//                .eq(SysUser::getEmail, email);
+//        return baseMapper.of(queryWrapper).present();
+        return repository.emailExists(email);
     }
 
     /**
@@ -64,9 +59,10 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
      * @return 是否存在
      */
     public boolean existPhone(String phone) {
-        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
-                .eq(SysUser::getPhone, phone);
-        return baseMapper.of(queryWrapper).present();
+//        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+//                .eq(SysUser::getPhone, phone);
+//        return baseMapper.of(queryWrapper).present();
+        return repository.phoneExists(phone);
     }
 
     /**
@@ -76,9 +72,10 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
      * @return 用户
      */
     public SysUser findByUsername(String username) {
-        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
-                .eq(SysUser::getUsername, username);
-        return baseMapper.of(queryWrapper).one();
+//        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+//                .eq(SysUser::getUsername, username);
+//        return baseMapper.of(queryWrapper).one();
+        return repository.findByUsername(username);
     }
 
     /**
@@ -88,9 +85,10 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
      * @return 用户
      */
     public SysUser findByPhone(String phone) {
-        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
-                .eq(SysUser::getPhone, phone);
-        return baseMapper.of(queryWrapper).one();
+//        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+//                .eq(SysUser::getPhone, phone);
+//        return baseMapper.of(queryWrapper).one();
+        return repository.findByPhone(phone);
     }
 
     /**
@@ -100,9 +98,10 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
      * @return 用户
      */
     public SysUser findByEmail(String email) {
-        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
-                .eq(SysUser::getEmail, email);
-        return baseMapper.of(queryWrapper).one();
+//        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+//                .eq(SysUser::getEmail, email);
+//        return baseMapper.of(queryWrapper).one();
+        return repository.findByEmail(email);
     }
 
     /**
@@ -114,7 +113,7 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
         SysUser user = new SysUser();
         user.setId(id);
         user.setLastLoginTime(new Date());
-        baseMapper.updateById(user);
+        repository.updateById(user);
     }
 
     /**
@@ -128,7 +127,7 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
         SysUser user = new SysUser();
         user.setId(id);
         user.setEmail(email);
-        baseMapper.updateById(user);
+        repository.updateById(user);
     }
 
     /**
@@ -142,7 +141,7 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
         SysUser user = new SysUser();
         user.setId(id);
         user.setPhone(phone);
-        baseMapper.updateById(user);
+        repository.updateById(user);
     }
 
     /**
@@ -177,7 +176,7 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
         String password = PasswdUtil.encrypt(dto.getNewPassword(), salt);
         user.setPassword(password);
         user.setSalt(salt);
-        baseMapper.updateById(user);
+        repository.updateById(user);
         // 更新密码
         return R.OK("重置密码成功");
     }
@@ -204,7 +203,7 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
         String newPassword = PasswdUtil.encrypt(password, salt);
         user.setPassword(newPassword);
         user.setSalt(salt);
-        baseMapper.updateById(user);
+        repository.updateById(user);
         // 更新密码
         return R.OK("重置密码成功");
     }
@@ -234,12 +233,13 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
      * @return 是否存在
      */
     public R<String> hasExistUsername(String username, String id) {
-        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
-                .eq(SysUser::getUsername, username);
-        if (StrUtil.isNotBlank(id)) {
-            queryWrapper.ne(SysUser::getId, id);
-        }
-        boolean present = baseMapper.of(queryWrapper).present();
+//        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+//                .eq(SysUser::getUsername, username);
+//        if (StrUtil.isNotBlank(id)) {
+//            queryWrapper.ne(SysUser::getId, id);
+//        }
+//        boolean present = baseMapper.of(queryWrapper).present();
+        boolean present = repository.usernameExists(username, id);
         return present ? R.NG("用户名已存在") : R.OK("用户名可用");
     }
 
@@ -251,12 +251,13 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
      * @return 是否存在
      */
     public R<String> hasExistHashPhone(String phone, String id) {
-        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
-                .eq(SysUser::getHashPhone, phone);
-        if (StrUtil.isNotBlank(id)) {
-            queryWrapper.ne(SysUser::getId, id);
-        }
-        boolean present = baseMapper.of(queryWrapper).present();
+//        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+//                .eq(SysUser::getHashPhone, phone);
+//        if (StrUtil.isNotBlank(id)) {
+//            queryWrapper.ne(SysUser::getId, id);
+//        }
+//        boolean present = baseMapper.of(queryWrapper).present();
+        boolean present = repository.phoneExists(phone, id);
         return present ? R.NG("手机号已存在") : R.OK("手机号可用");
     }
 
@@ -268,12 +269,13 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
      * @return 是否存在
      */
     public R<String> hasExistHashEmail(String email, String id) {
-        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
-                .eq(SysUser::getHashEmail, email);
-        if (StrUtil.isNotBlank(id)) {
-            queryWrapper.ne(SysUser::getId, id);
-        }
-        boolean present = baseMapper.of(queryWrapper).present();
+//        LambdaQueryWrapper<SysUser> queryWrapper = Wrappers.lambdaQuery(SysUser.class)
+//                .eq(SysUser::getHashEmail, email);
+//        if (StrUtil.isNotBlank(id)) {
+//            queryWrapper.ne(SysUser::getId, id);
+//        }
+//        boolean present = baseMapper.of(queryWrapper).present();
+        boolean present = repository.hashEmailExists(email, id);
         return present ? R.NG("邮箱已存在") : R.OK("邮箱可用");
     }
 
@@ -346,7 +348,7 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
             request.setHashEmail(null);
             request.setEmail(null);
         }
-        user = userConvert.updateEntity(request, user);
+        user = repository.getMapstruct().updateEntity(request, user);
         return updateById(user);
     }
 
@@ -363,7 +365,7 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
         }
         //TODO 禁用相关
 
-        return removeById(id);
+        return repository.deleteById(id);
     }
 
     /**
@@ -373,7 +375,7 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
      * @return 角色
      */
     public List<SysUserRoleVO> findRoles(String userId) {
-        return baseMapper.findRoles(null, userId);
+        return repository.findRolesByUserId(userId);
     }
 
 
@@ -408,13 +410,7 @@ public class SysUserService extends SuperServiceImpl<String, SysUserQueryRequest
      * @return 角色
      */
     public List<SysUserRole> findEffectiveRoles(String userId) {
-        LambdaQueryWrapper<SysUserRole> queryWrapper = Wrappers.lambdaQuery(SysUserRole.class)
-                .eq(SysUserRole::getUserId, userId)
-                .and(wrapper -> wrapper.isNull(SysUserRole::getEndTime)
-                        .or()
-                        .ge(SysUserRole::getEndTime, new Date()));
-        return userRoleService.list(queryWrapper);
-
+        return userRoleService.findEffectiveRolesByUserId(userId);
     }
 
 

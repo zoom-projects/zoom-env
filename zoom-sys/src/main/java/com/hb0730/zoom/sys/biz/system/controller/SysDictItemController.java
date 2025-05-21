@@ -77,7 +77,7 @@ public class SysDictItemController {
     @PreAuthorize("hasAuthority('sys:dict:item:delete')")
     @CacheEvict(value = DICT_ITEMS_KEY, allEntries = true)
     public R<String> delete(String id) {
-        service.removeById(id);
+        service.deleteById(id);
         return R.OK();
     }
 

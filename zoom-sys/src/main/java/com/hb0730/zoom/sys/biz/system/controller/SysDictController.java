@@ -121,7 +121,7 @@ public class SysDictController {
     @PreAuthorize("hasAuthority('sys:dict:delete')")
     @CacheEvict(value = DICT_ITEMS_KEY, allEntries = true)
     public R<String> del(@Parameter String id) {
-        sysDictService.removeById(id);
+        sysDictService.deleteById(id);
         return R.OK();
     }
 

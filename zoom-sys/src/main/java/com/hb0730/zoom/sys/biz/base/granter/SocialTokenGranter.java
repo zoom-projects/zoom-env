@@ -9,7 +9,7 @@ import com.hb0730.zoom.base.sys.system.entity.SysUserSocial;
 import com.hb0730.zoom.base.utils.CollectionUtil;
 import com.hb0730.zoom.social.core.SocialAuthRequestFactory;
 import com.hb0730.zoom.sys.biz.base.model.dto.LoginInfo;
-import com.hb0730.zoom.sys.biz.system.mapper.SysUserSocialMapper;
+import com.hb0730.zoom.sys.biz.system.repository.mapper.SysUserSocialMapper;
 import com.hb0730.zoom.sys.biz.system.service.SysUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

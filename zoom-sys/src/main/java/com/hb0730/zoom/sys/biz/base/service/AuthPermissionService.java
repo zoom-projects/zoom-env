@@ -1,7 +1,5 @@
 package com.hb0730.zoom.sys.biz.base.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.Pair;
 import com.hb0730.zoom.base.enums.MenuTypeEnums;
 import com.hb0730.zoom.base.exception.ZoomException;
@@ -71,10 +69,11 @@ public class AuthPermissionService {
         if (CollectionUtil.isEmpty(permissionIds)) {
             return new PermissionVO();
         }
-        LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
-                .in(SysPermission::getId, permissionIds)
-                .orderByAsc(SysPermission::getSort);
-        List<SysPermission> sysPermissions = permissionService.list(queryWrapper);
+//        LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
+//                .in(SysPermission::getId, permissionIds)
+//                .orderByAsc(SysPermission::getSort);
+//        List<SysPermission> sysPermissions = permissionService.list(queryWrapper);
+        List<SysPermission> sysPermissions = permissionService.listByIdsOrderBySortAsc(permissionIds);
         // 过滤掉禁用的
         sysPermissions.removeIf(SysPermission::isDisabled);
         if (CollectionUtil.isEmpty(sysPermissions)) {

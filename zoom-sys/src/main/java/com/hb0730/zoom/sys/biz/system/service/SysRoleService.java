@@ -1,17 +1,16 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
 import com.hb0730.zoom.base.R;
+import com.hb0730.zoom.base.core.service.BaseService;
 import com.hb0730.zoom.base.exception.ZoomException;
-import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysRole;
 import com.hb0730.zoom.base.sys.system.entity.SysRolePermission;
 import com.hb0730.zoom.base.utils.CollectionUtil;
-import com.hb0730.zoom.sys.biz.system.convert.SysRoleConvert;
-import com.hb0730.zoom.sys.biz.system.mapper.SysRoleMapper;
 import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.role.SysRoleUpdateRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysRoleVO;
+import com.hb0730.zoom.sys.biz.system.repository.SysRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,8 +27,8 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysRoleService extends SuperServiceImpl<String, SysRoleQueryRequest, SysRoleVO, SysRole,
-        SysRoleCreateRequest, SysRoleUpdateRequest, SysRoleMapper, SysRoleConvert> {
+public class SysRoleService extends BaseService<String, SysRoleQueryRequest, SysRoleVO, SysRole,
+        SysRoleCreateRequest, SysRoleUpdateRequest, SysRoleRepository> {
     private final SysRolePermissionService sysRolePermissionService;
     private final SysRoleOpenApiService sysRoleOpenApiService;
 
@@ -42,10 +41,11 @@ public class SysRoleService extends SuperServiceImpl<String, SysRoleQueryRequest
      * @return 是否存在
      */
     public R<String> hasCode(String id, String code) {
-        boolean present = baseMapper.of(
-                query -> query.eq(SysRole::getRoleCode, code)
-                        .ne(SysRole::getId, id)
-        ).present();
+//        boolean present = baseMapper.of(
+//                query -> query.eq(SysRole::getRoleCode, code)
+//                        .ne(SysRole::getId, id)
+//        ).present();
+        boolean present = repository.codeExists(code, id);
         return present ? R.NG("角色标识已存在") : R.OK();
     }
 
@@ -80,7 +80,7 @@ public class SysRoleService extends SuperServiceImpl<String, SysRoleQueryRequest
         if (null == entity) {
             throw new ZoomException("角色不存在");
         }
-        return removeById(id);
+        return repository.deleteById(id);
     }
 
 

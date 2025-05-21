@@ -1,11 +1,7 @@
 package com.hb0730.zoom.sys.biz.base.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.data.Page;
 import com.hb0730.zoom.base.enums.NoticeMessageStatusEnums;
-import com.hb0730.zoom.base.sys.message.entity.SysNoticeMessage;
 import com.hb0730.zoom.sys.biz.system.model.request.message.SysNoticeMessageQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysNoticeMessageVO;
 import com.hb0730.zoom.sys.biz.system.service.SysNoticeMessageService;
@@ -54,12 +50,13 @@ public class AuthUserNoticeService {
      * @return 数量
      */
     public Long count(String userId, Boolean queryUnread) {
-        LambdaQueryWrapper<SysNoticeMessage> eq = Wrappers.lambdaQuery(SysNoticeMessage.class)
-                .eq(SysNoticeMessage::getReceiverId, userId);
-        if (queryUnread) {
-            eq.eq(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.UN_READ.getCode());
-        }
-        return sysNoticeMessageService.count(eq);
+//        LambdaQueryWrapper<SysNoticeMessage> eq = Wrappers.lambdaQuery(SysNoticeMessage.class)
+//                .eq(SysNoticeMessage::getReceiverId, userId);
+//        if (queryUnread) {
+//            eq.eq(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.UN_READ.getCode());
+//        }
+        return sysNoticeMessageService.count(userId,
+                Boolean.TRUE.equals(queryUnread) ? NoticeMessageStatusEnums.UN_READ.getCode() : null);
     }
 
     /**
@@ -69,10 +66,11 @@ public class AuthUserNoticeService {
      * @return 是否有未读消息
      */
     public Boolean checkHasUnreadMessage(String userId) {
-        LambdaQueryWrapper<SysNoticeMessage> eq = Wrappers.lambdaQuery(SysNoticeMessage.class)
-                .eq(SysNoticeMessage::getReceiverId, userId)
-                .eq(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.UN_READ.getCode());
-        return sysNoticeMessageService.count(eq) > 0;
+//        LambdaQueryWrapper<SysNoticeMessage> eq = Wrappers.lambdaQuery(SysNoticeMessage.class)
+//                .eq(SysNoticeMessage::getReceiverId, userId)
+//                .eq(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.UN_READ.getCode());
+//        return sysNoticeMessageService.count(eq) > 0;
+        return sysNoticeMessageService.count(userId, NoticeMessageStatusEnums.UN_READ.getCode()) > 0;
     }
 
     /**
@@ -83,12 +81,15 @@ public class AuthUserNoticeService {
      * @return 是否成功
      */
     public Boolean read(String id, String userId) {
-        LambdaUpdateWrapper<SysNoticeMessage> ud = Wrappers.lambdaUpdate(SysNoticeMessage.class)
-                .eq(SysNoticeMessage::getId, id)
-                .eq(SysNoticeMessage::getReceiverId, userId)
-                .eq(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.UN_READ.getCode())
-                .set(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.READ.getCode());
-        return sysNoticeMessageService.update(ud);
+//        LambdaUpdateWrapper<SysNoticeMessage> ud = Wrappers.lambdaUpdate(SysNoticeMessage.class)
+//                .eq(SysNoticeMessage::getId, id)
+//                .eq(SysNoticeMessage::getReceiverId, userId)
+//                .eq(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.UN_READ.getCode())
+//                .set(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.READ.getCode());
+//        return sysNoticeMessageService.update(ud);
+
+        return sysNoticeMessageService.updateStatusBy(NoticeMessageStatusEnums.READ.getCode(), id, userId,
+                NoticeMessageStatusEnums.UN_READ.getCode());
     }
 
     /**
@@ -98,11 +99,13 @@ public class AuthUserNoticeService {
      * @return 是否成功
      */
     public Boolean readAll(String userId) {
-        LambdaUpdateWrapper<SysNoticeMessage> ud = Wrappers.lambdaUpdate(SysNoticeMessage.class)
-                .eq(SysNoticeMessage::getReceiverId, userId)
-                .eq(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.UN_READ.getCode())
-                .set(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.READ.getCode());
-        return sysNoticeMessageService.update(ud);
+//        LambdaUpdateWrapper<SysNoticeMessage> ud = Wrappers.lambdaUpdate(SysNoticeMessage.class)
+//                .eq(SysNoticeMessage::getReceiverId, userId)
+//                .eq(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.UN_READ.getCode())
+//                .set(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.READ.getCode());
+//        return sysNoticeMessageService.update(ud);
+        return sysNoticeMessageService.updateStatusBy(NoticeMessageStatusEnums.READ.getCode(), null, userId,
+                NoticeMessageStatusEnums.UN_READ.getCode());
     }
 
     /**
@@ -113,10 +116,12 @@ public class AuthUserNoticeService {
      * @return 是否成功
      */
     public Boolean removeById(String id, String userId) {
-        LambdaQueryWrapper<SysNoticeMessage> eq = Wrappers.lambdaQuery(SysNoticeMessage.class)
-                .eq(SysNoticeMessage::getId, id)
-                .eq(SysNoticeMessage::getReceiverId, userId);
-        return sysNoticeMessageService.remove(eq);
+//        LambdaQueryWrapper<SysNoticeMessage> eq = Wrappers.lambdaQuery(SysNoticeMessage.class)
+//                .eq(SysNoticeMessage::getId, id)
+//                .eq(SysNoticeMessage::getReceiverId, userId);
+//        return sysNoticeMessageService.remove(eq);
+
+        return sysNoticeMessageService.deleteBy(id, userId, null);
     }
 
     /**
@@ -127,9 +132,10 @@ public class AuthUserNoticeService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Boolean clearSystemMessage(String userId) {
-        LambdaQueryWrapper<SysNoticeMessage> eq = Wrappers.lambdaQuery(SysNoticeMessage.class)
-                .eq(SysNoticeMessage::getReceiverId, userId)
-                .eq(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.READ.getCode());
-        return sysNoticeMessageService.remove(eq);
+//        LambdaQueryWrapper<SysNoticeMessage> eq = Wrappers.lambdaQuery(SysNoticeMessage.class)
+//                .eq(SysNoticeMessage::getReceiverId, userId)
+//                .eq(SysNoticeMessage::getStatus, NoticeMessageStatusEnums.READ.getCode());
+//        return sysNoticeMessageService.remove(eq);
+        return sysNoticeMessageService.deleteBy(null, userId, NoticeMessageStatusEnums.READ.getCode());
     }
 }

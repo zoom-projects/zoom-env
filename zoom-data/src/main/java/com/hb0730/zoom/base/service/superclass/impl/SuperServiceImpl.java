@@ -75,6 +75,19 @@ public class SuperServiceImpl<Id extends Serializable,
     }
 
     @Override
+    public List<E> listEntity(Q query) {
+        if (query == null) {
+            return null;
+        }
+        return getBaseMapper().selectList(getQueryWrapper(query));
+    }
+
+    @Override
+    public List<E> listEntity() {
+        return getBaseMapper().selectList(null);
+    }
+
+    @Override
     public List<E> listByIds(Collection<? extends Serializable> idList) {
         if (idList == null || idList.isEmpty()) {
             return null;

@@ -1,16 +1,13 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
+import com.hb0730.zoom.base.core.service.BaseService;
 import com.hb0730.zoom.base.sys.system.entity.SysUserAccessToken;
 import com.hb0730.zoom.base.utils.RandomUtil;
 import com.hb0730.zoom.sys.biz.base.util.TokenUtil;
-import com.hb0730.zoom.sys.biz.system.convert.SysUserAccessTokenConvert;
-import com.hb0730.zoom.sys.biz.system.mapper.SysUserAccessTokenMapper;
 import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserAccessTokenCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.user.SysUserAccessTokenQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysUserAccessTokenVO;
+import com.hb0730.zoom.sys.biz.system.repository.SysUserAccessTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,9 +22,9 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysUserAccessTokenService extends SuperServiceImpl<String, SysUserAccessTokenQueryRequest,
+public class SysUserAccessTokenService extends BaseService<String, SysUserAccessTokenQueryRequest,
         SysUserAccessTokenVO, SysUserAccessToken, SysUserAccessTokenCreateRequest, SysUserAccessTokenCreateRequest,
-        SysUserAccessTokenMapper, SysUserAccessTokenConvert> {
+        SysUserAccessTokenRepository> {
     private final SysUserAccessTokenOpenApiService sysUserAccessTokenOpenApiService;
 
     /**
@@ -48,7 +45,7 @@ public class SysUserAccessTokenService extends SuperServiceImpl<String, SysUserA
      */
     @Transactional(rollbackFor = Exception.class)
     public String createAccessToken(String userId, SysUserAccessTokenCreateRequest request) {
-        SysUserAccessToken reqToEntity = mapstruct.createReqToEntity(request);
+        SysUserAccessToken reqToEntity = repository.getMapstruct().createReqToEntity(request);
         reqToEntity.setUserId(userId);
         //创建accessToken
         long expireTime = -1;
@@ -73,10 +70,11 @@ public class SysUserAccessTokenService extends SuperServiceImpl<String, SysUserA
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean cancelAccessToken(String id) {
-        LambdaUpdateWrapper<SysUserAccessToken> updateWrapper = Wrappers.lambdaUpdate(SysUserAccessToken.class)
-                .eq(SysUserAccessToken::getId, id)
-                .set(SysUserAccessToken::getStatus, false);
-        return update(updateWrapper);
+//        LambdaUpdateWrapper<SysUserAccessToken> updateWrapper = Wrappers.lambdaUpdate(SysUserAccessToken.class)
+//                .eq(SysUserAccessToken::getId, id)
+//                .set(SysUserAccessToken::getStatus, false);
+//        return update(updateWrapper);
+        return repository.updateStatusById(false, id);
     }
 
     /**
@@ -87,10 +85,11 @@ public class SysUserAccessTokenService extends SuperServiceImpl<String, SysUserA
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean resumeAccessToken(String id) {
-        LambdaUpdateWrapper<SysUserAccessToken> updateWrapper = Wrappers.lambdaUpdate(SysUserAccessToken.class)
-                .eq(SysUserAccessToken::getId, id)
-                .set(SysUserAccessToken::getStatus, true);
-        return update(updateWrapper);
+//        LambdaUpdateWrapper<SysUserAccessToken> updateWrapper = Wrappers.lambdaUpdate(SysUserAccessToken.class)
+//                .eq(SysUserAccessToken::getId, id)
+//                .set(SysUserAccessToken::getStatus, true);
+//        return update(updateWrapper);
+        return repository.updateStatusById(true, id);
     }
 
     /**
@@ -102,6 +101,6 @@ public class SysUserAccessTokenService extends SuperServiceImpl<String, SysUserA
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(String id) {
         sysUserAccessTokenOpenApiService.removeByAccessTokenId(id);
-        return removeById(id);
+        return repository.deleteById(id);
     }
 }

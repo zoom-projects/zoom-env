@@ -41,6 +41,21 @@ public interface IQueryService<Id extends Serializable,
     /**
      * 查询
      *
+     * @param query 查询条件
+     * @return 数据
+     */
+    List<E> listEntity(Q query);
+
+    /**
+     * 查询
+     *
+     * @return 数据
+     */
+    List<E> listEntity();
+
+    /**
+     * 查询
+     *
      * @param ids id集合
      * @return 数据
      */

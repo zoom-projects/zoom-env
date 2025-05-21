@@ -1,0 +1,58 @@
+package com.hb0730.zoom.sys.biz.system.repository;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.repository.CrudRepository;
+import com.hb0730.zoom.base.sys.system.entity.SysUserRole;
+import com.hb0730.zoom.sys.biz.system.repository.mapper.SysUserRoleMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @author <a href="mailto:huangbing0730@gmail">hb0730</a>
+ * @date 2025/5/21
+ */
+@Service
+@Slf4j
+public class SysUserRoleRepository extends CrudRepository<SysUserRoleMapper, SysUserRole> {
+
+    /**
+     * 根据用户ID删除
+     *
+     * @param userId 用户ID
+     * @return 是否成功
+     */
+    public boolean deleteByUserId(String userId) {
+        return baseMapper.deleteByUserId(userId) > 0;
+    }
+
+    /**
+     * 批量保存
+     *
+     * @param list 用户角色列表
+     * @return 是否成功
+     */
+    public boolean saveBatch(Collection<SysUserRole> list) {
+        return saveBatch(list, DEFAULT_BATCH_SIZE);
+    }
+
+    /**
+     * 通过用户ID查询有效的角色
+     *
+     * @param userId 用户ID
+     * @return 有效的角色列表
+     */
+    public List<SysUserRole> findEffectiveRolesByUserId(String userId) {
+        LambdaQueryWrapper<SysUserRole> queryWrapper = Wrappers.lambdaQuery(SysUserRole.class)
+                .eq(SysUserRole::getUserId, userId)
+                .and(wrapper -> wrapper.isNull(SysUserRole::getEndTime)
+                        .or()
+                        .ge(SysUserRole::getEndTime, new Date()));
+
+        return list(queryWrapper);
+    }
+}

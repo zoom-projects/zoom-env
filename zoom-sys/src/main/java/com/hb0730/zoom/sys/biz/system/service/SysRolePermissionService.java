@@ -1,10 +1,8 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysRolePermission;
-import com.hb0730.zoom.sys.biz.system.mapper.SysRolePermissionMapper;
+import com.hb0730.zoom.sys.biz.system.repository.SysRolePermissionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +14,10 @@ import java.util.Optional;
  * @date 2024/10/8
  */
 @Service
-public class SysRolePermissionService extends ServiceImpl<SysRolePermissionMapper, SysRolePermission> {
+@RequiredArgsConstructor
+public class SysRolePermissionService {
+
+    private final SysRolePermissionRepository repository;
 
     /**
      * 删除角色权限
@@ -26,9 +27,7 @@ public class SysRolePermissionService extends ServiceImpl<SysRolePermissionMappe
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean removeByRoleId(String roleId) {
-        LambdaUpdateWrapper<SysRolePermission> updateWrapper = Wrappers.lambdaUpdate(SysRolePermission.class)
-                .eq(SysRolePermission::getRoleId, roleId);
-        return remove(updateWrapper);
+        return repository.removeByRoleId(roleId);
     }
 
     /**
@@ -38,9 +37,7 @@ public class SysRolePermissionService extends ServiceImpl<SysRolePermissionMappe
      * @return 权限
      */
     public List<String> getPermsByRoleId(String roleId) {
-        Optional<List<SysRolePermission>> permissions = baseMapper.of(
-                query -> query.eq(SysRolePermission::getRoleId, roleId)
-        ).listOptional();
+        Optional<List<SysRolePermission>> permissions = repository.listByRoleId(roleId);
         return permissions
                 .map(sysRolePermissions -> sysRolePermissions.stream()
                         .map(SysRolePermission::getPermissionId)
@@ -55,13 +52,22 @@ public class SysRolePermissionService extends ServiceImpl<SysRolePermissionMappe
      * @return 权限
      */
     public List<String> getPermsByRoleIds(List<String> roleIds) {
-        Optional<List<SysRolePermission>> permissions = baseMapper.of(
-                query -> query.in(SysRolePermission::getRoleId, roleIds)
-        ).listOptional();
+        Optional<List<SysRolePermission>> permissions = repository.listByRoleIds(roleIds);
         return permissions
                 .map(sysRolePermissions -> sysRolePermissions.stream()
                         .map(SysRolePermission::getPermissionId)
                         .toList()).orElse(List.of());
 
+    }
+
+
+    /**
+     * 批量保存角色权限
+     *
+     * @param rolePermissions 角色权限
+     * @return 是否成功
+     */
+    public boolean saveBatch(List<SysRolePermission> rolePermissions) {
+        return repository.saveBatch(rolePermissions);
     }
 }

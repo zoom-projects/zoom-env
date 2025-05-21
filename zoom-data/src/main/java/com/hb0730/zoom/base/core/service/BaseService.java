@@ -60,6 +60,16 @@ public class BaseService<Id extends Serializable,
     }
 
     @Override
+    public List<E> listEntity(Q query) {
+        return repository.listEntity(query);
+    }
+
+    @Override
+    public List<E> listEntity() {
+        return repository.listEntity();
+    }
+
+    @Override
     public List<E> listByIds(Collection<? extends Serializable> ids) {
         return repository.listByIds(ids);
     }

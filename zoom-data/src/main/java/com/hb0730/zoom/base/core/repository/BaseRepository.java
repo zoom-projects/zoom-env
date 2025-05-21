@@ -64,6 +64,16 @@ public class BaseRepository<Id extends Serializable,
     }
 
     @Override
+    public List<E> listEntity(Q query) {
+        return getBaseMapper().selectList(getQueryWrapper(query));
+    }
+
+    @Override
+    public List<E> listEntity() {
+        return getBaseMapper().selectList(null);
+    }
+
+    @Override
     public List<E> listByIds(Collection<? extends Serializable> ids) {
         if (ids == null || ids.isEmpty()) {
             return null;

@@ -1,8 +1,5 @@
 package com.hb0730.zoom.sys.biz.base.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.sys.message.entity.SysMessageSubscribe;
 import com.hb0730.zoom.base.sys.system.entity.SysUserSubscribeMsg;
 import com.hb0730.zoom.base.utils.CollectionUtil;
@@ -129,9 +126,10 @@ public class AuthUserSubscribeMsgService {
      * @return 订阅消息
      */
     private List<SysUserSubscribeMsg> list(String userId) {
-        LambdaQueryWrapper<SysUserSubscribeMsg> eq = Wrappers.lambdaQuery(SysUserSubscribeMsg.class)
-                .eq(SysUserSubscribeMsg::getUserId, userId);
-        return sysUserSubscribeMsgService.list(eq);
+//        LambdaQueryWrapper<SysUserSubscribeMsg> eq = Wrappers.lambdaQuery(SysUserSubscribeMsg.class)
+//                .eq(SysUserSubscribeMsg::getUserId, userId);
+//        return sysUserSubscribeMsgService.list(eq);
+        return sysUserSubscribeMsgService.listByUserId(userId);
     }
 
 
@@ -143,9 +141,10 @@ public class AuthUserSubscribeMsgService {
      * @return 是否成功
      */
     private Boolean batchCancel(String userId, UserSubscribeMsgUpdateRequest.MsgType type) {
-        LambdaUpdateWrapper<SysUserSubscribeMsg> eq = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
-                .eq(SysUserSubscribeMsg::getUserId, userId);
-        return cancel(eq, type);
+//        LambdaUpdateWrapper<SysUserSubscribeMsg> eq = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
+//                .eq(SysUserSubscribeMsg::getUserId, userId);
+//        return cancel(eq, type);
+        return sysUserSubscribeMsgService.cancelSubscribe(userId, null, type);
     }
 
     /**
@@ -157,40 +156,44 @@ public class AuthUserSubscribeMsgService {
      * @return 是否成功
      */
     private Boolean batchCancel(String userId, String name, UserSubscribeMsgUpdateRequest.MsgType type) {
-        LambdaQueryWrapper<SysMessageSubscribe> eq = Wrappers.lambdaQuery(SysMessageSubscribe.class)
-                .eq(SysMessageSubscribe::getModule, name);
-        List<SysMessageSubscribe> list = sysMessageSubscribeService.list(eq);
+//        LambdaQueryWrapper<SysMessageSubscribe> eq = Wrappers.lambdaQuery(SysMessageSubscribe.class)
+//                .eq(SysMessageSubscribe::getModule, name);
+        SysMessageSubscribeQueryRequest eq = new SysMessageSubscribeQueryRequest();
+        eq.setModule(name);
+        List<SysMessageSubscribe> list = sysMessageSubscribeService.listEntity(eq);
         if (CollectionUtil.isEmpty(list)) {
             return Boolean.FALSE;
         }
         List<String> ids = list.stream().map(SysMessageSubscribe::getId).toList();
-        LambdaUpdateWrapper<SysUserSubscribeMsg> ud = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
-                .eq(SysUserSubscribeMsg::getUserId, userId)
-                .in(SysUserSubscribeMsg::getSubscribeId, ids);
-        return cancel(ud, type);
+//        LambdaUpdateWrapper<SysUserSubscribeMsg> ud = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
+//                .eq(SysUserSubscribeMsg::getUserId, userId)
+//                .in(SysUserSubscribeMsg::getSubscribeId, ids);
+//        return cancel(ud, type);
+        return sysUserSubscribeMsgService.batchCancelSubscribe(userId, ids, type);
     }
 
     private Boolean cancel(String userId, String id, UserSubscribeMsgUpdateRequest.MsgType type) {
-        LambdaUpdateWrapper<SysUserSubscribeMsg> eq = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
-                .eq(SysUserSubscribeMsg::getUserId, userId)
-                .eq(SysUserSubscribeMsg::getSubscribeId, id);
-        return cancel(eq, type);
+//        LambdaUpdateWrapper<SysUserSubscribeMsg> eq = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
+//                .eq(SysUserSubscribeMsg::getUserId, userId)
+//                .eq(SysUserSubscribeMsg::getSubscribeId, id);
+//        return cancel(eq, type);
+        return sysUserSubscribeMsgService.cancelSubscribe(userId, id, type);
     }
 
-    private boolean cancel(LambdaUpdateWrapper<SysUserSubscribeMsg> ud, UserSubscribeMsgUpdateRequest.MsgType type) {
-        switch (type) {
-            case EMAIL:
-                ud.set(SysUserSubscribeMsg::getIsEmail, false);
-                break;
-            case SMS:
-                ud.set(SysUserSubscribeMsg::getIsSms, false);
-                break;
-            case SITE:
-                ud.set(SysUserSubscribeMsg::getIsSite, false);
-                break;
-        }
-        return sysUserSubscribeMsgService.update(ud);
-    }
+//    private boolean cancel(LambdaUpdateWrapper<SysUserSubscribeMsg> ud, UserSubscribeMsgUpdateRequest.MsgType type) {
+//        switch (type) {
+//            case EMAIL:
+//                ud.set(SysUserSubscribeMsg::getIsEmail, false);
+//                break;
+//            case SMS:
+//                ud.set(SysUserSubscribeMsg::getIsSms, false);
+//                break;
+//            case SITE:
+//                ud.set(SysUserSubscribeMsg::getIsSite, false);
+//                break;
+//        }
+//        return sysUserSubscribeMsgService.update(ud);
+//    }
 
     /**
      * 批量订阅
@@ -200,16 +203,17 @@ public class AuthUserSubscribeMsgService {
      * @return 是否成功
      */
     private Boolean batchSubscribe(String userId, UserSubscribeMsgUpdateRequest.MsgType type) {
-        LambdaQueryWrapper<SysMessageSubscribe> eq = Wrappers.lambdaQuery(SysMessageSubscribe.class);
-        List<SysMessageSubscribe> list = sysMessageSubscribeService.list(eq);
+//        LambdaQueryWrapper<SysMessageSubscribe> eq = Wrappers.lambdaQuery(SysMessageSubscribe.class);
+        List<SysMessageSubscribe> list = sysMessageSubscribeService.listEntity();
         if (CollectionUtil.isEmpty(list)) {
             return Boolean.FALSE;
         }
         List<String> ids = list.stream().map(SysMessageSubscribe::getId).toList();
-        LambdaUpdateWrapper<SysUserSubscribeMsg> ud = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
-                .eq(SysUserSubscribeMsg::getUserId, userId)
-                .in(SysUserSubscribeMsg::getSubscribeId, ids);
-        return subscribe(ud, type);
+//        LambdaUpdateWrapper<SysUserSubscribeMsg> ud = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
+//                .eq(SysUserSubscribeMsg::getUserId, userId)
+//                .in(SysUserSubscribeMsg::getSubscribeId, ids);
+//        return subscribe(ud, type);
+        return sysUserSubscribeMsgService.batchSubscribe(userId, ids, type);
     }
 
     /**
@@ -221,41 +225,45 @@ public class AuthUserSubscribeMsgService {
      * @return 是否成功
      */
     private Boolean batchSubscribe(String userId, String name, UserSubscribeMsgUpdateRequest.MsgType type) {
-        LambdaQueryWrapper<SysMessageSubscribe> eq = Wrappers.lambdaQuery(SysMessageSubscribe.class)
-                .eq(SysMessageSubscribe::getModule, name);
-        List<SysMessageSubscribe> list = sysMessageSubscribeService.list(eq);
+//        LambdaQueryWrapper<SysMessageSubscribe> eq = Wrappers.lambdaQuery(SysMessageSubscribe.class)
+//                .eq(SysMessageSubscribe::getModule, name);
+        SysMessageSubscribeQueryRequest eq = new SysMessageSubscribeQueryRequest();
+        eq.setModule(name);
+        List<SysMessageSubscribe> list = sysMessageSubscribeService.listEntity(eq);
         if (CollectionUtil.isEmpty(list)) {
             return Boolean.FALSE;
         }
         List<String> ids = list.stream().map(SysMessageSubscribe::getId).toList();
-        LambdaUpdateWrapper<SysUserSubscribeMsg> ud = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
-                .eq(SysUserSubscribeMsg::getUserId, userId)
-                .in(SysUserSubscribeMsg::getSubscribeId, ids);
-        return subscribe(ud, type);
+//        LambdaUpdateWrapper<SysUserSubscribeMsg> ud = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
+//                .eq(SysUserSubscribeMsg::getUserId, userId)
+//                .in(SysUserSubscribeMsg::getSubscribeId, ids);
+//        return subscribe(ud, type);
+        return sysUserSubscribeMsgService.batchSubscribe(userId, ids, type);
     }
 
     private Boolean subscribe(String userId, String id, UserSubscribeMsgUpdateRequest.MsgType type) {
-        LambdaUpdateWrapper<SysUserSubscribeMsg> eq = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
-                .eq(SysUserSubscribeMsg::getUserId, userId)
-                .eq(SysUserSubscribeMsg::getSubscribeId, id);
-        return subscribe(eq, type);
+//        LambdaUpdateWrapper<SysUserSubscribeMsg> eq = Wrappers.lambdaUpdate(SysUserSubscribeMsg.class)
+//                .eq(SysUserSubscribeMsg::getUserId, userId)
+//                .eq(SysUserSubscribeMsg::getSubscribeId, id);
+//        return subscribe(eq, type);
+        return sysUserSubscribeMsgService.subscribe(userId, id, type);
     }
 
-    private Boolean subscribe(LambdaUpdateWrapper<SysUserSubscribeMsg> ud, UserSubscribeMsgUpdateRequest.MsgType type) {
-        switch (type) {
-            case EMAIL:
-                ud.set(SysUserSubscribeMsg::getIsEmail, true);
-                break;
-            case SMS:
-                ud.set(SysUserSubscribeMsg::getIsSms, true);
-                break;
-            case SITE:
-                ud.set(SysUserSubscribeMsg::getIsSite, true);
-                break;
-        }
-        return sysUserSubscribeMsgService.update(ud);
-
-    }
+//    private Boolean subscribe(LambdaUpdateWrapper<SysUserSubscribeMsg> ud, UserSubscribeMsgUpdateRequest.MsgType type) {
+//        switch (type) {
+//            case EMAIL:
+//                ud.set(SysUserSubscribeMsg::getIsEmail, true);
+//                break;
+//            case SMS:
+//                ud.set(SysUserSubscribeMsg::getIsSms, true);
+//                break;
+//            case SITE:
+//                ud.set(SysUserSubscribeMsg::getIsSite, true);
+//                break;
+//        }
+//        return sysUserSubscribeMsgService.update(ud);
+//
+//    }
 
     /**
      * 同步订阅消息
@@ -263,13 +271,14 @@ public class AuthUserSubscribeMsgService {
      * @param userId 用户ID
      */
     private void sync(String userId) {
-        List<SysMessageSubscribe> list = sysMessageSubscribeService.list();
+        List<SysMessageSubscribe> list = sysMessageSubscribeService.listEntity();
         if (CollectionUtil.isEmpty(list)) {
             return;
         }
         Map<String, SysMessageSubscribe> subscribeMap = list.stream().collect(Collectors.toMap(SysMessageSubscribe::getId, Function.identity()));
         Set<String> subscribeIds = subscribeMap.keySet();
-        List<SysUserSubscribeMsg> subscribed = sysUserSubscribeMsgService.list(Wrappers.lambdaQuery(SysUserSubscribeMsg.class).eq(SysUserSubscribeMsg::getUserId, userId));
+//        List<SysUserSubscribeMsg> subscribed = sysUserSubscribeMsgService.list(Wrappers.lambdaQuery(SysUserSubscribeMsg.class).eq(SysUserSubscribeMsg::getUserId, userId));
+        List<SysUserSubscribeMsg> subscribed = sysUserSubscribeMsgService.listByUserId(userId);
         List<String> subscribedIds = subscribed.stream().map(SysUserSubscribeMsg::getSubscribeId).toList();
 
         // 还未订阅的
@@ -280,9 +289,10 @@ public class AuthUserSubscribeMsgService {
         // 删除已经取消订阅的
         List<String> cancelSubscribed = subscribedIds.stream().filter(s -> !subscribeIds.contains(s)).toList();
         if (CollectionUtil.isNotEmpty(cancelSubscribed)) {
-            sysUserSubscribeMsgService.remove(Wrappers.lambdaQuery(SysUserSubscribeMsg.class)
-                    .eq(SysUserSubscribeMsg::getUserId, userId)
-                    .in(SysUserSubscribeMsg::getSubscribeId, cancelSubscribed));
+//            sysUserSubscribeMsgService.remove(Wrappers.lambdaQuery(SysUserSubscribeMsg.class)
+//                    .eq(SysUserSubscribeMsg::getUserId, userId)
+//                    .in(SysUserSubscribeMsg::getSubscribeId, cancelSubscribed));
+            sysUserSubscribeMsgService.deleteByUserIdAndSubscribeIds(userId, cancelSubscribed);
         }
 
         List<SysUserSubscribeMsg> save = notSubscribed.stream().map(s -> {

@@ -1,10 +1,8 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysUserSettings;
-import com.hb0730.zoom.sys.biz.system.mapper.SysUserSettingsMapper;
+import com.hb0730.zoom.sys.biz.system.repository.SysUserSettingsRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +14,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class SysUserSettingsService extends ServiceImpl<SysUserSettingsMapper, SysUserSettings> {
+@RequiredArgsConstructor
+public class SysUserSettingsService {
+    private final SysUserSettingsRepository repository;
 
     /**
      * 通过用户ID获取用户设置
@@ -25,9 +25,7 @@ public class SysUserSettingsService extends ServiceImpl<SysUserSettingsMapper, S
      * @return 用户设置
      */
     public SysUserSettings findByUserId(String userId) {
-        LambdaQueryWrapper<SysUserSettings> queryWrapper = Wrappers.lambdaQuery(SysUserSettings.class)
-                .eq(SysUserSettings::getUserId, userId);
-        return getOne(queryWrapper, false);
+        return repository.getByUserId(userId);
     }
 
     /**
@@ -38,11 +36,22 @@ public class SysUserSettingsService extends ServiceImpl<SysUserSettingsMapper, S
      * @return 是否成功
      */
     public boolean updateMessageNotification(String userId, boolean messageNotification) {
-        SysUserSettings sysUserSettings = new SysUserSettings();
-        sysUserSettings.setMessageNotification(messageNotification);
-        LambdaQueryWrapper<SysUserSettings> queryWrapper = Wrappers.lambdaQuery(SysUserSettings.class)
-                .eq(SysUserSettings::getUserId, userId);
-        return update(sysUserSettings, queryWrapper);
+//        SysUserSettings sysUserSettings = new SysUserSettings();
+//        sysUserSettings.setMessageNotification(messageNotification);
+//        LambdaQueryWrapper<SysUserSettings> queryWrapper = Wrappers.lambdaQuery(SysUserSettings.class)
+//                .eq(SysUserSettings::getUserId, userId);
+//        return update(sysUserSettings, queryWrapper);
+        return repository.updateMessageNotificationByUserId(messageNotification, userId);
     }
-    
+
+    /**
+     * 更新或保存用户设置
+     *
+     * @param sysUserSettings 用户设置
+     * @return 是否成功
+     */
+    public boolean saveOrUpdate(SysUserSettings sysUserSettings) {
+        return repository.saveOrUpdate(sysUserSettings);
+    }
+
 }

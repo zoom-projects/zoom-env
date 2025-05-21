@@ -1,7 +1,5 @@
 package com.hb0730.zoom.sys.conf;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.biz.entity.SysBizTask;
 import com.hb0730.zoom.base.enums.TaskCategoryEnums;
@@ -34,33 +32,43 @@ public class MyBizTaskProxyService extends BaseRpcService<SysBizTaskRpcService> 
 
     @Override
     public R<String> saveTask(BizTaskCreateDTO dto) {
-        SysBizTaskCreateRequest createRequest = sysBizTaskService.getMapstruct().toCreateRequest(dto);
+        SysBizTaskCreateRequest createRequest = sysBizTaskService.getRepository().getMapstruct().toCreateRequest(dto);
         sysBizTaskService.create(createRequest);
         return R.OK();
     }
 
     @Override
     public TaskInfo getWorkingTask(TaskCategoryEnums taskCategory, String appName) {
-        LambdaQueryWrapper<SysBizTask> queryWrapper = Wrappers.lambdaQuery(SysBizTask.class)
-                .eq(SysBizTask::getCategory, taskCategory.getCode())
-                .eq(SysBizTask::getDisState, TaskStateEnums.T1.getCode())
-                .eq(SysBizTask::getBusinessType, appName);
-        SysBizTask bizTask = sysBizTaskService.getOne(queryWrapper, false);
+//        LambdaQueryWrapper<SysBizTask> queryWrapper = Wrappers.lambdaQuery(SysBizTask.class)
+//                .eq(SysBizTask::getCategory, taskCategory.getCode())
+//                .eq(SysBizTask::getDisState, TaskStateEnums.T1.getCode())
+//                .eq(SysBizTask::getBusinessType, appName);
+//        SysBizTask bizTask = sysBizTaskService.getOne(queryWrapper, false);
+        SysBizTask bizTask = sysBizTaskService.getTask(
+                taskCategory.getCode(),
+                TaskStateEnums.T1.getCode(),
+                appName
+        );
         if (bizTask != null) {
-            return sysBizTaskService.getMapstruct().toTaskInfo(bizTask);
+            return sysBizTaskService.getRepository().getMapstruct().toTaskInfo(bizTask);
         }
         return null;
     }
 
     @Override
     public TaskInfo getPengdingTask(TaskCategoryEnums taskCategory, String appName) {
-        LambdaQueryWrapper<SysBizTask> queryWrapper = Wrappers.lambdaQuery(SysBizTask.class)
-                .eq(SysBizTask::getCategory, taskCategory.getCode())
-                .eq(SysBizTask::getDisState, TaskStateEnums.T0.getCode())
-                .eq(SysBizTask::getBusinessType, appName);
-        SysBizTask bizTask = sysBizTaskService.getOne(queryWrapper, false);
+//        LambdaQueryWrapper<SysBizTask> queryWrapper = Wrappers.lambdaQuery(SysBizTask.class)
+//                .eq(SysBizTask::getCategory, taskCategory.getCode())
+//                .eq(SysBizTask::getDisState, TaskStateEnums.T0.getCode())
+//                .eq(SysBizTask::getBusinessType, appName);
+//        SysBizTask bizTask = sysBizTaskService.getOne(queryWrapper, false);
+        SysBizTask bizTask = sysBizTaskService.getTask(
+                taskCategory.getCode(),
+                TaskStateEnums.T0.getCode(),
+                appName
+        );
         if (bizTask != null) {
-            return sysBizTaskService.getMapstruct().toTaskInfo(bizTask);
+            return sysBizTaskService.getRepository().getMapstruct().toTaskInfo(bizTask);
         }
         return null;
     }

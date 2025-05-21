@@ -1,4 +1,4 @@
-package com.hb0730.zoom.sys.biz.system.mapper;
+package com.hb0730.zoom.sys.biz.system.repository.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.hb0730.zoom.base.sys.system.entity.SysUser;

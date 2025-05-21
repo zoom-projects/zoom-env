@@ -1,22 +1,19 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.PairEnum;
 import com.hb0730.zoom.base.R;
 import com.hb0730.zoom.base.biz.entity.SysBizTask;
+import com.hb0730.zoom.base.core.service.BaseService;
 import com.hb0730.zoom.base.enums.TaskStateEnums;
 import com.hb0730.zoom.base.enums.TaskTypeEnums;
 import com.hb0730.zoom.base.exception.ZoomException;
 import com.hb0730.zoom.base.ext.security.SecurityUtils;
-import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
 import com.hb0730.zoom.base.utils.IdUtil;
 import com.hb0730.zoom.base.utils.JsonUtil;
-import com.hb0730.zoom.sys.biz.system.convert.SysBizTaskConvert;
-import com.hb0730.zoom.sys.biz.system.mapper.SysBizTaskMapper;
 import com.hb0730.zoom.sys.biz.system.model.request.task.SysBizTaskCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.task.SysBizTaskQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysBizTaskVO;
+import com.hb0730.zoom.sys.biz.system.repository.SysBizTaskRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +28,8 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
-public class SysBizTaskService extends SuperServiceImpl<String, SysBizTaskQueryRequest, SysBizTaskVO, SysBizTask,
-        SysBizTaskCreateRequest, SysBizTaskCreateRequest, SysBizTaskMapper, SysBizTaskConvert> {
+public class SysBizTaskService extends BaseService<String, SysBizTaskQueryRequest, SysBizTaskVO, SysBizTask,
+        SysBizTaskCreateRequest, SysBizTaskCreateRequest, SysBizTaskRepository> {
     @Autowired
     private SysSerialNumberService serialNumberService;
 
@@ -104,11 +101,20 @@ public class SysBizTaskService extends SuperServiceImpl<String, SysBizTaskQueryR
      * @return 是否成功
      */
     public Boolean updateTaskState(String taskId, Integer taskState, String taskStartTime) {
-        LambdaUpdateWrapper<SysBizTask> updateWrapper = Wrappers.lambdaUpdate(SysBizTask.class)
-                .set(SysBizTask::getDisState, taskState)
-                .set(SysBizTask::getDisTimeBegin, taskStartTime)
-                .eq(SysBizTask::getId, taskId);
-        return update(updateWrapper);
+        return repository.updateTaskStateById(taskState, taskStartTime, taskId);
+    }
+
+
+    /**
+     * 获取任务
+     *
+     * @param category 任务类型
+     * @param disState 任务状态
+     * @param appName  应用名称
+     * @return 任务
+     */
+    public SysBizTask getTask(String category, Integer disState, String appName) {
+        return repository.getTask(category, disState, appName);
     }
 
     /**

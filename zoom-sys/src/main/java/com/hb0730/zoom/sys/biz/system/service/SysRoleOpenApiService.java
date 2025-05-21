@@ -1,10 +1,8 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysRoleOpenApi;
 import com.hb0730.zoom.base.utils.CollectionUtil;
-import com.hb0730.zoom.sys.biz.system.mapper.SysRoleOpenApiMapper;
+import com.hb0730.zoom.sys.biz.system.repository.SysRoleOpenApiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,8 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysRoleOpenApiService extends ServiceImpl<SysRoleOpenApiMapper, SysRoleOpenApi> {
+public class SysRoleOpenApiService {
+    private final SysRoleOpenApiRepository repository;
 
     /**
      * 根据角色id获取开放接口id
@@ -28,11 +27,9 @@ public class SysRoleOpenApiService extends ServiceImpl<SysRoleOpenApiMapper, Sys
      * @return 开放接口id
      */
     public List<String> listByRoleId(String roleId) {
-        return baseMapper.of().wrapper(
-                Wrappers.<SysRoleOpenApi>lambdaQuery().eq(SysRoleOpenApi::getRoleId, roleId)
-        ).list().stream().map(SysRoleOpenApi::getOpenApiId).toList();
+        return repository.listByRoleId(roleId).stream().map(SysRoleOpenApi::getOpenApiId).toList();
     }
-    
+
 
     /**
      * 保存角色开放接口
@@ -50,7 +47,7 @@ public class SysRoleOpenApiService extends ServiceImpl<SysRoleOpenApiMapper, Sys
         }
         // 保存
         List<SysRoleOpenApi> list = openApiIds.stream().map(openApiId -> new SysRoleOpenApi().setRoleId(roleId).setOpenApiId(openApiId)).toList();
-        return saveBatch(list);
+        return repository.saveBatch(list);
     }
 
     /**
@@ -61,8 +58,6 @@ public class SysRoleOpenApiService extends ServiceImpl<SysRoleOpenApiMapper, Sys
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean removeByRoleId(String roleId) {
-        return baseMapper.of(
-                Wrappers.<SysRoleOpenApi>lambdaQuery().eq(SysRoleOpenApi::getRoleId, roleId)
-        ).remove();
+        return repository.removeByRoleId(roleId);
     }
 }

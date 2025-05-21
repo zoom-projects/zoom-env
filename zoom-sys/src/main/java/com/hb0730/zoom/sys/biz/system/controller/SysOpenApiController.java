@@ -113,7 +113,7 @@ public class SysOpenApiController {
     @OperatorLog(value = OpenApiOperatorType.DELETE)
     @PreAuthorize("hasAuthority('sys:open:api:del')")
     public R<String> delete(String id) {
-        sysOpenApiService.removeById(id);
+        sysOpenApiService.deleteById(id);
         return R.OK();
     }
 }

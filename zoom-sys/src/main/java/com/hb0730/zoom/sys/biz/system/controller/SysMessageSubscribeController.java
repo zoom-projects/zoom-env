@@ -130,7 +130,7 @@ public class SysMessageSubscribeController {
     @DeleteMapping("/del")
     @OperatorLog(SysMessageSubscribeOperatorType.DELETE)
     public R<String> removeById(String id) {
-        sysMessageSubscribeService.removeById(id);
+        sysMessageSubscribeService.deleteById(id);
         return R.OK();
     }
 

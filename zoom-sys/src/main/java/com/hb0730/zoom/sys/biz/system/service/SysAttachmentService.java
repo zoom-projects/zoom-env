@@ -1,12 +1,11 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
-import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
+import com.hb0730.zoom.base.core.service.BaseService;
 import com.hb0730.zoom.base.sys.system.entity.SysAttachment;
-import com.hb0730.zoom.sys.biz.system.convert.SysAttachmentConvert;
-import com.hb0730.zoom.sys.biz.system.mapper.SysAttachmentMapper;
 import com.hb0730.zoom.sys.biz.system.model.request.attachment.SysAttachmentCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.attachment.SysAttachmentQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysAttachmentVO;
+import com.hb0730.zoom.sys.biz.system.repository.SysAttachmentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +17,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class SysAttachmentService extends SuperServiceImpl<String, SysAttachmentQueryRequest, SysAttachmentVO,
-        SysAttachment, SysAttachmentCreateRequest, SysAttachmentCreateRequest, SysAttachmentMapper, SysAttachmentConvert> {
+public class SysAttachmentService extends BaseService<String, SysAttachmentQueryRequest, SysAttachmentVO,
+        SysAttachment, SysAttachmentCreateRequest, SysAttachmentCreateRequest, SysAttachmentRepository> {
 }

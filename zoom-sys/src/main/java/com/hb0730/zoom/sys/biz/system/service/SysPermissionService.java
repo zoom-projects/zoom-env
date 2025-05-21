@@ -1,21 +1,18 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.hb0730.zoom.base.PairEnum;
+import com.hb0730.zoom.base.core.service.BaseService;
 import com.hb0730.zoom.base.enums.MenuTypeEnums;
 import com.hb0730.zoom.base.exception.ZoomException;
-import com.hb0730.zoom.base.service.superclass.impl.SuperServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysPermission;
 import com.hb0730.zoom.base.utils.CollectionUtil;
 import com.hb0730.zoom.base.utils.StrUtil;
-import com.hb0730.zoom.sys.biz.system.convert.SysPermissionConvert;
-import com.hb0730.zoom.sys.biz.system.mapper.SysPermissionMapper;
 import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionCreateRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.request.permission.SysPermissionTreeQueryRequest;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionTreeVO;
 import com.hb0730.zoom.sys.biz.system.model.vo.SysPermissionVO;
+import com.hb0730.zoom.sys.biz.system.repository.SysPermissionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +27,8 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class SysPermissionService extends SuperServiceImpl<String, SysPermissionQueryRequest, SysPermissionVO,
-        SysPermission, SysPermissionCreateRequest, SysPermissionCreateRequest,
-        SysPermissionMapper, SysPermissionConvert> {
+public class SysPermissionService extends BaseService<String, SysPermissionQueryRequest, SysPermissionVO,
+        SysPermission, SysPermissionCreateRequest, SysPermissionCreateRequest, SysPermissionRepository> {
 
     /**
      * 菜单树
@@ -40,11 +36,13 @@ public class SysPermissionService extends SuperServiceImpl<String, SysPermission
      * @return 菜单树
      */
     public List<SysPermissionTreeVO> tree(SysPermissionTreeQueryRequest query) {
-        LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
-                .orderByAsc(SysPermission::getSort);
+//        LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
+//                .orderByAsc(SysPermission::getSort);
+//
+//        List<SysPermission> tree = baseMapper.selectList(queryWrapper);
+        List<SysPermission> tree = repository.listOrderBySortAsc();
 
-        List<SysPermission> tree = baseMapper.selectList(queryWrapper);
-        return mapstruct.toTreeVo(tree);
+        return repository.getMapstruct().toTreeVo(tree);
     }
 
     /**
@@ -54,7 +52,17 @@ public class SysPermissionService extends SuperServiceImpl<String, SysPermission
      * @return 权限
      */
     public List<SysPermission> findByUserId(String userId) {
-        return baseMapper.findByUserId(userId);
+        return repository.findByUserId(userId);
+    }
+
+    /**
+     * 根据ID列表获取权限
+     *
+     * @param ids ID列表
+     * @return 权限列表
+     */
+    public List<SysPermission> listByIdsOrderBySortAsc(List<String> ids) {
+        return repository.listByIdsOrderBySortAsc(ids);
     }
 
     /**
@@ -72,10 +80,10 @@ public class SysPermissionService extends SuperServiceImpl<String, SysPermission
             req.setParentId(null);
         }
         req.setIsLeaf(true);
-        SysPermission entity = getMapstruct().createReqToEntity(req);
+        SysPermission entity = repository.getMapstruct().createReqToEntity(req);
         save(entity);
         if (StrUtil.isNotBlank(parentId)) {
-            this.baseMapper.changeLeafById(parentId, 0);
+            this.repository.changeLeafById(parentId, 0);
         }
         return true;
     }
@@ -85,16 +93,17 @@ public class SysPermissionService extends SuperServiceImpl<String, SysPermission
     @Override
     public boolean updateById(String id, SysPermissionCreateRequest req) {
         check(req);
-        SysPermission entity = getMapstruct().updateReqToEntity(req);
+        SysPermission entity = repository.getMapstruct().updateReqToEntity(req);
         entity.setId(id);
         // steps 1: 更新parentId
         if (StrUtil.isBlank(req.getParentId())) {
             entity.setParentId(null);
         }
         // steps 2: 更新是否是叶子节点
-        LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
-                .eq(SysPermission::getParentId, id);
-        Long count = baseMapper.of(queryWrapper).count();
+//        LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
+//                .eq(SysPermission::getParentId, id);
+//        Long count = baseMapper.of(queryWrapper).count();
+        long count = repository.countByParentId(id);
         entity.setIsLeaf(count == 0);
 
         // 如果当前菜单的父菜单变了，则需要修改新父菜单和老父菜单的，叶子节点状态
@@ -103,14 +112,15 @@ public class SysPermissionService extends SuperServiceImpl<String, SysPermission
         String pId = entity.getParentId();
         if ((StrUtil.isNotBlank(pId) && !pId.equals(parentId)) || StrUtil.isBlank(pId) && StrUtil.isNotBlank(parentId)) {
             // 1.设置新的父菜单不为叶子节点
-            baseMapper.changeLeafById(pId, 0);
+            repository.changeLeafById(pId, 0);
             // 2.判断老的父菜单是否还有子菜单
-            LambdaQueryWrapper<SysPermission> query = Wrappers.lambdaQuery(SysPermission.class)
-                    .eq(SysPermission::getParentId, parentId);
-            Long count1 = baseMapper.of(query).count();
+//            LambdaQueryWrapper<SysPermission> query = Wrappers.lambdaQuery(SysPermission.class)
+//                    .eq(SysPermission::getParentId, parentId);
+//            Long count1 = baseMapper.of(query).count();
+            long count1 = repository.countByParentId(parentId);
             if (count1 == 1) {
                 if (StrUtil.isNotBlank(parentId)) {
-                    baseMapper.changeLeafById(parentId, 1);
+                    repository.changeLeafById(parentId, 1);
                 }
             }
         }
@@ -131,14 +141,15 @@ public class SysPermissionService extends SuperServiceImpl<String, SysPermission
         }
         String parentId = permission.getParentId();
         if (StrUtil.isNotBlank(parentId)) {
-            LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
-                    .eq(SysPermission::getParentId, parentId);
-            Long count = baseMapper.of(queryWrapper).count();
+//            LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
+//                    .eq(SysPermission::getParentId, parentId);
+//            Long count = baseMapper.of(queryWrapper).count();
+            long count = repository.countByParentId(parentId);
             if (count == 1) {
-                baseMapper.changeLeafById(parentId, 1);
+                repository.changeLeafById(parentId, 1);
             }
         }
-        boolean res = removeById(id);
+        boolean res = repository.deleteById(id);
         // 删除子节点
         removeChildrenBy(id);
         return res;
@@ -151,13 +162,14 @@ public class SysPermissionService extends SuperServiceImpl<String, SysPermission
      * @param parentId 父级id
      */
     private void removeChildrenBy(String parentId) {
-        LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
-                .eq(SysPermission::getParentId, parentId);
-        List<SysPermission> list = baseMapper.of(queryWrapper).list();
+//        LambdaQueryWrapper<SysPermission> queryWrapper = Wrappers.lambdaQuery(SysPermission.class)
+//                .eq(SysPermission::getParentId, parentId);
+//        List<SysPermission> list = baseMapper.of(queryWrapper).list();
+        List<SysPermission> list = repository.findByParentId(parentId);
         if (CollectionUtil.isNotEmpty(list)) {
             list.forEach(item -> {
                 removeChildrenBy(item.getId());
-                removeById(item.getId());
+                repository.deleteById(item.getId());
             });
         }
     }

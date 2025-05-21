@@ -1,10 +1,10 @@
 package com.hb0730.zoom.sys.biz.system.service;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hb0730.zoom.base.sys.system.entity.SysUserAccessToken;
 import com.hb0730.zoom.base.sys.system.entity.SysUserAccessTokenOpenApi;
 import com.hb0730.zoom.base.utils.CollectionUtil;
-import com.hb0730.zoom.sys.biz.system.mapper.SysUserAccessTokenOpenApiMapper;
+import com.hb0730.zoom.sys.biz.system.repository.SysUserAccessTokenOpenApiRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,9 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class SysUserAccessTokenOpenApiService extends ServiceImpl<SysUserAccessTokenOpenApiMapper, SysUserAccessTokenOpenApi> {
+@RequiredArgsConstructor
+public class SysUserAccessTokenOpenApiService {
+    private final SysUserAccessTokenOpenApiRepository repository;
 
     /**
      * 通过访问令牌ID获取开放接口ID
@@ -26,9 +28,9 @@ public class SysUserAccessTokenOpenApiService extends ServiceImpl<SysUserAccessT
      * @return 开放接口ID
      */
     public List<String> getOpenApiIds(String accessTokenId) {
-        return baseMapper.of(
-                query -> query.eq(SysUserAccessTokenOpenApi::getAccessTokenId, accessTokenId)
-        ).list().stream().map(SysUserAccessTokenOpenApi::getOpenApiId).toList();
+        return repository.listByAccessTokenId(accessTokenId)
+                .stream()
+                .map(SysUserAccessTokenOpenApi::getOpenApiId).toList();
     }
 
     /**
@@ -40,7 +42,7 @@ public class SysUserAccessTokenOpenApiService extends ServiceImpl<SysUserAccessT
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean save(SysUserAccessToken accessToken, List<String> openApiIds) {
-        List<SysUserAccessTokenOpenApi> list = list();
+        List<SysUserAccessTokenOpenApi> list = repository.list();
         if (CollectionUtil.isEmpty(openApiIds)) {
             return false;
         }
@@ -51,7 +53,7 @@ public class SysUserAccessTokenOpenApiService extends ServiceImpl<SysUserAccessT
             openApi.setOpenApiId(openApiId);
             list.add(openApi);
         });
-        return saveBatch(list);
+        return repository.saveBatch(list);
     }
 
     /**
@@ -62,8 +64,6 @@ public class SysUserAccessTokenOpenApiService extends ServiceImpl<SysUserAccessT
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean removeByAccessTokenId(String accessTokenId) {
-        return baseMapper.of(
-                query -> query.eq(SysUserAccessTokenOpenApi::getAccessTokenId, accessTokenId)
-        ).remove();
+        return repository.deleteByAccessTokenId(accessTokenId);
     }
 }
