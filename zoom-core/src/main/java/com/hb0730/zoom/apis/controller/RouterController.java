@@ -154,7 +154,7 @@ public class RouterController {
             dto.setUsername(userOptional.map(UserDTO::getUsername).orElse("summary"));
             // traceId
             // opentelemetry traceId
-            String traceId = TraceHolder.getOtelTraceId();
+            String traceId = TraceHolder.getTraceId();
             dto.setTraceId(traceId);
             // 请求ip address
             dto.setAddress(ServletUtil.getClientIP(request));
