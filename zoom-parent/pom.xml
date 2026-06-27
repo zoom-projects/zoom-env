@@ -16,7 +16,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <zoom-infra.version>1.0.0-SNAPSHOT</zoom-infra.version>
-        <springboot.version>3.4.5</springboot.version>
+        <springboot.version>3.5.16</springboot.version>
         <spring-integration.version>6.1.9</spring-integration.version>
         <mysql.version>8.4.0</mysql.version>
         <lombok.version>1.18.36</lombok.version>
